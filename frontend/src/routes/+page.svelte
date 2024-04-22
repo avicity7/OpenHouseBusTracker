@@ -11,7 +11,7 @@
   </h1>
   <div class="md:grid grid-cols-3">
     {#each bus_list as bus}
-      <BusCard bus={bus} />
+      <BusCard {bus} />
     {/each}
   </div>
 </div>
