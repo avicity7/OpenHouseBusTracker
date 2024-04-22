@@ -4,15 +4,14 @@
   export let data
   let { backend_uri, session } = data;
   import { onMount } from 'svelte';
-  let account = { username: null }
+  let account = { Email: null }
   import { UserSettingsOutline } from 'flowbite-svelte-icons';
 
   const getProfile = async () => {
     const response = await fetch(
-      `${backend_uri}:3000/auth/getUser?email=${session?.user?.email}`
+      `${backend_uri}:3000/auth/get-user/${session?.Email}`
     );
-    const parsed = await response.json();
-    account = parsed.rows[0]
+    account = await response.json();
     notLoaded = false
   };
 
@@ -44,11 +43,11 @@
               /> -->
             </a>
           </div>
-          <h2 class="text-2xl font-semibold mt-6">{account.username}</h2>
-          <h3 class="text-sm mt-2">{session?.user?.email}</h3>
+          <h2 class="text-2xl font-semibold mt-6">{account.Email}</h2>
+          <!-- <h3 class="text-sm mt-2">{session?.Email}</h3> -->
             <form method="POST" action="?/signOut">
               <button
-                class="mt-6 p-1 w-[20%] bg-sky-500 hover:bg-sky-700 rounded-full text-zinc-100"
+                class="mt-6 p-1 w-[20%] bg-red-800 hover:bg-red-900 rounded-full text-zinc-100"
               >
                 <div>Sign Out</div>
               </button>
@@ -77,7 +76,7 @@
           >
           <div class="text-zinc-400 font-medium text-sm mx-6 md:mx-24 mt-8 text-center">
             Don't have an account yet?
-            <a href="/profile/emailSignUp" class="text-blue-400 hover:text-blue-500"> Sign up </a>
+            <a href="/profile/sign-up" class="text-blue-400 hover:text-blue-500"> Sign up </a>
           </div>
         </form>
       {/if}

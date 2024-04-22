@@ -9,6 +9,8 @@ import (
 
 func Auth(r *chi.Mux) {
 	r.Route("/auth", func(r chi.Router) {
-		r.Get("/getJWT", http.HandlerFunc(controllers.GetJWT))
+		r.Get("/get-user/{email}", http.HandlerFunc(controllers.GetUser))
+		r.Post("/create-user", http.HandlerFunc(controllers.CreateUser))
+		r.Post("/login", http.HandlerFunc(controllers.Login))
 	})
 }

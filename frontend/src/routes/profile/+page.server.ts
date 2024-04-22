@@ -12,11 +12,11 @@ export const actions = {
     const values = await request.formData()
     const email = values.get('email')
     const password = values.get('password')
-    const result = await fetch(`${PUBLIC_BACKEND_URL}:3000/api/auth/signInUser`, {
+    const result = await fetch(`${PUBLIC_BACKEND_URL}:3000/auth/login`, {
       method: 'POST',
       body: JSON.stringify({
-        email,
-        password
+        "Email": email,
+        "Password": password
       }), 
       headers: {
         'content-type': 'application/json'
@@ -24,16 +24,18 @@ export const actions = {
     })
     
     try {
-      const parsed = await result.json() as {token: string, user: { email:string, username: string }}
-      cookies.set('jwt-token', parsed.token, {path: '/'})
-      const { email, username } = parsed.user
-      locals.session = {user: {email, username }}
+      const parsed = await result.json() as { User: { Email: string, Role: string }, AccessToken: string, RefreshToken: string }
+      const { User, AccessToken, RefreshToken } = parsed
+      cookies.set('accessToken', AccessToken, {path: '/'})
+      cookies.set('refreshToken', RefreshToken, {path: '/'}) 
+      locals.session = User
     } catch(err) {
       console.log(err)
     }
   },
   signOut: async ({ cookies, locals }) => {
-    cookies.delete('jwt-token', {path: '/'})
+    cookies.delete('accessToken', {path: '/'})
+    cookies.delete('refreshToken', {path: '/'})
     locals.session = null
   }
 }
