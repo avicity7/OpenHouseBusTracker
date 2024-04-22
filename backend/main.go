@@ -15,6 +15,9 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	config.Connect(r)
+
 	routes.TestRoute(r)
+	routes.Auth(r)
+
 	http.ListenAndServe("127.0.0.1:3000", r)
 }

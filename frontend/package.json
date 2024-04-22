@@ -13,7 +13,7 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
-		"@sveltejs/kit": "^2.0.0",
+		"@sveltejs/kit": "^2.5.7",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"@types/eslint": "^8.56.0",
 		"@typescript-eslint/eslint-plugin": "^7.0.0",
@@ -32,7 +32,12 @@
 	"type": "module",
 	"dependencies": {
 		"@iconify/json": "^2.2.201",
+		"@types/jsonwebtoken": "^9.0.6",
 		"autoprefixer": "^10.4.19",
+		"flowbite-svelte": "^0.46.0",
+		"flowbite-svelte-icons": "^1.5.0",
+		"jsonwebtoken": "^9.0.2",
+		"node-fetch": "^3.3.2",
 		"postcss": "^8.4.38",
 		"tailwindcss": "^3.4.3",
 		"unplugin-icons": "^0.18.5"
