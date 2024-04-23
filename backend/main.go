@@ -25,6 +25,7 @@ func main() {
 	routes.TestRoute(r)
 	routes.Auth(r)
 	routes.Users(r)
+	routes.Schedules(r)
 
 	http.ListenAndServe("127.0.0.1:3000", r)
 }

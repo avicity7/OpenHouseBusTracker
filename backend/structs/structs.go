@@ -1,5 +1,7 @@
 package structs
 
+import "time";
+
 type NewUser struct {
 	Email    string
 	Password string
@@ -40,4 +42,13 @@ type LoginResponse struct {
 	User         ReturnedUser
 	AccessToken  string
 	RefreshToken string
+}
+
+type Schedule struct {
+	BusId            int
+	Carplate         string
+	RouteDescription string
+	DriverName       string
+	StartTime        time.Time
+	EndTime          time.Time
 }
