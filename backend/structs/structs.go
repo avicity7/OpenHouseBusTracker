@@ -52,3 +52,8 @@ type Schedule struct {
 	StartTime        time.Time
 	EndTime          time.Time
 }
+
+type RefreshTokenResponse struct {
+	AccessToken  string
+	RefreshToken string
+}

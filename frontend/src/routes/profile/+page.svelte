@@ -5,7 +5,6 @@
   let { backend_uri, session } = data;
   import { onMount } from 'svelte';
   let account: User 
-  import { UserSettingsOutline } from 'flowbite-svelte-icons';
 
   const getProfile = async () => {
     const response = await fetch(

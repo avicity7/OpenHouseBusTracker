@@ -61,25 +61,26 @@ func CreateJWTPair(user structs.ReturnedUser) ([]byte, []byte) {
 	return access, refresh
 }
 
-func VerifyRefresh(refresh []byte) {
+func VerifyRefresh(refresh []byte) error {
 	secret := os.Getenv("SECRET")
 
 	parsed_refresh, err := jwt.Parse(refresh, jwt.WithKey(jwa.HS256, []byte(secret)))
 	if err != nil {
-		fmt.Printf("failed to parse JWT: %s\n", err)
+		return err
 	}
 	_ = parsed_refresh
+	return nil
 }
 
-func VerifyAccess(access []byte) {
+func VerifyAccess(access []byte) error {
 	secret := os.Getenv("SECRET")
 
 	parsed_access, err := jwt.Parse(access, jwt.WithKey(jwa.HS256, []byte(secret)))
 	if err != nil {
-		// TODO: Add if expired
-		fmt.Printf("failed to parse JWT: %s\n", err)
+		return err
 	}
 	_ = parsed_access
+	return nil
 }
 
 func CreateUser(user structs.NewUser) error {

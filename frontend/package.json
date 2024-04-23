@@ -35,7 +35,6 @@
 		"@types/jsonwebtoken": "^9.0.6",
 		"autoprefixer": "^10.4.19",
 		"flowbite-svelte": "^0.46.0",
-		"flowbite-svelte-icons": "^1.5.0",
 		"jsonwebtoken": "^9.0.2",
 		"node-fetch": "^3.3.2",
 		"postcss": "^8.4.38",
