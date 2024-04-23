@@ -5,17 +5,22 @@
   const { backend_uri, session } = data
   let users: Array<User> = []
   let roles: Array<UserRole> = []
+  let notLoaded = true
   
-  const getUsers = async() => {
-    let response = await fetch(`${backend_uri}:3000/users/get-users`)
-    users = await response.json()
-    return
+  const getUsers = () => {
+    return new Promise(async(resolve, reject) => {
+      let response = await fetch(`${backend_uri}:3000/users/get-users`)
+      users = await response.json()
+      resolve(users)
+    })
   } 
 
-  const getRoles = async() => {
-    let response = await fetch(`${backend_uri}:3000/users/get-roles`)
-    roles = await response.json()
-    return 
+  const getRoles = () => {
+    return new Promise(async(resolve, reject) => {
+      let response = await fetch(`${backend_uri}:3000/users/get-roles`)
+      roles = await response.json()
+      resolve(roles) 
+    })
   } 
 
   const updateUserRole = async(user: User) => {
@@ -30,12 +35,12 @@
         'content-type': 'application/json'
       },
       credentials: 'include'
-    }) 
+    })
   }
 
   onMount(async() => {
-    getUsers()
-    getRoles()
+    await Promise.all([getUsers(), getRoles()])
+    notLoaded = false
   })
 
 </script>
