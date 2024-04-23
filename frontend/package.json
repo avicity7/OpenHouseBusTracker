@@ -32,6 +32,7 @@
 	"type": "module",
 	"dependencies": {
 		"@iconify/json": "^2.2.201",
+		"@sveltejs/adapter-vercel": "^5.3.0",
 		"@types/jsonwebtoken": "^9.0.6",
 		"autoprefixer": "^10.4.19",
 		"flowbite-svelte": "^0.46.0",
