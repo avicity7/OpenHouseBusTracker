@@ -6,11 +6,11 @@ import type { Handle } from '@sveltejs/kit';
 
 const emailPassword: Handle = async ({ event, resolve }) => {
   const cookie = event.request.headers.get('cookie')
-  if (cookie && cookie.split('-')[0] != 'next' && cookie.split('-')[0] != '__Secure' && cookie.split('-')[0] != '__Host') {
-    const token = cookie.split('=')[1]
-    const decode = jwt.decode(token as string) as JwtPayload
-    const { email, username } = decode
-    event.locals.session = {user: { email, username }}
+  if (cookie) {
+    const tokens = cookie.split('; ')
+    const accessToken = tokens[0].split("=")[1]
+    const decode = jwt.decode(accessToken as string) as JwtPayload
+    event.locals.session = { Email: decode["Email"], Role: decode["Role"] }
   }
   if (event.url.search == '?/signOut') {
     event.locals.session = null

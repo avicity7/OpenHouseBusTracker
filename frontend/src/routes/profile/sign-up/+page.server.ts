@@ -3,16 +3,15 @@ import fetch from 'node-fetch'
 export const actions = {
   signUp: async ({ request, cookies, locals }) => {
     const values = await request.formData()
-    const email = values.get("email")
-    const password = values.get("password")
-    const username = values.get("username")
+    const Email = values.get("email")
+    const Password = values.get("password")
 
-    const result = await fetch(`${PUBLIC_BACKEND_URL}:3000/api/auth/createUser`, {
+    const result = await fetch(`${PUBLIC_BACKEND_URL}:3000/auth/create-user`, {
       method: 'POST',
       body: JSON.stringify({
-        email,
-        password,
-        username
+        Email,
+        Password,
+        Role: 0
       }), 
       headers: {
         'content-type': 'application/json'
@@ -20,10 +19,11 @@ export const actions = {
     })
 
     try {
-      const parsed = await result.json() as {token: string, user: {email:string, username: string}}
-      cookies.set('jwt-token', parsed.token, {path: '/'})
-      const { email, username } = parsed.user
-      locals.session = {user: {email, username}}
+      const parsed = await result.json() as { User: { Email: string, Role: string }, AccessToken: string, RefreshToken: string }
+      const { User, AccessToken, RefreshToken } = parsed
+      cookies.set('accessToken', AccessToken, {path: '/'})
+      cookies.set('refreshToken', RefreshToken, {path: '/'}) 
+      locals.session = User
     } catch(err) {
       console.log(err)
     }
