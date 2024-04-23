@@ -29,8 +29,8 @@ func main() {
 
 	env := os.Getenv("ENV")
 	if env == "PROD" {
-		http.ListenAndServeTLS("127.0.0.1:3000", "./cert.pem", "./key.pem", r)
+		http.ListenAndServeTLS(":3000", "cert.pem", "key.pem", r)
 	} else {
-		http.ListenAndServe("127.0.0.1:3000", r)
+		http.ListenAndServe(":3000", r)
 	}
 }
