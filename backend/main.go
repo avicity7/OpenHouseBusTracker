@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 	"server/config"
 	"server/routes"
 
@@ -26,5 +27,10 @@ func main() {
 	routes.Auth(r)
 	routes.Users(r)
 
-	http.ListenAndServe("127.0.0.1:3000", r)
+	env := os.Getenv("ENV")
+	if env == "PROD" {
+		http.ListenAndServeTLS("127.0.0.1:3000", "./cert.pem", "./key.pem", r)
+	} else {
+		http.ListenAndServe("127.0.0.1:3000", r)
+	}
 }

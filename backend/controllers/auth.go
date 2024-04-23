@@ -49,11 +49,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(500)
+	} else {
+		access, refresh := services.CreateJWTPair(user)
+		formatted, _ := json.Marshal(structs.LoginResponse{User: user, AccessToken: string(access), RefreshToken: string(refresh)})
+		w.WriteHeader(200)
+		w.Write(formatted)
 	}
-	access, refresh := services.CreateJWTPair(user)
-	formatted, _ := json.Marshal(structs.LoginResponse{User: user, AccessToken: string(access), RefreshToken: string(refresh)})
-	w.WriteHeader(200)
-	w.Write(formatted)
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
