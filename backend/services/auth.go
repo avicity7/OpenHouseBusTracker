@@ -18,10 +18,10 @@ func CreateAccessToken(user structs.ReturnedUser) []byte {
 	secret := os.Getenv("SECRET")
 
 	access_token, err := jwt.NewBuilder().
-		Issuer("me").
+		Issuer("server").
 		Claim("Email", user.Email).
 		Claim("Role", user.Role).
-		Expiration(time.Now().Add(24 * time.Hour)).
+		Expiration(time.Now().Add(24 * time.Second)).
 		Build()
 	if err != nil {
 		fmt.Println("Access Token generation failed.")
@@ -35,11 +35,13 @@ func CreateAccessToken(user structs.ReturnedUser) []byte {
 	return signed_access_token
 }
 
-func CreateRefreshToken() []byte {
+func CreateRefreshToken(user structs.ReturnedUser) []byte {
 	secret := os.Getenv("SECRET")
 
 	refresh_token, err := jwt.NewBuilder().
-		Issuer("me").
+		Issuer("server").
+		Claim("Email", user.Email).
+		Claim("Role", user.Role).
 		Expiration(time.Now().Add(168 * time.Hour)).
 		Build()
 	if err != nil {
@@ -56,7 +58,7 @@ func CreateRefreshToken() []byte {
 
 func CreateJWTPair(user structs.ReturnedUser) ([]byte, []byte) {
 	access := CreateAccessToken(user)
-	refresh := CreateRefreshToken()
+	refresh := CreateRefreshToken(user)
 
 	return access, refresh
 }

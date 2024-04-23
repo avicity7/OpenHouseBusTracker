@@ -75,37 +75,3 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	formatted, _ := json.Marshal(output)
 	w.Write(formatted)
 }
-
-func VerifyJWT(w http.ResponseWriter, r *http.Request) {
-	access, err := r.Cookie("accessToken")
-	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(500)
-	}
-
-	var user structs.ReturnedUser
-	err = json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(500)
-	}
-
-	err = services.VerifyAccess([]byte(access.Value))
-	if err != nil {
-		refresh, err := r.Cookie("refreshToken")
-		if err != nil {
-			fmt.Println(err)
-			w.WriteHeader(500)
-		}
-
-		err = services.VerifyRefresh([]byte(refresh.Value))
-		if err != nil {
-			fmt.Println(err)
-			w.WriteHeader(500)
-		}
-		newAccess, newRefresh := services.CreateJWTPair(user)
-		formatted, _ := json.Marshal(structs.RefreshTokenResponse{AccessToken: string(newAccess), RefreshToken: string(newRefresh)})
-		w.WriteHeader(200)
-		w.Write(formatted)
-	}
-}

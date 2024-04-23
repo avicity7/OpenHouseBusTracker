@@ -46,3 +46,8 @@ type RefreshTokenResponse struct {
 	AccessToken  string
 	RefreshToken string
 }
+
+type AuthedResponse struct {
+	Output interface{}
+	Tokens RefreshTokenResponse
+}

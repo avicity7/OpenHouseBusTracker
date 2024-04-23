@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"server/config"
+	"server/middleware"
 	"server/services"
 	"server/structs"
 
@@ -12,6 +13,7 @@ import (
 )
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
+	access, refresh := middleware.VerifyJWT(w, r)
 	var output interface{}
 	value, found := config.Cache.Get("Users")
 	if found {
@@ -26,7 +28,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 		config.Cache.Set("Users", arr, cache.DefaultExpiration)
 	}
 	w.WriteHeader(200)
-	formatted, _ := json.Marshal(output)
+	formatted, _ := json.Marshal(structs.AuthedResponse{Output: output, Tokens: structs.RefreshTokenResponse{AccessToken: string(access), RefreshToken: string(refresh)}})
 	w.Write(formatted)
 }
 

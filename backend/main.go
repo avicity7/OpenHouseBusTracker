@@ -31,6 +31,6 @@ func main() {
 	if env == "PROD" {
 		http.ListenAndServeTLS(":3000", "fullchain.pem", "privkey.pem", r)
 	} else {
-		http.ListenAndServe(":3000", r)
+		http.ListenAndServe("127.0.0.1:3000", r)
 	}
 }
