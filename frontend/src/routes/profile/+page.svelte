@@ -1,10 +1,10 @@
 <script lang='ts'>
   import { Avatar, Spinner } from 'flowbite-svelte';
-  import { page } from '$app/stores';
+  import type { User } from '../../types/global.js';
   export let data
   let { backend_uri, session } = data;
   import { onMount } from 'svelte';
-  let account = { Email: null }
+  let account: User 
   import { UserSettingsOutline } from 'flowbite-svelte-icons';
 
   const getProfile = async () => {
@@ -44,6 +44,7 @@
             </a>
           </div>
           <h2 class="text-2xl font-semibold mt-6">{account.Email}</h2>
+          <h3 class="text-xl mt-2 text-stone-700">{account.Role}</h3>
           <!-- <h3 class="text-sm mt-2">{session?.Email}</h3> -->
             <form method="POST" action="?/signOut">
               <button
