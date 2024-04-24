@@ -87,7 +87,7 @@ func VerifyAccess(access []byte) error {
 
 func CreateUser(user structs.NewUser) error {
 	query := `
-		INSERT INTO "User" ("Email", "Password", "Role") 
+		INSERT INTO user_table (email, password, role_id) 
 		VALUES (@Email, @Password, @Role)
 	`
 
@@ -113,9 +113,9 @@ func CreateUser(user structs.NewUser) error {
 func GetUser(email string) (structs.ReturnedUser, error) {
 	var user structs.ReturnedUser
 	query := `
-		SELECT "Email", "Description" as "Role" FROM "User" 
-		JOIN "UserRole" ON "User"."Role" = "UserRole"."RoleId" 
-		WHERE "Email" = @Email
+		SELECT email, role_name FROM user_table 
+		JOIN user_role ON user_table.role_id = user_role.role_id 
+		WHERE email = @Email
 	`
 	args := pgx.NamedArgs{
 		"Email": email,
@@ -132,9 +132,9 @@ func GetUser(email string) (structs.ReturnedUser, error) {
 func Login(login structs.Login) (structs.ReturnedUser, error) {
 	var user structs.User
 	query := `
-		SELECT "Email", "Password", "Description" as "Role" FROM "User" 
-		JOIN "UserRole" ON "User"."Role" = "UserRole"."RoleId" 
-		WHERE "Email" = @Email
+		SELECT email, password, role_name FROM user_table 
+		JOIN user_role ON user_table.role_id = user_role.role_id 
+		WHERE email = @Email
 	`
 	args := pgx.NamedArgs{
 		"Email": login.Email,
