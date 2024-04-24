@@ -11,7 +11,7 @@ import (
 func GetUsers() (structs.ReturnedUserArray, error) {
 	output := make(structs.ReturnedUserArray, 0)
 	query := `
-		SELECT email, role_name FROM user_table 
+		SELECT email, role_name, verification_token FROM user_table 
 		JOIN user_role ON user_table.role_id = user_role.role_id 
 		ORDER BY email ASC
 	`

@@ -75,3 +75,15 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	formatted, _ := json.Marshal(output)
 	w.Write(formatted)
 }
+
+func VerifyEmail(w http.ResponseWriter, r *http.Request) {
+	verification_token := chi.URLParam(r, "token")
+	email, err := services.VerifyEmail(verification_token)
+	fmt.Println(email)
+	if err != nil {
+		w.WriteHeader(500)
+	} else {
+		config.Cache.Delete(email)
+		w.WriteHeader(200)
+	}
+}

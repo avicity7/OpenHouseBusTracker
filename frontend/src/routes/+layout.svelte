@@ -1,12 +1,22 @@
-<script>
+<script lang="ts">
   import '../app.css'
   import '../../node_modules/mapbox-gl/dist/mapbox-gl.css';
+  import { page } from '$app/stores';  
   import { onMount } from 'svelte';
+  import type { User } from '../types/global';
+  let account:User = {Email: "", Role: "", VerificationToken: "" }
   export let data
-  let { session } = data;
+  let { session, backend_uri } = data;
   import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
 
   injectSpeedInsights();
+
+  const getProfile = async () => {
+    const response = await fetch(
+      `${backend_uri}:3000/auth/get-user/${session?.Email}`
+    )
+    account = await response.json()
+  }
 
   const detectColorScheme = () => {
     let theme = "light"
@@ -24,6 +34,9 @@
 
   onMount(() => {
     detectColorScheme()
+    if (session != undefined) {
+      getProfile()
+    }
   })
 </script>
 
@@ -45,4 +58,11 @@
     {/if}
   </div>
 </nav>
-<slot />
+{#if session && account.VerificationToken != "" && !$page.url.pathname.includes("verify")}
+  <div class="flex flex-col text-center items-center my-auto mx-8">
+    <h1 class="mt-16 text-3xl font-semibold">You're signed up!</h1>
+    <p class="mt-8 text-xl">But before you use the Tracker, you need to verify your email.</p>
+  </div>
+{:else}
+  <slot />
+{/if}
