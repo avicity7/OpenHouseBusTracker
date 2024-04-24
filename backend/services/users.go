@@ -23,7 +23,7 @@ func GetUsers() (structs.ReturnedUserArray, error) {
 
 	for rows.Next() {
 		var user structs.ReturnedUser
-		rows.Scan(&user.Email, &user.Role)
+		rows.Scan(&user.Email, &user.Role, &user.VerificationToken)
 		output = append(output, user)
 	}
 
