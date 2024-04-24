@@ -1,15 +1,39 @@
 <script lang="ts">
 
-    let bus_schedule: {bus_id: number, route_id: number, assigned_driver: number, start_time: string, end_time: string}[] = [
-        {bus_id: 1, route_id: 1, assigned_driver: 1, start_time: "2024-04-22T08:00:00", end_time: "2024-04-22T10:00:00"},
-        {bus_id: 2, route_id: 2, assigned_driver: 2, start_time: "2024-04-22T09:00:00", end_time: "2024-04-22T11:00:00"}
-    ];
+    import { onMount } from "svelte";
+    import { writable } from "svelte/store";
+    import type { Schedule } from "../../../types/global";
+    export let data
+    const { backend_uri, session } = data
+
+    let bus_schedule = writable<Schedule[]>([]);
+
+    // let drivers = [{driver_id: 0, driver_name: "John Smith"}]
+
+
+    onMount(async () => {
+    try {
+        const response = await fetch(`${backend_uri}:3000/schedules/get-schedule`);
+        if (!response.ok) {
+            throw new Error("Failed to fetch bus schedules");
+        }
+        const data = await response.json() as Schedule[];
+        console.log("this is data" + data)
+        bus_schedule.set(data);
+    } catch (error) {
+        console.error(error);
+    }
+});
+    // let bus_schedule: {bus_id: number, route_id: number, assigned_driver: number, start_time: string, end_time: string}[] = [
+    //     {bus_id: 1, route_id: 1, assigned_driver: 1, start_time: "2024-04-22T08:00:00", end_time: "2024-04-22T10:00:00"},
+    //     {bus_id: 2, route_id: 2, assigned_driver: 2, start_time: "2024-04-22T09:00:00", end_time: "2024-04-22T11:00:00"}
+    // ];
+
+    // function deleteSchedule(index: number) {
+    //     bus_schedule = bus_schedule.filter((_schedule, i) => i !== index);
+    // }
 
     let showModal = false;
-
-    function deleteSchedule(index: number) {
-        bus_schedule = bus_schedule.filter((_schedule, i) => i !== index);
-    }
 
     function openModal() {
     showModal = true;
@@ -73,24 +97,28 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus ID</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route ID</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned Driver</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus Schedule ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus Carplate</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route Description</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver Name</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Time</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Time</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                {#each bus_schedule as schedule, index (schedule.bus_id)}
+                <!-- temporary way of doing, might need a unique identifier for BusSchedules -->
+                {#each $bus_schedule as schedule, index (`${schedule.BusId}-${index}`)}
                 <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">{schedule.bus_id}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{schedule.route_id}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{schedule.assigned_driver}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(schedule.start_time)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(schedule.end_time)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{schedule.BusId}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{schedule.Carplate}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{schedule.RouteName}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{schedule.DriverName}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(schedule.StartTime)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(schedule.EndTime)}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button class="text-red-600 hover:text-red-900" on:click={() => deleteSchedule(index)}>Delete</button>
+                        <button class="text-red-600 hover:text-red-900" >Delete</button>
+                        <!-- on:click={() => deleteSchedule(index)} -->
                     </td>
                 </tr>
                 {/each}
@@ -115,4 +143,4 @@
     <h3>Admin Dashboard to display all schedules, addition of new bus schedules, deletion of bus schedules</h3>
     <p>display of bus schedules for user side outside of admin route</p>
     
-</div> -->
+</div> -->  
