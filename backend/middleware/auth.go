@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 	"server/services"
 	"server/structs"
@@ -11,17 +10,14 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
-func VerifyJWT(w http.ResponseWriter, r *http.Request) ([]byte, []byte) {
+func VerifyJWT(access string, refresh string) ([]byte, []byte, error) {
 	secret := os.Getenv("SECRET")
-	access := r.Header.Get("Access")
 	err := services.VerifyAccess([]byte(access))
 	if err != nil {
-		refresh := r.Header.Get("Refresh")
-
 		err = services.VerifyRefresh([]byte(refresh))
 		if err != nil {
 			fmt.Println(err)
-			w.WriteHeader(500)
+			return nil, nil, err
 		}
 		decode, err := jwt.Parse([]byte(refresh), jwt.WithKey(jwa.HS256, []byte(secret)))
 		if err != nil {
@@ -35,9 +31,9 @@ func VerifyJWT(w http.ResponseWriter, r *http.Request) ([]byte, []byte) {
 				role_string, _ := role.(string)
 				user := structs.ReturnedUser{Email: email_string, Role: role_string}
 				newAccess, newRefresh := services.CreateJWTPair(user)
-				return newAccess, newRefresh
+				return newAccess, newRefresh, nil
 			}
 		}
 	}
-	return nil, nil
+	return nil, nil, nil
 }

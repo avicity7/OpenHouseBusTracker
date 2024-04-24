@@ -13,7 +13,12 @@ import (
 )
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	access, refresh := middleware.VerifyJWT(w, r)
+	accessToken := r.Header.Get("Access")
+	refreshToken := r.Header.Get("Refresh")
+	access, refresh, err := middleware.VerifyJWT(accessToken, refreshToken)
+	if err != nil {
+		w.WriteHeader(500)
+	}
 	var output interface{}
 	value, found := config.Cache.Get("Users")
 	if found {
