@@ -15,6 +15,7 @@
       })
       let parsed = await response.json()
       users = parsed
+      console.log(users)
       resolve(users)
     })
   } 
