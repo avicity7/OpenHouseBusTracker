@@ -51,6 +51,7 @@
     <a href="/bus-routes" class="text-lg font-medium hover:text-red-600">Routes</a>
     {#if session?.Role == "admin"}
       <a href="/admin/users" class="ml-6 text-lg font-medium hover:text-red-600">Users</a>
+      <!-- <a href="/admin/schedule" class="ml-6 text-lg font-medium hover:text-red-600">Schedule</a> -->
     {/if}
     <a href="/profile" class="ml-6 text-lg font-medium hover:text-red-600">Profile</a>
     {#if session?.Role == "user"}

@@ -26,6 +26,7 @@ func main() {
 	routes.TestRoute(r)
 	routes.Auth(r)
 	routes.Users(r)
+	routes.Schedules(r)
 
 	env := os.Getenv("ENV")
 	if env == "PROD" {
