@@ -14,5 +14,5 @@ export async function GET({ fetch, cookies }) {
     cookies.set("accessToken", AccessToken, { path: "/" })
     cookies.set("refreshToken", RefreshToken, { path: "/" })
   }
-  return new Response(JSON.stringify(parsed))
+  return new Response(JSON.stringify(parsed.Output))
 }
