@@ -9,9 +9,11 @@
   
   const getUsers = () => {
     return new Promise(async(resolve, reject) => {
-      let response = await fetch(`${window.location.href.split('/')[0]}/api/users/get-users`)
+      let response = await fetch(`${window.location.href.split('/')[0]}/api/users/get-users`, {
+        method: 'GET',
+        credentials: 'include'
+      })
       let parsed = await response.json()
-      console.log(parsed)
       users = parsed.Output
       resolve(users)
     })
