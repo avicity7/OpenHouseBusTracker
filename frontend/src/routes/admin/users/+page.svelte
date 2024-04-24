@@ -14,7 +14,7 @@
         credentials: 'include'
       })
       let parsed = await response.json()
-      users = parsed.Output
+      users = parsed
       resolve(users)
     })
   } 
