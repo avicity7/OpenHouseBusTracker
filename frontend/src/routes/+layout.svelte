@@ -3,6 +3,9 @@
   import { onMount } from 'svelte';
   export let data
   let { session } = data;
+  import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
+
+  injectSpeedInsights();
 
   const detectColorScheme = () => {
     let theme = "light"
