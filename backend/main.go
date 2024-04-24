@@ -16,7 +16,7 @@ func main() {
 	godotenv.Load()
 	r := chi.NewRouter()
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://*", "http://localhost:5173"},
+		AllowedOrigins:   []string{"https://open-house-bus-tracker.vercel.app", "http://localhost:5173"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowCredentials: true,
 	}))
