@@ -11,9 +11,9 @@ import (
 func GetUsers() (structs.ReturnedUserArray, error) {
 	output := make(structs.ReturnedUserArray, 0)
 	query := `
-		SELECT "Email", "Description" as "Role" FROM "User" 
-		JOIN "UserRole" ON "User"."Role" = "UserRole"."RoleId" 
-		ORDER BY "Email" ASC
+		SELECT email, role_name FROM user_table 
+		JOIN user_role ON user_table.role_id = user_role.role_id 
+		ORDER BY email ASC
 	`
 
 	rows, err := config.Dbpool.Query(context.Background(), query)
@@ -33,7 +33,7 @@ func GetUsers() (structs.ReturnedUserArray, error) {
 func GetUserRoles() (structs.UserRoleArray, error) {
 	output := make(structs.UserRoleArray, 0)
 	query := `
-		SELECT * FROM "UserRole"
+		SELECT * FROM user_role
 	`
 
 	rows, err := config.Dbpool.Query(context.Background(), query)
@@ -52,9 +52,9 @@ func GetUserRoles() (structs.UserRoleArray, error) {
 
 func UpdateUserRole(user structs.EditUserRole) error {
 	query := `
-		UPDATE "User"
-		SET "Role" = @Role
-		WHERE "Email" = @Email
+		UPDATE user_table
+		SET role_id = @Role
+		WHERE email = @Email
 	`
 
 	args := pgx.NamedArgs{
