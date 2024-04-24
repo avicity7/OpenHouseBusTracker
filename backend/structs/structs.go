@@ -49,6 +49,11 @@ type RefreshTokenResponse struct {
 	RefreshToken string
 }
 
+type AuthedResponse struct {
+	Output interface{}
+	Tokens RefreshTokenResponse
+}
+
 type Schedule struct {
 	BusId      int
 	Carplate   string

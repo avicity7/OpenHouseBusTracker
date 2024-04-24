@@ -1,8 +1,12 @@
 <script>
   import '../app.css'
+  import '../../node_modules/mapbox-gl/dist/mapbox-gl.css';
   import { onMount } from 'svelte';
   export let data
   let { session } = data;
+  import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
+
+  injectSpeedInsights();
 
   const detectColorScheme = () => {
     let theme = "light"

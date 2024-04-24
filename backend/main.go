@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 	"server/config"
 	"server/routes"
 
@@ -15,7 +16,7 @@ func main() {
 	godotenv.Load()
 	r := chi.NewRouter()
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://*", "http://localhost:5173"},
+		AllowedOrigins:   []string{"https://open-house-bus-tracker.vercel.app", "http://localhost:5173"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowCredentials: true,
 	}))
@@ -27,5 +28,10 @@ func main() {
 	routes.Users(r)
 	routes.Schedules(r)
 
-	http.ListenAndServe("127.0.0.1:3000", r)
+	env := os.Getenv("ENV")
+	if env == "PROD" {
+		http.ListenAndServeTLS(":3000", "fullchain.pem", "privkey.pem", r)
+	} else {
+		http.ListenAndServe("127.0.0.1:3000", r)
+	}
 }
