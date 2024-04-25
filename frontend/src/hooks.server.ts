@@ -9,8 +9,12 @@ const emailPassword: Handle = async ({ event, resolve }) => {
   if (cookie && cookie.split('-')[0] != 'next' && cookie.split('-')[0] != '__Secure' && cookie.split('-')[0] != '__Host') {
     const token = cookie.split('=')[1]
     const decode = jwt.decode(token as string) as JwtPayload
-    const { email, username } = decode
-    event.locals.session = {user: { email, username }}
+    if (decode && decode.email && decode.username) {
+      const { email, username } = decode
+      event.locals.session = { user: { email, username } }
+    } else {
+      event.locals.session = null
+    }
   }
   if (event.url.search == '?/signOut') {
     event.locals.session = null
