@@ -15,13 +15,6 @@
     method='POST'
     action="?/signUp"
   >
-    <div class="font-medium mb-4">Username</div>
-    <input 
-      type="text"
-      autocomplete="off"
-      name="username"
-      class="border-2 border-zinc-200 rounded-full focus:border-purple-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
-    />
     <div class="font-medium mb-4 mt-8">Email</div>
     <input 
       type="text"
@@ -36,7 +29,7 @@
       name="password"
       class="border-2 border-zinc-200 rounded-full focus:border-purple-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
     />
-    <button class="py-1 bg-purple-400 hover:bg-purple-500 font-medium text-white rounded-full mt-6" type="submit">Sign up</button>
+    <button class="py-1 bg-red-800 hover:bg-red-900 font-medium text-white rounded-full mt-6" type="submit">Sign up</button>
     <div class="text-zinc-400 font-medium text-sm mx-6 md:mx-24 mt-8 text-center">
       Already have an account?
       <a href="/profile" class="text-blue-400 hover:text-blue-500">
