@@ -13,12 +13,19 @@ export type UserRole = {
 }
 
 export type Schedule = {
-  BusId: number;
+  BusScheduleId: number;
   Carplate: string;
   RouteName: string;
+  DriverId: number,
   DriverName: string;
   StartTime: string;
   EndTime: string;
+  Driver: Driver[];
+}
+
+export type Driver = {
+  DriverId: number;
+  DriverName: string;
 }
 
 // export type Schedule = {

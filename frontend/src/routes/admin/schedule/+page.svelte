@@ -3,35 +3,16 @@
     import { onMount } from "svelte";
     import { writable } from "svelte/store";
     import type { Schedule } from "../../../types/global";
-    export let data
-    const { backend_uri, session } = data
 
     let bus_schedule = writable<Schedule[]>([]);
 
-    // let drivers = [{driver_id: 0, driver_name: "John Smith"}]
+    export let data: { data: Schedule[] };  
 
-
-    onMount(async () => {
-    try {
-        const response = await fetch(`${backend_uri}:3000/schedules/get-schedule`);
-        if (!response.ok) {
-            throw new Error("Failed to fetch bus schedules");
+    onMount(() => {
+        if (data && data.data) {
+            bus_schedule.set(data.data);
         }
-        const data = await response.json() as Schedule[];
-        console.log("this is data" + data)
-        bus_schedule.set(data);
-    } catch (error) {
-        console.error(error);
-    }
-});
-    // let bus_schedule: {bus_id: number, route_id: number, assigned_driver: number, start_time: string, end_time: string}[] = [
-    //     {bus_id: 1, route_id: 1, assigned_driver: 1, start_time: "2024-04-22T08:00:00", end_time: "2024-04-22T10:00:00"},
-    //     {bus_id: 2, route_id: 2, assigned_driver: 2, start_time: "2024-04-22T09:00:00", end_time: "2024-04-22T11:00:00"}
-    // ];
-
-    // function deleteSchedule(index: number) {
-    //     bus_schedule = bus_schedule.filter((_schedule, i) => i !== index);
-    // }
+    });
 
     let showModal = false;
 
@@ -92,7 +73,6 @@
         <button class="border-2 border-black text-black text-xl px-4 py-2 rounded-full hover:bg-gray-200" on:click={addSchedule}>+</button>
     </div>
 
-
     <div class="mt-8">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -107,10 +87,9 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                <!-- temporary way of doing, might need a unique identifier for BusSchedules -->
-                {#each $bus_schedule as schedule, index (`${schedule.BusId}-${index}`)}
+                {#each $bus_schedule as schedule (schedule.BusScheduleId)}
                 <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">{schedule.BusId}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{schedule.BusScheduleId}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{schedule.Carplate}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{schedule.RouteName}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{schedule.DriverName}</td>

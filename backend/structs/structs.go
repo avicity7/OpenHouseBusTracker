@@ -55,7 +55,7 @@ type AuthedResponse struct {
 }
 
 type Schedule struct {
-	BusId      int
+	BusScheduleId      int
 	Carplate   string
 	RouteName  string
 	DriverName string
@@ -78,6 +78,17 @@ type UpdateSchedule struct {
     DriverId      int       `json:"driver_id"`
     StartTime     time.Time `json:"start_time"`
     EndTime       time.Time `json:"end_time"`
+}
+
+type ScheduleDropdownData struct {
+    Carplate  string   `json:"carplate"`
+    RouteName string   `json:"route_name"`
+    Driver   []Driver `json:"driver"`
+}
+
+type Driver struct {
+    DriverId   int    `json:"driver_id"`
+    DriverName string `json:"driver_name"`
 }
 
 

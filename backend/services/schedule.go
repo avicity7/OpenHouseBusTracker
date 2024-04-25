@@ -38,7 +38,7 @@ func GetSchedule() ([]structs.Schedule, error) {
 	for rows.Next() {
 		var schedule structs.Schedule
 		err := rows.Scan(
-			&schedule.BusId,
+			&schedule.BusScheduleId,
 			&schedule.Carplate,
 			&schedule.RouteName,
 			&schedule.DriverName,
@@ -118,6 +118,51 @@ func DeleteBusSchedule(scheduleID int) error {
 	
     return nil
 }
+
+func GetDropdownData() ([]structs.ScheduleDropdownData, error) {
+	var dropdownData []structs.ScheduleDropdownData
+
+	query := `
+		SELECT 
+			b.carplate,
+			r.route_name,
+			d.driver_name,
+			d.driver_id
+		FROM 
+			bus b,
+			route r,
+			driver d
+    `
+
+	rows, err := config.Dbpool.Query(context.Background(), query)
+	if err != nil {
+		fmt.Println("Error executing query:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var data structs.ScheduleDropdownData
+		var driver structs.Driver
+		err := rows.Scan(
+			&data.Carplate,
+			&data.RouteName,
+			&driver.DriverName,
+			&driver.DriverId,
+		)
+		if err != nil {
+			fmt.Println("Error scanning row:", err)
+			return nil, err
+		}
+
+		data.Driver = append(data.Driver, driver)
+		dropdownData = append(dropdownData, data)
+
+	}
+
+	return dropdownData, nil
+}
+
 
 // to be confirmed, might need unique identifier for BusSchedule for Update and Delete 
 // below is an example of checking composite keys to update
