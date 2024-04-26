@@ -13,6 +13,7 @@ require (
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
 	github.com/PuerkitoBio/goquery v1.9.1 // indirect
+	github.com/gorilla/mux v1.8.1 // indirect
 )
 
 require (

@@ -19,15 +19,26 @@ func AddDriver(driver structs.Driver) error {
 }
 
 // Get Driver
-func GetDriver(driverID int) (structs.Driver, error) {
-    var driver structs.Driver
-    query := `SELECT * FROM driver WHERE driver_id = $1;`
-    err := config.Dbpool.QueryRow(context.Background(), query, driverID).Scan(&driver.DriverID, &driver.Name)
+func GetDriver() ([]structs.Driver, error) {
+    var drivers []structs.Driver
+    rows, err := config.Dbpool.Query(context.Background(), "SELECT * FROM driver")
     if err != nil {
-        fmt.Println("Error getting driver:", err)
-        return driver, err
+        return nil, err
     }
-    return driver, nil
+    defer rows.Close()
+
+    for rows.Next() {
+        var driver structs.Driver
+        if err := rows.Scan(&driver.DriverID, &driver.Name); err != nil {
+            return nil, err
+        }
+        drivers = append(drivers, driver)
+    }
+    if err := rows.Err(); err != nil {
+        return nil, err
+    }
+
+    return drivers, nil
 }
 
 // Update Driver
@@ -38,6 +49,7 @@ func UpdateDriver(driver structs.Driver) error {
         fmt.Println("Error updating driver:", err)
         return err
     }
+    fmt.Println("Driver updated successfully")
     return nil
 }
 

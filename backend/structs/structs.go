@@ -84,7 +84,7 @@ type UpdateSchedule struct {
 
 type Driver struct{
 	DriverID int
-	Name varchar
+	Name string
 }
 
 // could try to use clearer seperation of structs / reduce structs needed
