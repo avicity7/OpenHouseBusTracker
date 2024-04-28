@@ -18,23 +18,24 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	access, refresh, err := middleware.VerifyJWT(accessToken, refreshToken)
 	if err != nil {
 		w.WriteHeader(500)
-	}
-	var output interface{}
-	value, found := config.Cache.Get("Users")
-	if found {
-		output = value
 	} else {
-		arr, err := services.GetUsers()
-		if err != nil {
-			fmt.Println(err)
-			w.WriteHeader(500)
+		var output interface{}
+		value, found := config.Cache.Get("Users")
+		if found {
+			output = value
+		} else {
+			arr, err := services.GetUsers()
+			if err != nil {
+				fmt.Println(err)
+				w.WriteHeader(500)
+			}
+			output = arr
+			config.Cache.Set("Users", arr, cache.DefaultExpiration)
 		}
-		output = arr
-		config.Cache.Set("Users", arr, cache.DefaultExpiration)
+		w.WriteHeader(200)
+		formatted, _ := json.Marshal(structs.AuthedResponse{Output: output, Tokens: structs.RefreshTokenResponse{AccessToken: string(access), RefreshToken: string(refresh)}})
+		w.Write(formatted)
 	}
-	w.WriteHeader(200)
-	formatted, _ := json.Marshal(structs.AuthedResponse{Output: output, Tokens: structs.RefreshTokenResponse{AccessToken: string(access), RefreshToken: string(refresh)}})
-	w.Write(formatted)
 }
 
 func GetUserRoles(w http.ResponseWriter, r *http.Request) {

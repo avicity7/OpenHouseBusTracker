@@ -6,6 +6,7 @@ import (
 	"os"
 	"server/config"
 	"server/structs"
+	"server/utils"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -87,8 +88,8 @@ func VerifyAccess(access []byte) error {
 
 func CreateUser(user structs.NewUser) error {
 	query := `
-		INSERT INTO user_table (email, password, role_id) 
-		VALUES (@Email, @Password, @Role)
+		INSERT INTO user_table (email, password, role_id, verification_token) 
+		VALUES (@Email, @Password, @Role, @VerificationToken)
 	`
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
@@ -96,15 +97,20 @@ func CreateUser(user structs.NewUser) error {
 		return err
 	}
 
+	verification_token := utils.GenerateRandomToken(20)
+
 	args := pgx.NamedArgs{
-		"Email":    user.Email,
-		"Password": hashedPassword,
-		"Role":     user.Role,
+		"Email":             user.Email,
+		"Password":          hashedPassword,
+		"Role":              user.Role,
+		"VerificationToken": verification_token,
 	}
 
 	_, err = config.Dbpool.Exec(context.Background(), query, args)
 	if err != nil {
 		return err
+	} else {
+		utils.SendEmail(verification_token, user.Email)
 	}
 
 	return nil
@@ -113,7 +119,7 @@ func CreateUser(user structs.NewUser) error {
 func GetUser(email string) (structs.ReturnedUser, error) {
 	var user structs.ReturnedUser
 	query := `
-		SELECT email, role_name FROM user_table 
+		SELECT email, role_name, verification_token FROM user_table 
 		JOIN user_role ON user_table.role_id = user_role.role_id 
 		WHERE email = @Email
 	`
@@ -121,7 +127,7 @@ func GetUser(email string) (structs.ReturnedUser, error) {
 		"Email": email,
 	}
 
-	err := config.Dbpool.QueryRow(context.Background(), query, args).Scan(&user.Email, &user.Role)
+	err := config.Dbpool.QueryRow(context.Background(), query, args).Scan(&user.Email, &user.Role, &user.VerificationToken)
 	if err != nil {
 		return structs.ReturnedUser{}, err
 	}
@@ -132,7 +138,7 @@ func GetUser(email string) (structs.ReturnedUser, error) {
 func Login(login structs.Login) (structs.ReturnedUser, error) {
 	var user structs.User
 	query := `
-		SELECT email, password, role_name FROM user_table 
+		SELECT email, password, role_name, verification_token FROM user_table 
 		JOIN user_role ON user_table.role_id = user_role.role_id 
 		WHERE email = @Email
 	`
@@ -140,7 +146,7 @@ func Login(login structs.Login) (structs.ReturnedUser, error) {
 		"Email": login.Email,
 	}
 
-	err := config.Dbpool.QueryRow(context.Background(), query, args).Scan(&user.Email, &user.Password, &user.Role)
+	err := config.Dbpool.QueryRow(context.Background(), query, args).Scan(&user.Email, &user.Password, &user.Role, &user.VerificationToken)
 	if err != nil {
 		return structs.ReturnedUser{}, err
 	}
@@ -151,9 +157,36 @@ func Login(login structs.Login) (structs.ReturnedUser, error) {
 	}
 
 	returnedUser := structs.ReturnedUser{
-		Email: user.Email,
-		Role:  user.Role,
+		Email:             user.Email,
+		Role:              user.Role,
+		VerificationToken: user.VerificationToken,
 	}
 
 	return returnedUser, nil
+}
+
+func VerifyEmail(verification_token string) (string, error) {
+	query_select := `
+		SELECT email FROM user_table
+		WHERE verification_token = @VerificationToken
+	`
+	query_update := `
+		UPDATE user_table
+		SET verification_token = ''
+		WHERE verification_token = @VerificationToken
+	`
+	args := pgx.NamedArgs{
+		"VerificationToken": verification_token,
+	}
+	var username string
+	err := config.Dbpool.QueryRow(context.Background(), query_select, args).Scan(&username)
+	if err != nil {
+		return "", err
+	}
+	fmt.Println(username)
+	_, err = config.Dbpool.Exec(context.Background(), query_update, args)
+	if err != nil {
+		return "", err
+	}
+	return username, nil
 }

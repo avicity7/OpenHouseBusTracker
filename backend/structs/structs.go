@@ -9,14 +9,16 @@ type NewUser struct {
 }
 
 type User struct {
-	Email    string
-	Password string
-	Role     string
+	Email             string
+	Password          string
+	Role              string
+	VerificationToken string
 }
 
 type ReturnedUser struct {
-	Email string
-	Role  string
+	Email             string
+	Role              string
+	VerificationToken string
 }
 
 type EditUserRole struct {
