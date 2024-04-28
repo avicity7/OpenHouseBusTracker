@@ -57,8 +57,11 @@ func UpdateBusSchedule(w http.ResponseWriter, r *http.Request) {
     err := json.NewDecoder(r.Body).Decode(&schedule)
     if err != nil {
         http.Error(w, "Invalid request body", http.StatusBadRequest)
+		fmt.Println("Error decoding request body:", err)
         return
     }
+
+	fmt.Printf("Received update request for schedule: %+v\n", schedule)
 
     err = services.UpdateBusSchedule(schedule)
     if err != nil {
@@ -71,20 +74,22 @@ func UpdateBusSchedule(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "Schedule updated successfully")
 }
 
-func DeleteBusSchedule(w http.ResponseWriter, r *http.Request) {
-    scheduleID := chi.URLParam(r, "id")
-    if scheduleID == "" {
+func DeleteBusSchedule(w http.ResponseWriter, r *http.Request) { // might need to improve
+    // scheduleID := chi.URLParam(r, "id")
+	schedule := make([]int, 0)
+	err := json.NewDecoder(r.Body).Decode(&schedule)
+    if len(schedule) == 0 {
         http.Error(w, "Schedule ID is required", http.StatusBadRequest)
         return
     }
 
-    scheduleIDInt, err := strconv.Atoi(scheduleID)
-    if err != nil {
-        http.Error(w, "Invalid schedule ID", http.StatusBadRequest)
-        return
-    }
+    // scheduleIDInt, err := strconv.Atoi(scheduleID)
+    // if err != nil {
+    //     http.Error(w, "Invalid schedule ID", http.StatusBadRequest)
+    //     return
+    // }
 
-    err = services.DeleteBusSchedule(scheduleIDInt)
+    err = services.DeleteBusSchedule(schedule)
     if err != nil {
         http.Error(w, "Failed to delete schedule", http.StatusInternalServerError)
         return
@@ -122,7 +127,7 @@ func GetScheduleByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-    fmt.Println("Received schedule ID:", scheduleID) // Add this line to log the received ID
+    fmt.Println("Received schedule ID:", scheduleID) 
 
 	schedule, err := services.GetScheduleByID(scheduleID)
 	if err != nil {

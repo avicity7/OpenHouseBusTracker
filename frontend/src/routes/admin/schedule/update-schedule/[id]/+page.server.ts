@@ -1,4 +1,4 @@
-import type { Load } from '@sveltejs/kit';
+import { error, type Load } from '@sveltejs/kit';
 import type { Schedule } from '../../../../../types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
@@ -8,8 +8,7 @@ export const load: Load = async (ctx) => {
         const dropdownDataPromise = new Promise((resolve, reject) => {
             const fetchData = async () => {
                 try {
-                    const dropdownUrl = `${PUBLIC_BACKEND_URL}/schedules/get-dropdown-data`;
-                    console.log("Fetching dropdown data from:", dropdownUrl);
+                    const dropdownUrl = `${PUBLIC_BACKEND_URL}:3000/schedules/get-dropdown-data`;
 
                     const response = await ctx.fetch(dropdownUrl);
                     if (!response.ok) {
@@ -34,18 +33,13 @@ export const load: Load = async (ctx) => {
             const fetchData = async () => {
                 try {
                     const { id } = ctx.params;
-                    console.log("Received ID:", id);
-                    const scheduleUrl = `${PUBLIC_BACKEND_URL}/schedules/get-schedule/${id}`;
-                    console.log("Fetching schedule data from:", scheduleUrl);
-
+                    const scheduleUrl = `${PUBLIC_BACKEND_URL}:3000/schedules/get-schedule/${id}`;
                     const response = await ctx.fetch(scheduleUrl);
                     if (!response.ok) {
                         throw new Error(`Failed to fetch schedule data from id: ${id}: ${response.statusText}`);
                     }
 
                     const schedule = await response.json();
-                    console.log("Fetched schedule data:", schedule);
-
                     resolve({ schedule });
                 } catch (error) {
                     console.error("Error fetching schedule data:", error);
@@ -64,8 +58,6 @@ export const load: Load = async (ctx) => {
             scheduleDataPromise
         ]);
 
-        console.log("Dropdown data result:", dropdownData);
-
         return {     
             dropdownData,
             scheduleData
@@ -79,6 +71,41 @@ export const load: Load = async (ctx) => {
     }
 };
 
+export const actions = {
+    updateBusSchedule: async({ request}): Promise<void> =>{
+      const form =await request.formData()
+        
+        const url = new URL(request.url);
+        const id = url.pathname.split('/').pop();
+
+        const BusScheduleId = id ? +id : undefined;
+        const Carplate = form.get('carplate');
+        const RouteName = form.get('route_name');
+        const DriverIdString = form.get('driver_id');
+        const DriverId = DriverIdString ? +DriverIdString : null;
+        const StartTime = form.get('start_time') + ":00Z"; // should not be doing this, saving time in UTC instead of local time (UTC+8)
+        const EndTime = form.get('end_time') + ":00Z";
+        
+        const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/update-schedule`, {
+          method: "PUT",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+                  Carplate, 
+                  RouteName,
+                  DriverId,
+                  StartTime,
+                  EndTime,
+                  BusScheduleId
+              })
+        });
+        
+        console.log(`update bus schedule ${id} successful`)
+        if (!response.ok) {
+            console.log(error)
+          throw new Error("Failed to create bus schedule");
+        }
+      }
+  }
 
 
 // export const load: Load = async (ctx) => {

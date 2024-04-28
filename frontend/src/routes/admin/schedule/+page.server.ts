@@ -23,15 +23,15 @@ export const load: Load = async ({ fetch }) => {
     }
 };
 
-export const actions = {
-    deleteBusSchedule: async (scheduleId) => {
-      const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/delete-schedule/${scheduleId}`, {
-        method: 'DELETE'
-      });
+// export const actions = {
+//     deleteBusSchedule: async (scheduleId) => {
+//       const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/delete-schedule/${scheduleId}`, {
+//         method: 'DELETE'
+//       });
   
-      if (!response.ok) {
-        throw new Error("Failed to delete bus schedule");
-      }
-    }
-  };
+//       if (!response.ok) {
+//         throw new Error("Failed to delete bus schedule");
+//       }
+//     }
+//   };
   

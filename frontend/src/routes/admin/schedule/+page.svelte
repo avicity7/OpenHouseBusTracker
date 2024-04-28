@@ -7,32 +7,36 @@
     let selectedSchedules = new Set<number>();
 
     export let data;
-    const { backend_uri, session } = data
+    const { backend_uri } = data
 
-    onMount(() => {
-        if (data && data.data) {
-            busSchedule.set(data.data);
+    async function deleteSchedule(id: number | number[]) {
+        try {
+            const response = await fetch(`${backend_uri}:3000/schedules/delete-schedule`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(Array.isArray(id) ? id : [id])
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to delete schedule');
+            }
+
+            const updatedSchedules = $busSchedule.filter(schedule => {
+                if (Array.isArray(id)) {
+                    return !id.includes(schedule.BusScheduleId);
+                } else {
+                    return schedule.BusScheduleId !== id;
+                }
+            });
+            busSchedule.set(updatedSchedules);
+
+            console.log("Deleted Bus Schedule with ID:", id);
+        } catch (error) {
+            console.error('Error deleting schedule:', error);
         }
-    });
-
-    async function deleteSchedule(id: number) {
-    try {
-      const response = await fetch(`${backend_uri}:3000/schedules/delete-schedule/${id}`, {
-        method: 'DELETE'
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to delete schedule');
-      }
-
-      const newScheduleList = $busSchedule.filter(schedule => schedule.BusScheduleId !== id);
-      busSchedule.set(newScheduleList);
-      selectedSchedules.delete(id);
-      console.log("Deleted Bus Schedule with ID:", id);
-    } catch (error) {
-      console.error('Error deleting schedule:', error);
     }
-  }
 
     function formatTimestamp(timestamp: string): string {
         const date = new Date(timestamp);
@@ -52,19 +56,39 @@
         } else {
             selectedSchedules.add(id);
         }
-        
+        console.log("Number of selected schedules:", selectedSchedules.size);
         console.log("Selected Bus Schedule IDs:", Array.from(selectedSchedules));
+        selectedSchedules = selectedSchedules;
     }
 
-    // function updateSchedule(id: number) {
-    //     console.log("Update schedule with ID:", id);
-    //     // Add your update logic here
-    // }
+    async function bulkDelete() {
+        const idsToDelete = Array.from(selectedSchedules);
+        console.log(idsToDelete)
+        try {
+                await deleteSchedule(idsToDelete);
+            
+            console.log("Bulk delete successful.");
+        } catch (error) {
+            console.error('Error during bulk delete:', error);
+        }
+    }
+
+    onMount(() => {
+        if (data && data.data) {
+            busSchedule.set(data.data);
+        }
+    });
 </script>
 
 <div class="p-6 md:p-12">
     <div class="flex items-center mb-4">
         <h1 class="text-3xl font-semibold mr-4">Bus Schedules</h1>
+
+        {#if selectedSchedules.size > 1}
+            <button class="text-red-600 hover:text-red-900" on:click={bulkDelete}>
+                Bulk Delete
+            </button>
+        {/if}
         <a href="schedule/add-schedule" class="border-2 border-black text-black text-xl px-4 py-2 rounded-full hover:bg-gray-200">
             +
         </a>    
@@ -88,7 +112,11 @@
                 {#each $busSchedule as schedule (schedule.BusScheduleId)}
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <input type="checkbox" checked={selectedSchedules.has(schedule.BusScheduleId)} on:change={() => toggleSelection(schedule.BusScheduleId)} />
+                        <input type="checkbox" checked={selectedSchedules.has(schedule.BusScheduleId)} on:change={() => {
+                            toggleSelection(schedule.BusScheduleId);
+                            console.log("Updated selected schedules:", selectedSchedules);
+                        }} />                     
+                        
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">{schedule.BusScheduleId}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{schedule.Carplate}</td>
