@@ -4,7 +4,7 @@ import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 export const load: Load = async ({ fetch }) => {
     try {
-        const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/get-schedule`);
+        const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/get-schedules`);
         if (!response.ok) {
             throw new Error("Failed to fetch bus schedules");
         }
@@ -22,3 +22,16 @@ export const load: Load = async ({ fetch }) => {
         };
     }
 };
+
+export const actions = {
+    deleteBusSchedule: async (scheduleId) => {
+      const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/delete-schedule/${scheduleId}`, {
+        method: 'DELETE'
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to delete bus schedule");
+      }
+    }
+  };
+  

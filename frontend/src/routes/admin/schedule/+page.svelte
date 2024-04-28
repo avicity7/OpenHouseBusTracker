@@ -1,40 +1,38 @@
 <script lang="ts">
-
     import { onMount } from "svelte";
     import { writable } from "svelte/store";
     import type { Schedule } from "../../../types/global";
 
-    let bus_schedule = writable<Schedule[]>([]);
+    let busSchedule = writable<Schedule[]>([]);
+    let selectedSchedules = new Set<number>();
 
-    export let data: { data: Schedule[] };  
+    export let data;
+    const { backend_uri, session } = data
 
     onMount(() => {
         if (data && data.data) {
-            bus_schedule.set(data.data);
+            busSchedule.set(data.data);
         }
     });
 
-    let showModal = false;
+    async function deleteSchedule(id: number) {
+    try {
+      const response = await fetch(`${backend_uri}:3000/schedules/delete-schedule/${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete schedule');
+      }
 
-    function openModal() {
-    showModal = true;
+      const newScheduleList = $busSchedule.filter(schedule => schedule.BusScheduleId !== id);
+      busSchedule.set(newScheduleList);
+      selectedSchedules.delete(id);
+      console.log("Deleted Bus Schedule with ID:", id);
+    } catch (error) {
+      console.error('Error deleting schedule:', error);
     }
-
-    function closeModal() {
-        console.log("close modal clicked")
-        showModal = false;
-    }
-
-    function addSchedule() {
-        openModal();
-        console.log('button to open modal clicked');
-    }
-
-    function handleSubmit(event: Event) {
-        event.preventDefault();
-        closeModal();
-        console.log('Form submitted');
-    }
+  }
 
     function formatTimestamp(timestamp: string): string {
         const date = new Date(timestamp);
@@ -47,36 +45,36 @@
 
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
+
+    function toggleSelection(id: number) {
+        if (selectedSchedules.has(id)) {
+            selectedSchedules.delete(id);
+        } else {
+            selectedSchedules.add(id);
+        }
+        
+        console.log("Selected Bus Schedule IDs:", Array.from(selectedSchedules));
+    }
+
+    // function updateSchedule(id: number) {
+    //     console.log("Update schedule with ID:", id);
+    //     // Add your update logic here
+    // }
 </script>
-
-<!-- Modal component -->
-<div class="fixed inset-0 flex items-center justify-center" style="background-color: rgba(0, 0, 0, 0.5); display: {showModal ? '' : 'none'};">
-    <div class="bg-white p-6 rounded-lg shadow-md">
-        <h2 class="text-xl font-semibold mb-4">Add New Bus Schedule</h2>
-        <form on:submit={handleSubmit}> 
-            <label for="bus_id">Bus ID:</label>
-            <input type="text" id="bus_id" name="bus_id" />
-            
-            <!-- Check on what should be inside the form  MAKE NEW PAGE-->
-
-            <div class="mt-4 flex justify-end">
-                <button type="button" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md mr-2" on:click={closeModal}>Cancel</button>
-                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md">Add Schedule</button>
-            </div>
-        </form>
-    </div>
-</div>
 
 <div class="p-6 md:p-12">
     <div class="flex items-center mb-4">
         <h1 class="text-3xl font-semibold mr-4">Bus Schedules</h1>
-        <button class="border-2 border-black text-black text-xl px-4 py-2 rounded-full hover:bg-gray-200" on:click={addSchedule}>+</button>
+        <a href="schedule/add-schedule" class="border-2 border-black text-black text-xl px-4 py-2 rounded-full hover:bg-gray-200">
+            +
+        </a>    
     </div>
 
     <div class="mt-8">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Select</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus Schedule ID</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus Carplate</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route Description</th>
@@ -87,8 +85,11 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                {#each $bus_schedule as schedule (schedule.BusScheduleId)}
+                {#each $busSchedule as schedule (schedule.BusScheduleId)}
                 <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <input type="checkbox" checked={selectedSchedules.has(schedule.BusScheduleId)} on:change={() => toggleSelection(schedule.BusScheduleId)} />
+                    </td>
                     <td class="px-6 py-4 whitespace-nowrap">{schedule.BusScheduleId}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{schedule.Carplate}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{schedule.RouteName}</td>
@@ -96,30 +97,12 @@
                     <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(schedule.StartTime)}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(schedule.EndTime)}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button class="text-red-600 hover:text-red-900" >Delete</button>
-                        <!-- on:click={() => deleteSchedule(index)} -->
+                        <a href={`schedule/update-schedule/${schedule.BusScheduleId}`} class="text-green-600 hover:text-green-900 mr-5">Update</a>
+                        <button class="text-red-600 hover:text-red-900" on:click={() => deleteSchedule(schedule.BusScheduleId)}>Delete</button>
                     </td>
                 </tr>
                 {/each}
             </tbody>
         </table>
     </div>
-
-    <div class="mt-8">
-        <h2 class="text-xl font-semibold">Bus Schedule JOINS Bus, Route and Driver tables</h2>
-        <p>dropdown for routes, buses is carplate, driver name </p>
-    </div>
 </div>
-
-
-<!-- 
-    <div class="mt-8">
-        <h2 class="text-xl font-semibold">Add New Bus Schedule</h2>
-    </div> -->
-
-<!-- <div class="p-6 md:p-12">
-    <h1 class="text-3xl font-semibold">Bus Schedules</h1>
-    <h3>Admin Dashboard to display all schedules, addition of new bus schedules, deletion of bus schedules</h3>
-    <p>display of bus schedules for user side outside of admin route</p>
-    
-</div> -->  

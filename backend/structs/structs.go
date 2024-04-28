@@ -64,11 +64,11 @@ type Schedule struct {
 }
 
 type NewSchedule struct {
-    Carplate  string    `json:"carplate"`
-    RouteName string    `json:"route_name"`
-    DriverId  int       `json:"driver_id"`
-    StartTime time.Time `json:"start_time"`
-    EndTime   time.Time `json:"end_time"`
+    Carplate  string   
+    RouteName string    
+    DriverId  int       
+    StartTime time.Time 
+    EndTime   time.Time 
 }
 
 type UpdateSchedule struct {

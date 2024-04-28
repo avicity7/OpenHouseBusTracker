@@ -163,21 +163,42 @@ func GetDropdownData() ([]structs.ScheduleDropdownData, error) {
 	return dropdownData, nil
 }
 
+func GetScheduleByID(id int) (structs.Schedule, error) {
+	var schedule structs.Schedule
 
-// to be confirmed, might need unique identifier for BusSchedule for Update and Delete 
-// below is an example of checking composite keys to update
+	fmt.Println("Received schedule ID in service:", id) // Add this line to log the received ID
 
-// func UpdateBusSchedule(schedule structs.NewSchedule) error {
-//     query := `
-//         UPDATE "BusSchedule"
-//         SET "AssignedDriver" = $1, "StartTime" = $2, "EndTime" = $3
-//         WHERE "BusId" = $4 AND "RouteId" = $5 AND "AssignedDriver" = $6 AND "StartTime" = $7 AND "EndTime" = $8
-//     `
+	query := `
+		SELECT 
+			bs.bus_schedule_id,
+			b.carplate AS Bus_Carplate,
+			r.route_name AS Route_Name,
+			d.driver_name AS Driver_Name,
+			bs.start_time,
+			bs.end_time
+		FROM 
+			bus_schedule bs
+		JOIN 
+			bus b ON bs.carplate = b.carplate
+		JOIN 
+			route r ON bs.route_name = r.route_name
+		JOIN 
+			driver d ON bs.driver_id = d.driver_id
+		WHERE
+			bs.bus_schedule_id = $1
+    `
 
-//     _, err := config.Dbpool.Exec(context.Background(), query, schedule.AssignedDriver, schedule.StartTime, schedule.EndTime, schedule.BusId, schedule.RouteId, schedule.AssignedDriver, schedule.StartTime, schedule.EndTime)
-//     if err != nil {
-//         return err
-//     }
+	err := config.Dbpool.QueryRow(context.Background(), query, id).Scan(
+		&schedule.BusScheduleId,
+		&schedule.Carplate,
+		&schedule.RouteName,
+		&schedule.DriverName,
+		&schedule.StartTime,
+		&schedule.EndTime,
+	)
+	if err != nil {
+		return structs.Schedule{}, err
+	}
 
-//     return nil
-// }
+	return schedule, nil
+}

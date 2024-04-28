@@ -1,9 +1,10 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { writable } from 'svelte/store';
-    import type { Schedule, Driver } from "../../../../types/global";
+    import type { Schedule, Driver } from "../../../../../types/global";
 
-    export let data: Schedule[];
+    export let dropdownData: { data: Schedule[] };
+    export let scheduleData: { schedule: Schedule };
 
     const carplates = writable<string[]>([]);
     const routeNames = writable<string[]>([]);
@@ -14,7 +15,7 @@
 
     function setDropdownOptions(data: any) {
 
-    if (!data || !Array.isArray(data.data)) {
+    if (!data || !Array.isArray(dropdownData)) {
         console.log("Data is empty or not an array:", data);
         return;
     }
@@ -45,13 +46,15 @@
 }
 
     onMount(() => {
-        setDropdownOptions(data);
+        console.log("Dropdown Data:", dropdownData);
+        console.log("Schedule Data:", scheduleData);
+        // setDropdownOptions(data);
     });
 
 </script>
 
 <div class="p-6 md:p-12">
-    <h1 class="text-3xl font-semibold mb-4">Add New Bus Schedule</h1>
+    <h1 class="text-3xl font-semibold mb-4">Update Select Bus Schedule</h1>
     <form method="POST" action="?/createBusSchedule">
         <label for="carplate">Carplate:</label>
         <select id="carplate" name="carplate" bind:value={$selectedCarplate}>
@@ -81,7 +84,7 @@
         <input type="datetime-local" id="end_time" name="end_time" required/>
 
         <div class="mt-4 flex justify-end">
-            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md">Add Schedule</button>
+            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md">Update Schedule</button>
         </div>
     </form>
 </div>
