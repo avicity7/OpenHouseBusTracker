@@ -38,7 +38,7 @@ func GetSchedule() ([]structs.Schedule, error) {
 	for rows.Next() {
 		var schedule structs.Schedule
 		err := rows.Scan(
-			&schedule.BusId,
+			&schedule.BusScheduleId,
 			&schedule.Carplate,
 			&schedule.RouteName,
 			&schedule.DriverName,
@@ -55,15 +55,15 @@ func GetSchedule() ([]structs.Schedule, error) {
 }
 
 func CreateBusSchedule(schedule structs.NewSchedule) error {
-    query := `
+	query := `
 		INSERT INTO bus_schedule (carplate, route_name, driver_id, start_time, end_time) 
 		VALUES ($1, $2, $3, $4, $5)
     `
-	_, err := config.Dbpool.Exec(context.Background(), query, 
-		schedule.Carplate, 
-		schedule.RouteName, 
-		schedule.DriverId, 
-		schedule.StartTime, 
+	_, err := config.Dbpool.Exec(context.Background(), query,
+		schedule.Carplate,
+		schedule.RouteName,
+		schedule.DriverId,
+		schedule.StartTime,
 		schedule.EndTime,
 	)
 
@@ -71,12 +71,12 @@ func CreateBusSchedule(schedule structs.NewSchedule) error {
 		fmt.Println("Error inserting schedule:", err)
 		return err
 	}
-	
-    return nil
+
+	return nil
 }
 
 func UpdateBusSchedule(schedule structs.UpdateSchedule) error {
-    query := `
+	query := `
 		UPDATE bus_schedule
 		SET 
 			carplate = $1,
@@ -87,11 +87,11 @@ func UpdateBusSchedule(schedule structs.UpdateSchedule) error {
 		WHERE
 			bus_schedule_id = $6
     `
-	_, err := config.Dbpool.Exec(context.Background(), query, 
-		schedule.Carplate, 
-		schedule.RouteName, 
-		schedule.DriverId, 
-		schedule.StartTime, 
+	_, err := config.Dbpool.Exec(context.Background(), query,
+		schedule.Carplate,
+		schedule.RouteName,
+		schedule.DriverId,
+		schedule.StartTime,
 		schedule.EndTime,
 		schedule.BusScheduleId,
 	)
@@ -100,14 +100,14 @@ func UpdateBusSchedule(schedule structs.UpdateSchedule) error {
 		fmt.Println("Error updating schedule:", err)
 		return err
 	}
-	
-    return nil
+
+	return nil
 }
 
-func DeleteBusSchedule(scheduleID int) error {
-    query := `
+func DeleteBusSchedule(scheduleID []int) error {
+	query := `
 		DELETE FROM bus_schedule
-		WHERE bus_schedule_id = $1
+		WHERE bus_schedule_id = ANY ($1)
     `
 	_, err := config.Dbpool.Exec(context.Background(), query, scheduleID)
 
@@ -115,24 +115,90 @@ func DeleteBusSchedule(scheduleID int) error {
 		fmt.Println("Error deleting schedule:", err)
 		return err
 	}
-	
-    return nil
+
+	return nil
 }
 
-// to be confirmed, might need unique identifier for BusSchedule for Update and Delete 
-// below is an example of checking composite keys to update
+func GetDropdownData() ([]structs.ScheduleDropdownData, error) {
+	var dropdownData []structs.ScheduleDropdownData
 
-// func UpdateBusSchedule(schedule structs.NewSchedule) error {
-//     query := `
-//         UPDATE "BusSchedule"
-//         SET "AssignedDriver" = $1, "StartTime" = $2, "EndTime" = $3
-//         WHERE "BusId" = $4 AND "RouteId" = $5 AND "AssignedDriver" = $6 AND "StartTime" = $7 AND "EndTime" = $8
-//     `
+	query := `
+		SELECT 
+			b.carplate,
+			r.route_name,
+			d.driver_name,
+			d.driver_id
+		FROM 
+			bus b,
+			route r,
+			driver d
+    `
 
-//     _, err := config.Dbpool.Exec(context.Background(), query, schedule.AssignedDriver, schedule.StartTime, schedule.EndTime, schedule.BusId, schedule.RouteId, schedule.AssignedDriver, schedule.StartTime, schedule.EndTime)
-//     if err != nil {
-//         return err
-//     }
+	rows, err := config.Dbpool.Query(context.Background(), query)
+	if err != nil {
+		fmt.Println("Error executing query:", err)
+		return nil, err
+	}
+	defer rows.Close()
 
-//     return nil
-// }
+	for rows.Next() {
+		var data structs.ScheduleDropdownData
+		var driver structs.Driver
+		err := rows.Scan(
+			&data.Carplate,
+			&data.RouteName,
+			&driver.DriverName,
+			&driver.DriverId,
+		)
+		if err != nil {
+			fmt.Println("Error scanning row:", err)
+			return nil, err
+		}
+
+		data.Driver = append(data.Driver, driver)
+		dropdownData = append(dropdownData, data)
+
+	}
+
+	return dropdownData, nil
+}
+
+func GetScheduleByID(id int) (structs.UpdateSchedule, error) {
+	var schedule structs.UpdateSchedule
+
+	fmt.Println("Received schedule ID in service:", id)
+
+	query := `
+	SELECT 
+		bs.bus_schedule_id,
+		b.carplate AS Bus_Carplate,
+		r.route_name AS Route_Name,
+		d.driver_id AS Driver_Id,
+		bs.start_time,
+		bs.end_time
+	FROM 
+		bus_schedule bs
+	JOIN 
+		bus b ON bs.carplate = b.carplate
+	JOIN 
+		route r ON bs.route_name = r.route_name
+	JOIN 
+		driver d ON bs.driver_id = d.driver_id
+	WHERE
+		bs.bus_schedule_id = $1
+    `
+
+	err := config.Dbpool.QueryRow(context.Background(), query, id).Scan(
+		&schedule.BusScheduleId,
+		&schedule.Carplate,
+		&schedule.RouteName,
+		&schedule.DriverId,
+		&schedule.StartTime,
+		&schedule.EndTime,
+	)
+	if err != nil {
+		return structs.UpdateSchedule{}, err
+	}
+
+	return schedule, nil
+}
