@@ -22,6 +22,11 @@ export type Schedule = {
   EndTime: string;
 }
 
+export type Driver = {
+	DriverID: number;
+	Name: string;
+}
+
 // export type Schedule = {
 //   BusId: number;
 //   RouteId: number;

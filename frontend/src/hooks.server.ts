@@ -10,7 +10,9 @@ const emailPassword: Handle = async ({ event, resolve }) => {
     const tokens = cookie.split('; ')
     const accessToken = tokens[0].split("=")[1]
     const decode = await jwt.decode(accessToken as string) as JwtPayload
-    event.locals.session = { Email: decode["Email"], Role: decode["Role"] }
+    if(decode){
+      event.locals.session = { Email: decode["Email"], Role: decode["Role"] }
+    }
   }
   if (event.url.search == '?/signOut') {
     event.locals.session = null
