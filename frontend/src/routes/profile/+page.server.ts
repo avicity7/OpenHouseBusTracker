@@ -1,12 +1,6 @@
-import fetch from 'node-fetch'
 import { PUBLIC_BACKEND_URL } from '$env/static/public'
-// import type { Agent } from 'https'
-// let httpsAgent: Agent
-// if (PUBLIC_ENV !== "DEV") {
-//   httpsAgent = new https.Agent({
-//     rejectUnauthorized: false,
-//   });
-// }
+import type { User } from '../../types/global.js'
+
 export const actions = {
   login: async ({ request, cookies, locals }) => {
     const values = await request.formData()
@@ -29,6 +23,9 @@ export const actions = {
       cookies.set('accessToken', AccessToken, {path: '/'})
       cookies.set('refreshToken', RefreshToken, {path: '/'}) 
       locals.session = User
+      return {
+        account: User
+      }
     } catch(err) {
       console.log(err)
     }
@@ -40,11 +37,26 @@ export const actions = {
   }
 }
 
-// export const load = async (event) => {
-//   const session = event.locals.session
-//   const backend_uri = PUBLIC_BACKEND_URL 
-//   return {
-//     backend_uri,
-//     session,
-//   }
-// }
+export const load = async ({ locals, fetch }) => {
+  let account: User = {
+    Email: '',
+    Role: '',
+    VerificationToken: ''
+  }
+
+  if (locals.session?.Email != undefined) {
+    const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/auth/get-user/${locals.session?.Email}`, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json'
+      },
+    })
+    if (response) {
+      account = await response.json() as User
+    }
+  }
+
+  return {
+    account
+  }
+}

@@ -1,32 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte"
-  import type { User, UserRole } from "../../../types/global";
+  import type { Session, User, UserRole } from "../../../types/global";
   export let data
-  const { backend_uri, session } = data
-  let users: Array<User> = []
-  let roles: Array<UserRole> = []
-  let notLoaded = true
-  
-  const getUsers = () => {
-    return new Promise(async(resolve, reject) => {
-      let response = await fetch(`${window.location.href.split('/')[0]}/api/users/get-users`, {
-        method: 'GET',
-        credentials: 'include'
-      })
-      let parsed = await response.json()
-      users = parsed
-      console.log(users)
-      resolve(users)
-    })
-  } 
-
-  const getRoles = () => {
-    return new Promise(async(resolve, reject) => {
-      let response = await fetch(`${backend_uri}:3000/users/get-roles`)
-      roles = await response.json()
-      resolve(roles) 
-    })
-  } 
+  let { backend_uri, session, users, roles } = data
 
   const updateUserRole = async(user: User) => {
     let roleInt = roles.find((role) => role.Description == user.Role)?.RoleId
@@ -42,13 +18,8 @@
       credentials: 'include'
     })
   }
-
-  onMount(async() => {
-    await Promise.all([getUsers(), getRoles()])
-    notLoaded = false
-  })
-
 </script>
+
 <div class="p-6 md:p-12">
   <h1 class="text-3xl font-semibold">
     Users
