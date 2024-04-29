@@ -93,7 +93,10 @@ type Driver struct {
     DriverName string `json:"driver_name"`
 }
 
-
+type Driver struct{
+	DriverID int
+	Name string
+}
 
 // could try to use clearer seperation of structs / reduce structs needed
 

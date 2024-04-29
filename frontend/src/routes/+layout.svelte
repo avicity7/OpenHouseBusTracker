@@ -51,8 +51,10 @@
   <div class="hidden md:block flex flex-row items-center">
     <a href="/bus-routes" class={"font-medium "+($page.url.pathname == '/bus-routes' ? "text-red-700" : "hover:text-red-700")}>Routes</a>
     {#if session?.Role == "admin"}
+
       <a href="/admin/users" class={"ml-6 font-medium "+($page.url.pathname == '/admin/users' ? "text-red-700" : "hover:text-red-700")}>Users</a>
       <a href="/admin/schedule" class={"ml-6 font-medium "+($page.url.pathname == '/admin/schedule' ? "text-red-700" : "hover:text-red-700")}>Schedule</a>
+
     {/if}
     <a href="/profile" class={"ml-6 font-medium "+($page.url.pathname == '/profile' ? "text-red-700" : "hover:text-red-700")}>Profile</a>
     {#if session?.Role == "user"}
