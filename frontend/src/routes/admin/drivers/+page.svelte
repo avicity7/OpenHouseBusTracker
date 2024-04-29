@@ -1,16 +1,10 @@
-<div class="p-6 md:p-12">
-  <h1 class="text-3xl font-semibold">
-    Drivers (Admin)
-  </h1>
-</div>
-
 <script lang="ts">
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
   import type { Driver } from '../../../types/global'
   import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
-  let drivers = writable<Driver[]>([]);
+  let drivers: Array<Driver> = [];
   let newName = '';
   let alert = '';
 
@@ -37,14 +31,16 @@
     const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/driver/get-driver`);
     if (response.ok) {
       const data = await response.json() as Driver[];
-      drivers.set(data);
+      drivers = data
     }
   };
 
-  onMount(getDrivers);
+  onMount(() => {
+    getDrivers()
+  });
 
- // Update Driver
- async function updateDriver(id: number, name: string) {
+  // Update Driver
+  async function updateDriver(id: number, name: string) {
     const updatedName = prompt('Enter the new name:', name);
     if (updatedName === null) return;
     const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/driver/update-driver/${id}`, {
@@ -58,7 +54,6 @@
       getDrivers();
       alert = `${name} has been updated to ${updatedName}!`;
       setTimeout(() => { alert = ''; }, 3000);
-
     }
   }
 
@@ -74,6 +69,12 @@
 
 </script>
 
+<div class="p-6 md:p-12">
+  <h1 class="text-3xl font-semibold">
+    Drivers (Admin)
+  </h1>
+</div>
+
 <div class="container mx-auto p-5">
   <div class="flex mb-4">
     <input type="text" class="border border-gray-300 rounded p-2 m-2" bind:value={newName} placeholder="Enter driver name">
@@ -83,12 +84,12 @@
       </div>
   </div>
   <ul>
-    {#each $drivers as driver}
+    {#each drivers as driver}
       <li class="border border-gray-300 rounded p-2 mb-2 flex justify-between items-center">
-        <span>{driver.Name}</span>
+        <span>{driver.DriverName}</span>
          <div>
-            <button class="bg-yellow-500 text-white px-3 py-1 rounded mr-2" on:click={() => updateDriver(driver.DriverID, driver.Name)}>Update</button>
-            <button class="bg-red-500 text-white px-3 py-1 rounded" on:click={() => deleteDriver(driver.DriverID, driver.Name)}>Delete</button>
+            <button class="bg-yellow-500 text-white px-3 py-1 rounded mr-2" on:click={() => updateDriver(driver.DriverID, driver.DriverName)}>Update</button>
+            <button class="bg-red-500 text-white px-3 py-1 rounded" on:click={() => deleteDriver(driver.DriverID, driver.DriverName)}>Delete</button>
          </div>
       </li>
     {/each}

@@ -63,7 +63,7 @@ func UpdateDriver(w http.ResponseWriter, r *http.Request) {
     }
     var currentDriver *structs.Driver
     for _, d := range drivers {
-        if d.DriverID == int(id) {
+        if d.DriverId == int(id) {
             currentDriver = &d
             break
         }
@@ -72,11 +72,11 @@ func UpdateDriver(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Driver not found", http.StatusNotFound)
         return
     }
-	if driver.Name == currentDriver.Name {
+	if driver.DriverName == currentDriver.DriverName {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-    driver.DriverID = int(id)
+    driver.DriverId = int(id)
     err = services.UpdateDriver(driver)
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -104,7 +104,7 @@ func DeleteDriver(w http.ResponseWriter, r *http.Request) {
 
     var currentDriver *structs.Driver
     for _, d := range drivers {
-        if d.DriverID == id {
+        if d.DriverId == id {
             currentDriver = &d
             break
         }

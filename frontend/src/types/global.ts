@@ -34,7 +34,7 @@ export type Schedule = {
 
 export type Driver = {
 	DriverID: number;
-	Name: string;
+	DriverName: string;
 }
 
 export type Session = {

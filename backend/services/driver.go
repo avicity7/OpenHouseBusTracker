@@ -10,7 +10,7 @@ import (
 // Add Driver
 func AddDriver(driver structs.Driver) error {
     query := `INSERT INTO driver (driver_name) VALUES ($1);`
-    _, err := config.Dbpool.Exec(context.Background(), query, driver.Name)
+    _, err := config.Dbpool.Exec(context.Background(), query, driver.DriverName)
     if err != nil {
         fmt.Println("Error adding driver:", err)
         return err
@@ -29,7 +29,7 @@ func GetDriver() ([]structs.Driver, error) {
 
     for rows.Next() {
         var driver structs.Driver
-        if err := rows.Scan(&driver.DriverID, &driver.Name); err != nil {
+        if err := rows.Scan(&driver.DriverId, &driver.DriverName); err != nil {
             return nil, err
         }
         drivers = append(drivers, driver)
@@ -44,7 +44,7 @@ func GetDriver() ([]structs.Driver, error) {
 // Update Driver
 func UpdateDriver(driver structs.Driver) error {
     query := `UPDATE driver SET driver_name = $1 WHERE driver_id = $2;`
-    _, err := config.Dbpool.Exec(context.Background(), query, driver.Name, driver.DriverID)
+    _, err := config.Dbpool.Exec(context.Background(), query, driver.DriverName, driver.DriverId)
     if err != nil {
         fmt.Println("Error updating driver:", err)
         return err
