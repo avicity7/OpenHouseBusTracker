@@ -1,3 +1,10 @@
+export type AuthedResponse = {
+  Output: Array<User>,
+  Tokens: {
+    AccessToken: string,
+    RefreshToken: string
+  }
+}
 export type Bus = {
   BusId: string,
 }
@@ -7,6 +14,7 @@ export type User = {
   Role: string,
   VerificationToken: string
 }
+
 
 export type UserRole = {
   RoleId: number,
@@ -28,6 +36,11 @@ export type Driver = {
   DriverId: number;
   DriverName: string;
 }
+
+export type Session = {
+  Email: string,
+  Role: string
+} | null
 
 // export type Schedule = {
 //   BusId: number;
