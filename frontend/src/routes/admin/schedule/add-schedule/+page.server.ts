@@ -35,7 +35,9 @@ export const load: Load = async ({ fetch }) => {
         const DriverId = DriverIdString ? +DriverIdString : null; 
         const StartTime = form.get('start_time') + ":00Z"; // should not be doing this, saving time in UTC instead of local time (UTC+8)
         const EndTime = form.get('end_time') + ":00Z";
-        
+
+        // console.log('Retrieved start_time:', StartTime);
+        // console.log('Retrieved end_time:', EndTime);
         const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/add-schedule`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

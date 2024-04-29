@@ -3,9 +3,12 @@
     import { writable } from 'svelte/store';
     import type { Schedule, Driver } from "../../../../../types/global";
 
-
-    export let data: any
-    let { dropdownData, scheduleData } = data
+    export let data: {
+        dropdownData: { data: { carplate: string, route_name: string, driver: { driver_id: number, driver_name: string }[] }[] };
+        scheduleData: { schedule: Schedule };
+    };
+    
+    let { dropdownData, scheduleData } = data;
 
     const carplates = writable<string[]>([]);
     const routeNames = writable<string[]>([]);
@@ -16,12 +19,12 @@
     let selectedStartTime = "";
     let selectedEndTime = "";
 
-    function setDropdownOptions(data: any) {
+    function setDropdownOptions(data: { carplate: string, route_name: string, driver: { driver_id: number, driver_name: string }[] }[]) {
         const uniqueCarplates = new Set<string>();
         const uniqueRouteNames = new Set<string>();
         const uniqueDrivers = new Map<number, string>();
 
-        data.forEach(({ carplate, route_name, driver }: { carplate: string, route_name: string, driver: any[] }) => {
+        data.forEach(({ carplate, route_name, driver }) => {
             if (carplate) {
                 uniqueCarplates.add(carplate);
             }
@@ -44,13 +47,13 @@
         setDropdownOptions(dropdownData.data);
 
         if (scheduleData && scheduleData.schedule) {
-        const { Carplate, RouteName, DriverId, StartTime, EndTime } = scheduleData.schedule;
-        selectedCarplate.set(Carplate);
-        selectedRouteName.set(RouteName);
-        selectedDriverId.set(DriverId);
-        selectedStartTime = new Date(StartTime).toISOString().slice(0, 16);
-        selectedEndTime = new Date(EndTime).toISOString().slice(0, 16);
-    }
+            const { Carplate, RouteName, DriverId, StartTime, EndTime } = scheduleData.schedule;
+            selectedCarplate.set(Carplate);
+            selectedRouteName.set(RouteName);
+            selectedDriverId.set(DriverId);
+            selectedStartTime = new Date(StartTime).toISOString().slice(0, 16);
+            selectedEndTime = new Date(EndTime).toISOString().slice(0, 16);
+        }
     });
 
 </script>

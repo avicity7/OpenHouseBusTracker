@@ -1,11 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import BusScheduleCard from "../../components/busScheduleCard.svelte";
+	import type { Schedule } from "../../types/global";
 
   export let data;
   let { backend_uri } = data;
 
-  let busScheduleList: any[] = [];
+  let busScheduleList: Schedule[] = [];
 
   async function fetchData() {
     try {
@@ -31,7 +32,8 @@
   <div class="flex justify-center mb-4">
     <div class="p-4 flex justify-between items-center">
       <div class="mr-24">
-        <p class="text-3xl font-semibold">Bus {busScheduleList[0].BusScheduleId}</p>
+        <p class="text-3xl font-semibold">Bus {busScheduleList[0].BusScheduleId}</p> 
+        <!-- shouldnt be bus Schedule id, should be bus id -->
         <p class="text-md font-medium">{busScheduleList[0].Carplate}</p>
       </div>
       <div class="ml-24">

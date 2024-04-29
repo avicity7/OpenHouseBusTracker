@@ -40,6 +40,8 @@
 
     function formatTimestamp(timestamp: string): string {
         const date = new Date(timestamp);
+        // Convert the UTC datetime to local datetime (UTC+8)
+        // const localDate = new Date(date.getTime() + (date.getTimezoneOffset() * 60000) + (8 * 60 * 60000)); // not working, might be logic error
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const day = date.getDate().toString().padStart(2, '0');
@@ -61,12 +63,36 @@
         selectedSchedules = selectedSchedules;
     }
 
+    function toggleSelectAll(event: MouseEvent) {
+        const isChecked = (event.target as HTMLInputElement).checked;
+        if (isChecked) {
+            selectedSchedules.clear();
+            $busSchedule.forEach(schedule => {
+                selectedSchedules.add(schedule.BusScheduleId);
+                console.log("Number of selected schedules:", selectedSchedules.size);
+                console.log("Selected Bus Schedule ID:", Array.from(selectedSchedules));
+            });
+        } else {
+            selectedSchedules.clear();
+        }
+        selectedSchedules = selectedSchedules;
+
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            (checkbox as HTMLInputElement).checked = isChecked;
+        });
+    }
+
     async function bulkDelete() {
         const idsToDelete = Array.from(selectedSchedules);
         console.log(idsToDelete)
         try {
-                await deleteSchedule(idsToDelete);
-            
+            await deleteSchedule(idsToDelete);
+            const selectAllCheckbox = document.querySelector('input[type="checkbox"]');
+            if (selectAllCheckbox) {
+                (selectAllCheckbox as HTMLInputElement).checked = false;
+            }
+        
             console.log("Bulk delete successful.");
         } catch (error) {
             console.error('Error during bulk delete:', error);
@@ -85,7 +111,10 @@
         <h1 class="text-3xl font-semibold mr-4">Bus Schedules</h1>
 
         {#if selectedSchedules.size > 1}
-            <button class="text-red-600 hover:text-red-900" on:click={bulkDelete}>
+            <button 
+                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mr-2 rounded transition duration-300"
+                on:click={bulkDelete}
+            >
                 Bulk Delete
             </button>
         {/if}
@@ -98,7 +127,9 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Select</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <input type="checkbox" on:click={toggleSelectAll} />
+                    </th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus Schedule ID</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus Carplate</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route Description</th>
