@@ -29,7 +29,7 @@
         <!-- <h3 class="text-sm mt-2">{session?.Email}</h3> -->
           <form method="POST" action="?/signOut">
             <button
-              class="mt-6 p-1 w-[20%] bg-red-800 hover:bg-red-900 rounded-full text-zinc-100"
+              class="mt-6 px-1 py-1.5 w-[20%] bg-red-800 hover:bg-red-900 hover:text-zinc-200 rounded-md text-zinc-100 text-sm font-medium"
             >
               <div>Sign Out</div>
             </button>
