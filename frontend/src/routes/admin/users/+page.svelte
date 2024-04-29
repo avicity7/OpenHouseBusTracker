@@ -24,16 +24,34 @@
   <h1 class="text-3xl font-semibold">
     Users
   </h1>
-  <div class="mt-12">
-    {#each users as user}
-      <div class="flex flex-row justify-between max-w-3xl mt-3">
-        <h1>{user.Email}</h1>
-        <select bind:value={user.Role} on:change={() => {updateUserRole(user)}}>
-          {#each roles as role}
-            <option value={role.Description} selected={user.Role == role.Description ?? role.Description}>{role.Description}</option>
-          {/each}
-        </select>
-      </div>
-    {/each}
+  <div class="mt-12 max-w-sm md:max-w-4xl mx-auto bg-white p-2 md:p-8 rounded-lg">
+    <table class="w-full">
+      <thead>
+        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+      </thead>
+      <tbody class="divide-y divide-stone-300">
+        {#each users as user}
+          <tr>
+            <td class="px-4 py-6">{user.Email}</td>
+            <td class="py-6">
+              <select
+                bind:value={user.Role}
+                on:change={() => {updateUserRole(user)}}
+              >
+                {#each roles as role}
+                  <option 
+                    value={role.Description}
+                    selected={user.Role == role.Description ?? role.Description}
+                  >
+                    {role.Description}
+                  </option>
+                {/each}
+              </select>
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
   </div>
 </div>
