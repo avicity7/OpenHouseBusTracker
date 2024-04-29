@@ -23,10 +23,12 @@ export const handle = emailPassword
 
 /** @type {import('@sveltejs/kit').HandleFetch} */
 export async function handleFetch({ event, request, fetch }) {
-  const tokens = String(event.request.headers.get('cookie')).split(" ")
-	request.headers.set('access', tokens[0].split("=")[1].replace(";",""))
-  request.headers.set('refresh', tokens[1].split("=")[1])
-
-	return fetch(request);
+  if (event.request.headers.has('cookie')) {  
+    const tokens = String(event.request.headers.get('cookie')).split(" ")
+    request.headers.set('access', tokens[0].split("=")[1].replace(";",""))
+    request.headers.set('refresh', tokens[1].split("=")[1])
+  
+    return fetch(request);
+  }
 
 }
