@@ -2,7 +2,7 @@
   export let bus: {bus_id: number, carplate: string, status: number, route: string}
 </script>
 
-<div class="p-6 bg-white rounded-2xl shadow-md mt-6 md:mr-4">
+<div class="p-6 bg-white rounded-xl border border-stone-200 shadow-sm mt-6 md:mr-4">
   <div class="flex flex-row justify-between">
     <div>
       <h1 class="text-2xl font-semibold">
