@@ -66,36 +66,31 @@ type Schedule struct {
 }
 
 type NewSchedule struct {
-    Carplate  string   
-    RouteName string    
-    DriverId  int       
-    StartTime time.Time 
-    EndTime   time.Time 
+  Carplate  string   
+  RouteName string    
+  DriverId  int       
+  StartTime time.Time 
+  EndTime   time.Time 
 }
 
 type UpdateSchedule struct {
-    BusScheduleId int      
-    Carplate      string   
-    RouteName     string   
-    DriverId      int      
-    StartTime     time.Time 
-    EndTime       time.Time 
+  BusScheduleId int      
+  Carplate      string   
+  RouteName     string   
+  DriverId      int      
+  StartTime     time.Time 
+  EndTime       time.Time 
 }
 
 type ScheduleDropdownData struct {
-    Carplate  string   `json:"carplate"`
-    RouteName string   `json:"route_name"`
-    Driver   []Driver `json:"driver"`
+  Carplate  string   `json:"carplate"`
+  RouteName string   `json:"route_name"`
+  Driver   []Driver `json:"driver"`
 }
 
 type Driver struct {
-    DriverId   int    `json:"driver_id"`
-    DriverName string `json:"driver_name"`
-}
-
-type Driver struct{
-	DriverID int
-	Name string
+  DriverId int
+  DriverName string
 }
 
 // could try to use clearer seperation of structs / reduce structs needed
