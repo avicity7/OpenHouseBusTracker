@@ -54,6 +54,7 @@
 
       <a href="/admin/users" class={"ml-6 font-medium "+($page.url.pathname == '/admin/users' ? "text-red-700" : "hover:text-red-700")}>Users</a>
       <a href="/admin/schedule" class={"ml-6 font-medium "+($page.url.pathname == '/admin/schedule' ? "text-red-700" : "hover:text-red-700")}>Schedule</a>
+      <a href="/admin/drivers" class={"ml-6 font-medium "+($page.url.pathname == '/admin/drivers' ? "text-red-700" : "hover:text-red-700")}>Drivers</a>
 
     {/if}
     <a href="/profile" class={"ml-6 font-medium "+($page.url.pathname == '/profile' ? "text-red-700" : "hover:text-red-700")}>Profile</a>

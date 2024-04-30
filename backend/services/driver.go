@@ -9,13 +9,13 @@ import (
 
 // Add Driver
 func AddDriver(driver structs.Driver) error {
-    query := `INSERT INTO driver (driver_name) VALUES ($1);`
-    _, err := config.Dbpool.Exec(context.Background(), query, driver.DriverName)
-    if err != nil {
-        fmt.Println("Error adding driver:", err)
-        return err
-    }
-    return nil
+	query := `INSERT INTO driver (driver_name) VALUES ($1);`
+	_, err := config.Dbpool.Exec(context.Background(), query, driver.DriverName)
+	if err != nil {
+		fmt.Println("Error adding driver:", err)
+		return err
+	}
+	return nil
 }
 
 // Get Driver
