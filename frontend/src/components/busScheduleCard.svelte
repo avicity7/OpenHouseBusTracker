@@ -1,9 +1,10 @@
 <script lang="ts">
   export let bus;
 
-  function formatTime(timeString: string | number | Date) {
-    const date = new Date(timeString);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  function formatTime(timestamp: string | number | Date) {
+    const utcDate = new Date(timestamp);
+    const localDate = new Date(utcDate.getTime() + (utcDate.getTimezoneOffset() * 60000)); 
+    return localDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 </script>
 
