@@ -4,12 +4,13 @@
     import type { Schedule, Driver } from "../../../../../types/global";
 
     export let data: {
-        dropdownData: { data: { carplate: string, route_name: string, driver: { driver_id: number, driver_name: string }[] }[] };
-        scheduleData: { schedule: Schedule };
+        dropdownData: { data: Schedule[] } | undefined;
+        scheduleData: { schedule: Schedule } | undefined;
     };
     
     let { dropdownData, scheduleData } = data;
-
+    // needs cleanup
+    
     const carplates = writable<string[]>([]);
     const routeNames = writable<string[]>([]);
     const drivers = writable<Driver[]>([]);
@@ -19,21 +20,22 @@
     let selectedStartTime = "";
     let selectedEndTime = "";
 
-    function setDropdownOptions(data: { carplate: string, route_name: string, driver: { driver_id: number, driver_name: string }[] }[]) {
+    function setDropdownOptions(data: Schedule[]) {
+        if (!data) return;
         const uniqueCarplates = new Set<string>();
         const uniqueRouteNames = new Set<string>();
         const uniqueDrivers = new Map<number, string>();
 
-        data.forEach(({ carplate, route_name, driver }) => {
-            if (carplate) {
-                uniqueCarplates.add(carplate);
+        data.forEach(({ Carplate, RouteName, Driver }) => {
+            if (Carplate) {
+                uniqueCarplates.add(Carplate);
             }
-            if (route_name) {
-                uniqueRouteNames.add(route_name);
+            if (RouteName) {
+                uniqueRouteNames.add(RouteName);
             }
-            if (driver && Array.isArray(driver)) {
-                driver.forEach(({ driver_id, driver_name }) => {
-                    uniqueDrivers.set(driver_id, driver_name);
+            if (Driver && Array.isArray(Driver)) {
+                Driver.forEach(({ DriverId, DriverName }) => {
+                    uniqueDrivers.set(DriverId, DriverName);
                 });
             }
         });
@@ -44,7 +46,9 @@
     }
 
     onMount(() => {
-        setDropdownOptions(dropdownData.data);
+        if (data && data.dropdownData) {
+            setDropdownOptions(data.dropdownData.data);
+        }
 
         if (scheduleData && scheduleData.schedule) {
             const { Carplate, RouteName, DriverId, StartTime, EndTime } = scheduleData.schedule;
