@@ -3,7 +3,7 @@
     import { writable } from 'svelte/store';
     import type { Schedule, Driver } from "../../../../types/global";
 
-    export let data: Schedule[];
+    export let data;
 
     const carplates = writable<string[]>([]);
     const routeNames = writable<string[]>([]);
@@ -12,9 +12,9 @@
     const selectedRouteName = writable<string|null>(null);
     const selectedDriverId = writable<number|null>(null);
 
-    function setDropdownOptions(data: any) {
+    function setDropdownOptions(data: Schedule[] | undefined) {
 
-    if (!data || !Array.isArray(data.data)) {
+    if (!data || !Array.isArray(data)) {
         console.log("Data is empty or not an array:", data);
         return;
     }
@@ -23,18 +23,17 @@
     const uniqueRouteNames = new Set<string>();
     const uniqueDrivers = new Map<number, string>();
 
-    
-    data.data.forEach(({ carplate, route_name, driver }: { carplate: string, route_name: string, driver: any[] }) => {
+    data.forEach(({ Carplate, RouteName, Driver }: Schedule) => {
 
-        if (carplate) {
-            uniqueCarplates.add(carplate);
+        if (Carplate) {
+            uniqueCarplates.add(Carplate);
         }
-        if (route_name) {
-            uniqueRouteNames.add(route_name);
+        if (RouteName) {
+            uniqueRouteNames.add(RouteName);
         }
-        if (driver && Array.isArray(driver)) {
-            driver.forEach(({ driver_id, driver_name }) => {
-                uniqueDrivers.set(driver_id, driver_name);
+        if (Driver && Array.isArray(Driver)) {
+            Driver.forEach(({ DriverId, DriverName }) => {
+                uniqueDrivers.set(DriverId, DriverName);
             });
         }
     });
@@ -45,7 +44,7 @@
 }
 
     onMount(() => {
-        setDropdownOptions(data);
+        setDropdownOptions(data.data);
     });
 
 </script>
