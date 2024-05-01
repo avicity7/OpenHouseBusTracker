@@ -27,6 +27,7 @@
   });  
 </script>
 
+<!-- Should this page be unique to each bus uniquely? (To be asked) -->
 <div class="p-6 md:p-12">
   {#if busScheduleList.length > 0}
   <div class="flex justify-center mb-4">
