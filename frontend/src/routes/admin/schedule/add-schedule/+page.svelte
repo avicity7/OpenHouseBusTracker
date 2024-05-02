@@ -13,40 +13,35 @@
     const selectedDriverId = writable<number|null>(null);
 
     function setDropdownOptions(data: Schedule[] | undefined) {
+        if (!data) return;
 
-    if (!data || !Array.isArray(data)) {
-        console.log("Data is empty or not an array:", data);
-        return;
+        const uniqueCarplates = new Set<string>();
+        const uniqueRouteNames = new Set<string>();
+        const uniqueDrivers = new Map<number, string>();
+
+        data.forEach(({ Carplate, RouteName, Driver }: Schedule) => {
+
+            if (Carplate) {
+                uniqueCarplates.add(Carplate);
+            }
+            if (RouteName) {
+                uniqueRouteNames.add(RouteName);
+            }
+            if (Driver && Array.isArray(Driver)) {
+                Driver.forEach(({ DriverId, DriverName }) => {
+                    uniqueDrivers.set(DriverId, DriverName);
+                });
+            }
+        });
+
+        carplates.set(Array.from(uniqueCarplates));
+        routeNames.set(Array.from(uniqueRouteNames));
+        drivers.set(Array.from(uniqueDrivers.entries()).map(([DriverId, DriverName]) => ({ DriverId, DriverName })));
     }
-
-    const uniqueCarplates = new Set<string>();
-    const uniqueRouteNames = new Set<string>();
-    const uniqueDrivers = new Map<number, string>();
-
-    data.forEach(({ Carplate, RouteName, Driver }: Schedule) => {
-
-        if (Carplate) {
-            uniqueCarplates.add(Carplate);
-        }
-        if (RouteName) {
-            uniqueRouteNames.add(RouteName);
-        }
-        if (Driver && Array.isArray(Driver)) {
-            Driver.forEach(({ DriverId, DriverName }) => {
-                uniqueDrivers.set(DriverId, DriverName);
-            });
-        }
-    });
-
-    carplates.set(Array.from(uniqueCarplates));
-    routeNames.set(Array.from(uniqueRouteNames));
-    drivers.set(Array.from(uniqueDrivers.entries()).map(([DriverId, DriverName]) => ({ DriverId, DriverName })));
-}
 
     onMount(() => {
         setDropdownOptions(data.data);
     });
-
 </script>
 
 <div class="p-6 md:p-12">

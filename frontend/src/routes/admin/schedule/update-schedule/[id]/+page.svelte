@@ -9,7 +9,6 @@
     };
     
     let { dropdownData, scheduleData } = data;
-    // needs cleanup
     
     const carplates = writable<string[]>([]);
     const routeNames = writable<string[]>([]);
@@ -22,6 +21,7 @@
 
     function setDropdownOptions(data: Schedule[]) {
         if (!data) return;
+        
         const uniqueCarplates = new Set<string>();
         const uniqueRouteNames = new Set<string>();
         const uniqueDrivers = new Map<number, string>();
@@ -46,8 +46,8 @@
     }
 
     onMount(() => {
-        if (data && data.dropdownData) {
-            setDropdownOptions(data.dropdownData.data);
+        if (data && dropdownData) {
+            setDropdownOptions(dropdownData.data);
         }
 
         if (scheduleData && scheduleData.schedule) {
