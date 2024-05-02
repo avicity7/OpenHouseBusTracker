@@ -38,7 +38,7 @@
         }
     }
 
-    // might be cleaner and easier using a library
+    // might be cleaner and easier using a library, dayjs / toLocaleString()
     function formatTimestamp(timestamp: string): string { 
         const utcDate = new Date(timestamp);
         const localDate = new Date(utcDate.getTime() + (utcDate.getTimezoneOffset() * 60000)); 
