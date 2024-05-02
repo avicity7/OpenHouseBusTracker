@@ -83,7 +83,7 @@ export const actions = {
         const RouteName = form.get('route_name');
         const DriverIdString = form.get('driver_id');
         const DriverId = DriverIdString ? +DriverIdString : null;
-        const StartTime = form.get('start_time') + ":00Z"; // should not be doing this, saving time in UTC instead of local time (UTC+8)
+        const StartTime = form.get('start_time') + ":00Z";
         const EndTime = form.get('end_time') + ":00Z";
         
         const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/update-schedule`, {

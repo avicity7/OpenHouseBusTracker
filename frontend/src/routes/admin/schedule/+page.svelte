@@ -38,7 +38,7 @@
         }
     }
 
-    // might be cleaner and easier using a library
+    // might be cleaner and easier using a library, dayjs / toLocaleString()
     function formatTimestamp(timestamp: string): string { 
         const utcDate = new Date(timestamp);
         const localDate = new Date(utcDate.getTime() + (utcDate.getTimezoneOffset() * 60000)); 
@@ -62,8 +62,8 @@
         } else {
             selectedSchedules.add(id);
         }
-        console.log("Number of selected schedules:", selectedSchedules.size);
-        console.log("Selected Bus Schedule IDs:", Array.from(selectedSchedules));
+        // console.log("Number of selected schedules:", selectedSchedules.size);
+        // console.log("Selected Bus Schedule IDs:", Array.from(selectedSchedules));
         selectedSchedules = selectedSchedules;
     }
 
@@ -73,8 +73,6 @@
             selectedSchedules.clear();
             $busSchedule.forEach(schedule => {
                 selectedSchedules.add(schedule.BusScheduleId);
-                console.log("Number of selected schedules:", selectedSchedules.size);
-                console.log("Selected Bus Schedule ID:", Array.from(selectedSchedules));
             });
         } else {
             selectedSchedules.clear();
