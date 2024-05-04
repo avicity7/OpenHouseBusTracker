@@ -83,14 +83,14 @@ type UpdateSchedule struct {
 }
 
 type ScheduleDropdownData struct {
-  Carplate  string   `json:"carplate"`
-  RouteName string   `json:"route_name"`
-  Driver   []Driver `json:"driver"`
+  Carplate  string  
+  RouteName string   
+  Driver   []Driver 
 }
 
 type Driver struct {
-  DriverId int
-  DriverName string
+ DriverId   int    
+ DriverName string 
 }
 
 // could try to use clearer seperation of structs / reduce structs needed

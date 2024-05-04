@@ -38,18 +38,22 @@
         }
     }
 
-    function formatTimestamp(timestamp: string): string {
-        const date = new Date(timestamp);
-        // Convert the UTC datetime to local datetime (UTC+8)
-        // const localDate = new Date(date.getTime() + (date.getTimezoneOffset() * 60000) + (8 * 60 * 60000)); // not working, might be logic error
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const day = date.getDate().toString().padStart(2, '0');
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        const seconds = date.getSeconds().toString().padStart(2, '0');
+    // might be cleaner and easier using a library, dayjs / toLocaleString()
+    function formatTimestamp(timestamp: string): string { 
+        const utcDate = new Date(timestamp);
+        const localDate = new Date(utcDate.getTime() + (utcDate.getTimezoneOffset() * 60000)); 
+        const year = localDate.getFullYear();
+        const month = (localDate.getMonth() + 1).toString().padStart(2, '0');
+        const day = localDate.getDate().toString().padStart(2, '0');
+        let hours = localDate.getHours();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        const hoursString = hours.toString().padStart(2, '0');
+        const minutes = localDate.getMinutes().toString().padStart(2, '0');
+        const seconds = localDate.getSeconds().toString().padStart(2, '0');
 
-        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        return `${year}-${month}-${day} ${hoursString}:${minutes}:${seconds} ${ampm}`;
     }
 
     function toggleSelection(id: number) {
@@ -58,8 +62,8 @@
         } else {
             selectedSchedules.add(id);
         }
-        console.log("Number of selected schedules:", selectedSchedules.size);
-        console.log("Selected Bus Schedule IDs:", Array.from(selectedSchedules));
+        // console.log("Number of selected schedules:", selectedSchedules.size);
+        // console.log("Selected Bus Schedule IDs:", Array.from(selectedSchedules));
         selectedSchedules = selectedSchedules;
     }
 
@@ -69,8 +73,6 @@
             selectedSchedules.clear();
             $busSchedule.forEach(schedule => {
                 selectedSchedules.add(schedule.BusScheduleId);
-                console.log("Number of selected schedules:", selectedSchedules.size);
-                console.log("Selected Bus Schedule ID:", Array.from(selectedSchedules));
             });
         } else {
             selectedSchedules.clear();
