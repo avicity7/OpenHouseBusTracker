@@ -72,6 +72,8 @@
 
       if (existingDriver && updatedName.toLowerCase() !== name.toLowerCase()) {
         nameExistsMessage = `${updatedName} already exists in the database. Please choose a new name.`;
+      } else if (updatedName.toLowerCase() === name.toLowerCase()) {
+        nameExistsMessage = 'Name has no changes. ';
       } else {
         nameExistsMessage = ''; 
         break; 
@@ -120,6 +122,7 @@
   function cancelDelete() {
     driverToDelete = null;
   }
+
 </script>
 
 <div class="container mx-auto px-8 relative">
@@ -133,7 +136,7 @@
   </div>
   {#if alert}
   <div class="fixed top-0 left-0 w-full h-full flex items-center justify-center">
-    <div class="bg-green-200 text-white p-4 m-5 rounded-lg shadow-2xl border border-gray-300 ">
+    <div class="bg-gray-100 p-4 m-5 rounded-lg shadow-2xl border border-gray-300 w-800 h-1000">
       <p class="text-lg mb-2">{alert}</p>
     </div>
   </div>
