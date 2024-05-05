@@ -1,9 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { writable } from "svelte/store";
     import type { Schedule } from "../../../types/global";
 
-    let busSchedule = writable<Schedule[]>([]);
+    let busSchedule: Schedule[] = [];
     let selectedSchedules = new Set<number>();
 
     export let data;
@@ -23,14 +22,14 @@
                 throw new Error('Failed to delete schedule');
             }
 
-            const updatedSchedules = $busSchedule.filter(schedule => {
+            const updatedSchedules = busSchedule.filter(schedule => {
                 if (Array.isArray(id)) {
                     return !id.includes(schedule.BusScheduleId);
                 } else {
                     return schedule.BusScheduleId !== id;
                 }
             });
-            busSchedule.set(updatedSchedules);
+            busSchedule = updatedSchedules;
 
             console.log("Deleted Bus Schedule with ID:", id);
         } catch (error) {
@@ -38,22 +37,30 @@
         }
     }
 
-    // might be cleaner and easier using a library, dayjs / toLocaleString()
-    function formatTimestamp(timestamp: string): string { 
+    // // might be cleaner and easier using a library, dayjs / toLocaleString()
+    // function formatTimestamp(timestamp: string): string { 
+    //     const utcDate = new Date(timestamp);
+    //     const localDate = new Date(utcDate.getTime() + (utcDate.getTimezoneOffset() * 60000)); 
+    //     const year = localDate.getFullYear();
+    //     const month = (localDate.getMonth() + 1).toString().padStart(2, '0');
+    //     const day = localDate.getDate().toString().padStart(2, '0');
+    //     let hours = localDate.getHours();
+    //     const ampm = hours >= 12 ? 'PM' : 'AM';
+    //     hours = hours % 12;
+    //     hours = hours ? hours : 12;
+    //     const hoursString = hours.toString().padStart(2, '0');
+    //     const minutes = localDate.getMinutes().toString().padStart(2, '0');
+    //     const seconds = localDate.getSeconds().toString().padStart(2, '0');
+
+    //     return `${year}-${month}-${day} ${hoursString}:${minutes}:${seconds} ${ampm}`;
+    // }
+
+    // using toLocaleString() is much cleaner
+    function formatTimestamp(timestamp: string): string {
         const utcDate = new Date(timestamp);
         const localDate = new Date(utcDate.getTime() + (utcDate.getTimezoneOffset() * 60000)); 
-        const year = localDate.getFullYear();
-        const month = (localDate.getMonth() + 1).toString().padStart(2, '0');
-        const day = localDate.getDate().toString().padStart(2, '0');
-        let hours = localDate.getHours();
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12;
-        hours = hours ? hours : 12;
-        const hoursString = hours.toString().padStart(2, '0');
-        const minutes = localDate.getMinutes().toString().padStart(2, '0');
-        const seconds = localDate.getSeconds().toString().padStart(2, '0');
-
-        return `${year}-${month}-${day} ${hoursString}:${minutes}:${seconds} ${ampm}`;
+        const formattedDate = localDate.toLocaleString();
+        return formattedDate;
     }
 
     function toggleSelection(id: number) {
@@ -71,7 +78,7 @@
         const isChecked = (event.target as HTMLInputElement).checked;
         if (isChecked) {
             selectedSchedules.clear();
-            $busSchedule.forEach(schedule => {
+            busSchedule.forEach(schedule => {
                 selectedSchedules.add(schedule.BusScheduleId);
             });
         } else {
@@ -103,15 +110,15 @@
 
     onMount(() => {
         if (data && data.data) {
-            busSchedule.set(data.data);
+            busSchedule = data.data;
         }
     });
 </script>
 
 <div class="p-6 md:p-12">
-    <div class="flex items-center mb-4">
+    <div class="flex items-center justify-between mb-4">
         <h1 class="text-3xl font-semibold mr-4">Bus Schedules</h1>
-
+    
         {#if selectedSchedules.size > 1}
             <button 
                 class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mr-2 rounded transition duration-300"
@@ -120,9 +127,14 @@
                 Bulk Delete
             </button>
         {/if}
-        <a href="schedule/add-schedule" class="border-2 border-black text-black text-xl px-4 py-2 rounded-full hover:bg-gray-200">
+        <a href="schedule/add-schedule" class="border-2 border-black text-black text-xl px-4 py-2 rounded-full hover:bg-gray-200 mr-2">
             +
         </a>    
+        
+        <!-- to be decided whether to search backend or frontend -->
+        <div class="ml-auto">
+            <input type="text" placeholder="Search..." class="border border-gray-300 rounded-md px-3 py-2 w-60">
+        </div>
     </div>
 
     <div class="mt-8">
@@ -142,7 +154,7 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                {#each $busSchedule as schedule (schedule.BusScheduleId)}
+                {#each busSchedule as schedule (schedule.BusScheduleId)}
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <input type="checkbox" checked={selectedSchedules.has(schedule.BusScheduleId)} on:change={() => {

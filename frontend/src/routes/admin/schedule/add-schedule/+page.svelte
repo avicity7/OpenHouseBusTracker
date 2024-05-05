@@ -1,16 +1,15 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { writable } from 'svelte/store';
     import type { Schedule, Driver } from "../../../../types/global";
 
     export let data;
 
-    const carplates = writable<string[]>([]);
-    const routeNames = writable<string[]>([]);
-    const drivers = writable<Driver[]>([]);
-    const selectedCarplate = writable<string|null>(null);
-    const selectedRouteName = writable<string|null>(null);
-    const selectedDriverId = writable<number|null>(null);
+    let carplates: string[] = [];
+    let routeNames: string[] = [];
+    let drivers: Driver[] = [];
+    let selectedCarplate: string | null = null;
+    let selectedRouteName: string | null = null;
+    let selectedDriverId: number | null = null;
 
     function setDropdownOptions(data: Schedule[] | undefined) {
         if (!data) return;
@@ -34,9 +33,9 @@
             }
         });
 
-        carplates.set(Array.from(uniqueCarplates));
-        routeNames.set(Array.from(uniqueRouteNames));
-        drivers.set(Array.from(uniqueDrivers.entries()).map(([DriverId, DriverName]) => ({ DriverId, DriverName })));
+        carplates = Array.from(uniqueCarplates);
+        routeNames = Array.from(uniqueRouteNames);
+        drivers = Array.from(uniqueDrivers.entries()).map(([DriverId, DriverName]) => ({ DriverId, DriverName }));
     }
 
     onMount(() => {
@@ -50,8 +49,8 @@
         <form method="POST" action="?/createBusSchedule">
         <div class="mb-4">
             <label for="carplate" class="block text-sm font-medium mb-1">Carplate:</label>
-            <select id="carplate" name="carplate" bind:value={$selectedCarplate} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
-            {#each $carplates as carplate}
+            <select id="carplate" name="carplate" bind:value={selectedCarplate} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            {#each carplates as carplate}
                 <option value={carplate}>{carplate}</option>
             {/each}
             </select>
@@ -59,8 +58,8 @@
 
         <div class="mb-4">
             <label for="route_name" class="block text-sm font-medium mb-1">Route Name:</label>
-            <select id="route_name" name="route_name" bind:value={$selectedRouteName} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
-            {#each $routeNames as routeName}
+            <select id="route_name" name="route_name" bind:value={selectedRouteName} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            {#each routeNames as routeName}
                 <option value={routeName}>{routeName}</option>
             {/each}
             </select>
@@ -68,8 +67,8 @@
 
         <div class="mb-4">
             <label for="driver_id" class="block text-sm font-medium mb-1">Driver:</label>
-            <select id="driver_id" name="driver_id" bind:value={$selectedDriverId} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
-            {#each $drivers as { DriverId, DriverName }}
+            <select id="driver_id" name="driver_id" bind:value={selectedDriverId} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            {#each drivers as { DriverId, DriverName }}
                 <option value={DriverId}>{DriverName}</option>
             {/each}
             </select>
