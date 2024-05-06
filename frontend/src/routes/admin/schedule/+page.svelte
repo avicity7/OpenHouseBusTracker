@@ -3,7 +3,9 @@
     import type { Schedule } from "../../../types/global";
 
     let busSchedule: Schedule[] = [];
+    let filteredSchedules: Schedule[] = [];
     let selectedSchedules = new Set<number>();
+    let searchTerm = "";
 
     export let data;
     const { backend_uri } = data
@@ -37,24 +39,6 @@
         }
     }
 
-    // // might be cleaner and easier using a library, dayjs / toLocaleString()
-    // function formatTimestamp(timestamp: string): string { 
-    //     const utcDate = new Date(timestamp);
-    //     const localDate = new Date(utcDate.getTime() + (utcDate.getTimezoneOffset() * 60000)); 
-    //     const year = localDate.getFullYear();
-    //     const month = (localDate.getMonth() + 1).toString().padStart(2, '0');
-    //     const day = localDate.getDate().toString().padStart(2, '0');
-    //     let hours = localDate.getHours();
-    //     const ampm = hours >= 12 ? 'PM' : 'AM';
-    //     hours = hours % 12;
-    //     hours = hours ? hours : 12;
-    //     const hoursString = hours.toString().padStart(2, '0');
-    //     const minutes = localDate.getMinutes().toString().padStart(2, '0');
-    //     const seconds = localDate.getSeconds().toString().padStart(2, '0');
-
-    //     return `${year}-${month}-${day} ${hoursString}:${minutes}:${seconds} ${ampm}`;
-    // }
-
     // using toLocaleString() is much cleaner
     function formatTimestamp(timestamp: string): string {
         const utcDate = new Date(timestamp);
@@ -69,8 +53,6 @@
         } else {
             selectedSchedules.add(id);
         }
-        // console.log("Number of selected schedules:", selectedSchedules.size);
-        // console.log("Selected Bus Schedule IDs:", Array.from(selectedSchedules));
         selectedSchedules = selectedSchedules;
     }
 
@@ -108,11 +90,22 @@
         }
     }
 
+    // to do dropdowns for routes, touring, carplates, start and end time
+    function filterSchedules() {
+            filteredSchedules  = busSchedule.filter(schedule => {
+                const driverName = schedule.DriverName.toLowerCase();
+                const searchTermLower = searchTerm.toLowerCase();
+                return driverName.includes(searchTermLower);
+        });
+    }
+
     onMount(() => {
         if (data && data.data) {
             busSchedule = data.data;
         }
     });
+
+
 </script>
 
 <div class="p-6 md:p-12">
@@ -131,9 +124,8 @@
             +
         </a>    
         
-        <!-- to be decided whether to search backend or frontend -->
         <div class="ml-auto">
-            <input type="text" placeholder="Search..." class="border border-gray-300 rounded-md px-3 py-2 w-60">
+            <input type="text" placeholder="Search..." class="border border-gray-300 rounded-md px-3 py-2 w-60" bind:value={searchTerm} on:input={filterSchedules}>
         </div>
     </div>
 
@@ -154,27 +146,57 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                {#each busSchedule as schedule (schedule.BusScheduleId)}
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <input type="checkbox" checked={selectedSchedules.has(schedule.BusScheduleId)} on:change={() => {
-                            toggleSelection(schedule.BusScheduleId);
-                            console.log("Updated selected schedules:", selectedSchedules);
-                        }} />                     
-                        
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">{schedule.BusScheduleId}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{schedule.Carplate}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{schedule.RouteName}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{schedule.DriverName}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(schedule.StartTime)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(schedule.EndTime)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <a href={`schedule/update-schedule/${schedule.BusScheduleId}`} class="text-green-600 hover:text-green-900 mr-5">Update</a>
-                        <button class="text-red-600 hover:text-red-900" on:click={() => deleteSchedule(schedule.BusScheduleId)}>Delete</button>
-                    </td>
-                </tr>
-                {/each}
+                {#if searchTerm}
+                    {#if filteredSchedules.length > 0}
+                        {#each filteredSchedules as schedule (schedule.BusScheduleId)}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <input type="checkbox" checked={selectedSchedules.has(schedule.BusScheduleId)} on:change={() => {
+                                        toggleSelection(schedule.BusScheduleId);
+                                        console.log("Updated selected schedules:", selectedSchedules);
+                                    }} />                     
+                                    
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">{schedule.BusScheduleId}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{schedule.Carplate}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{schedule.RouteName}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{schedule.DriverName}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(schedule.StartTime)}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(schedule.EndTime)}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <a href={`schedule/update-schedule/${schedule.BusScheduleId}`} class="text-green-600 hover:text-green-900 mr-5">Update</a>
+                                    <button class="text-red-600 hover:text-red-900" on:click={() => deleteSchedule(schedule.BusScheduleId)}>Delete</button>
+                                </td>
+                            </tr>
+                        {/each}
+                    {:else}
+                        <tr>
+                            <td colspan="8" class="px-6 py-4 whitespace-nowrap text-center">No bus schedules found for '{searchTerm}'</td>
+                        </tr>
+                    {/if}
+                {:else}
+                    {#each busSchedule as schedule (schedule.BusScheduleId)}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <input type="checkbox" checked={selectedSchedules.has(schedule.BusScheduleId)} on:change={() => {
+                                    toggleSelection(schedule.BusScheduleId);
+                                    console.log("Updated selected schedules:", selectedSchedules);
+                                }} />                     
+                                
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">{schedule.BusScheduleId}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{schedule.Carplate}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{schedule.RouteName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{schedule.DriverName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(schedule.StartTime)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(schedule.EndTime)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <a href={`schedule/update-schedule/${schedule.BusScheduleId}`} class="text-green-600 hover:text-green-900 mr-5">Update</a>
+                                <button class="text-red-600 hover:text-red-900" on:click={() => deleteSchedule(schedule.BusScheduleId)}>Delete</button>
+                            </td>
+                        </tr>
+                    {/each}
+                {/if}
             </tbody>
         </table>
     </div>
