@@ -6,9 +6,16 @@
     let filteredSchedules: Schedule[] = [];
     let selectedSchedules = new Set<number>();
     let searchTerm = "";
+    let selectedRoute = "";
+    let selectedCarplate = "";
+    let startTime = "";
+    let endTime = "";
+
+    let uniqueRoutes = [];
+    let uniqueCarplates = [];
 
     export let data;
-    const { backend_uri } = data
+    const { backend_uri, schedules, dropdownData } = data
 
     async function deleteSchedule(id: number | number[]) {
         try {
@@ -90,21 +97,43 @@
         }
     }
 
-    // to do dropdowns for routes, touring, carplates, start and end time
     function filterSchedules() {
-            filteredSchedules  = busSchedule.filter(schedule => {
-                const driverName = schedule.DriverName.toLowerCase();
-                const searchTermLower = searchTerm.toLowerCase();
-                return driverName.includes(searchTermLower);
+        console.log(selectedCarplate)
+        filteredSchedules = busSchedule.filter(schedule => {
+            const driverName = schedule.DriverName.toLowerCase();
+            const routeMatch = !selectedRoute || schedule.RouteName.toLowerCase() === selectedRoute.toLowerCase();
+            const carplateMatch = !selectedCarplate || schedule.Carplate.toLowerCase() === selectedCarplate.toLowerCase();
+            const startTimeMatch = !startTime || formatTimestamp(schedule.StartTime).toLowerCase().includes(startTime.toLowerCase());
+            const endTimeMatch = !endTime || formatTimestamp(schedule.EndTime).toLowerCase().includes(endTime.toLowerCase());
+            const searchTermMatch = !searchTerm || driverName.includes(searchTerm.toLowerCase());
+            
+        return searchTermMatch && routeMatch && carplateMatch && startTimeMatch && endTimeMatch;
         });
     }
 
-    onMount(() => {
-        if (data && data.data) {
-            busSchedule = data.data;
+        function getUniqueRoutes() {
+            if (dropdownData) {
+                return [...new Set(dropdownData.map(item => item.RouteName))];
+            } else {
+                return [];
+            }
         }
-    });
 
+        function getUniqueCarplates() {
+            if (dropdownData) {
+                return [...new Set(dropdownData.map(item => item.Carplate))];
+            } else {
+                return [];
+            }
+        }
+
+    onMount(() => {
+        if (data && schedules) {
+            busSchedule = schedules;
+        }
+        uniqueRoutes = getUniqueRoutes();
+        uniqueCarplates = getUniqueCarplates();
+    });
 
 </script>
 
@@ -123,6 +152,23 @@
         <a href="schedule/add-schedule" class="border-2 border-black text-black text-xl px-4 py-2 rounded-full hover:bg-gray-200 mr-2">
             +
         </a>    
+
+        <div class="ml-auto">
+            <select class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={selectedRoute} on:change ={filterSchedules}>
+                <option value="">All Routes</option>
+                {#each getUniqueRoutes() as route}
+                    <option value={route}>{route}</option>
+                {/each}
+            </select>
+            <select class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={selectedCarplate} on:change={filterSchedules}>
+                <option value="">All Carplates</option>
+                {#each getUniqueCarplates() as carplate}
+                    <option value={carplate}>{carplate}</option>
+                {/each}
+            </select>
+            <input type="datetime" placeholder="Start Time" class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={startTime} on:input={filterSchedules}>
+            <input type="datetime" placeholder="End Time" class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={endTime} on:input={filterSchedules}>
+        </div>
         
         <div class="ml-auto">
             <input type="text" placeholder="Search..." class="border border-gray-300 rounded-md px-3 py-2 w-60" bind:value={searchTerm} on:input={filterSchedules}>
@@ -146,34 +192,31 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                {#if searchTerm}
-                    {#if filteredSchedules.length > 0}
-                        {#each filteredSchedules as schedule (schedule.BusScheduleId)}
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <input type="checkbox" checked={selectedSchedules.has(schedule.BusScheduleId)} on:change={() => {
-                                        toggleSelection(schedule.BusScheduleId);
-                                        console.log("Updated selected schedules:", selectedSchedules);
-                                    }} />                     
-                                    
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">{schedule.BusScheduleId}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{schedule.Carplate}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{schedule.RouteName}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{schedule.DriverName}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(schedule.StartTime)}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(schedule.EndTime)}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <a href={`schedule/update-schedule/${schedule.BusScheduleId}`} class="text-green-600 hover:text-green-900 mr-5">Update</a>
-                                    <button class="text-red-600 hover:text-red-900" on:click={() => deleteSchedule(schedule.BusScheduleId)}>Delete</button>
-                                </td>
-                            </tr>
-                        {/each}
-                    {:else}
+                {#if filteredSchedules.length > 0}
+                    {#each filteredSchedules as schedule (schedule.BusScheduleId)}
                         <tr>
-                            <td colspan="8" class="px-6 py-4 whitespace-nowrap text-center">No bus schedules found for '{searchTerm}'</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <input type="checkbox" checked={selectedSchedules.has(schedule.BusScheduleId)} on:change={() => {
+                                    toggleSelection(schedule.BusScheduleId);
+                                    console.log("Updated selected schedules:", selectedSchedules);
+                                }} />                     
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">{schedule.BusScheduleId}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{schedule.Carplate}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{schedule.RouteName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{schedule.DriverName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(schedule.StartTime)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(schedule.EndTime)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <a href={`schedule/update-schedule/${schedule.BusScheduleId}`} class="text-green-600 hover:text-green-900 mr-5">Update</a>
+                                <button class="text-red-600 hover:text-red-900" on:click={() => deleteSchedule(schedule.BusScheduleId)}>Delete</button>
+                            </td>
                         </tr>
-                    {/if}
+                    {/each} 
+                {:else if searchTerm !== '' || selectedCarplate !== '' || selectedRoute !== '' || startTime !== '' || endTime !== ''}
+                    <tr>
+                        <td colspan="8" class="px-6 py-4 whitespace-nowrap text-center">No matching schedules found</td>
+                    </tr>
                 {:else}
                     {#each busSchedule as schedule (schedule.BusScheduleId)}
                         <tr>
@@ -182,7 +225,6 @@
                                     toggleSelection(schedule.BusScheduleId);
                                     console.log("Updated selected schedules:", selectedSchedules);
                                 }} />                     
-                                
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">{schedule.BusScheduleId}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{schedule.Carplate}</td>
