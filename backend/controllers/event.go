@@ -61,23 +61,6 @@ func DeleteFollowBus(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 }
 
-func GetBuses(w http.ResponseWriter, r *http.Request) {
-	response, err := services.GetBuses()
-	if err != nil {
-		http.Error(w, "Error getting Buses", 500)
-		return
-	}
-
-	parsed, err := json.Marshal(response)
-	if err != nil {
-		http.Error(w, "Error on marshalling", 500)
-		return
-	}
-
-	w.WriteHeader(200)
-	w.Write(parsed)
-}
-
 func GetRouteSteps(w http.ResponseWriter, r *http.Request) {
 	routeName := chi.URLParam(r, "routeName")
 
