@@ -3,58 +3,59 @@
   import BusScheduleCard from "../../components/busScheduleCard.svelte";
 	import type { Schedule } from "../../types/global";
 
-  export let data;
-  let { backend_uri } = data;
+  export let data: { data: Schedule[] };
 
-  let busScheduleList: Schedule[] = [];
+// let busScheduleList: Schedule[] = [];
 
-  async function fetchData() {
-    try {
-      const response = await fetch(`${backend_uri}:3000/schedules/get-schedules`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
-      }
-      const data = await response.json();
-      busScheduleList = data; 
-      console.log('Fetched data:', busScheduleList);
-    } catch (error) {
-      console.error('Error fetching data:', error);
+let currentSchedules: Schedule[] = [];
+let upcomingSchedules: Schedule[] = [];
+
+onMount(() => {
+    if (data && data.data) {
+      const currentTime = new Date().getTime();
+      
+      data.data.forEach(schedule => {
+        const startTime = new Date(schedule.StartTime).getTime();
+        const endTime = new Date(schedule.EndTime).getTime();
+        if (currentTime >= startTime && currentTime <= endTime) {
+          currentSchedules.push(schedule);
+        } else {
+          upcomingSchedules.push(schedule);
+        }
+        currentSchedules = currentSchedules
+        upcomingSchedules = upcomingSchedules 
+      });
+
+      // busScheduleList = data.data;
+      // console.log(busScheduleList)
     }
-  }
-
-  onMount(() => {
-    fetchData();
-  });  
+  });
 </script>
 
-<!-- Should this page be unique to each bus uniquely? (To be asked) -->
-<div class="p-6 md:p-12">
-  {#if busScheduleList.length > 0}
-  <div class="flex justify-center mb-4">
-    <div class="p-4 flex justify-between items-center">
-      <div class="mr-24">
-        <p class="text-3xl font-semibold">Bus {busScheduleList[0].BusScheduleId}</p> 
-        <!-- shouldnt be bus Schedule id, should be bus id -->
-        <p class="text-md font-medium">{busScheduleList[0].Carplate}</p>
-      </div>
-      <div class="ml-24">
-        <div class="flex flex-row items-center font-semibold text-green-600">
-          <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" width="0.75em" height="0.75em" viewBox="0 0 24 24">
-            <path fill="currentColor" d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10s10-4.47 10-10S17.53 2 12 2"/>
-          </svg>
-          Touring
-        </div>
-        <p class="text-xl font-semibold">{busScheduleList[0].RouteName}</p>
-      </div>
-    </div>
-  </div>
-{/if}
+  <div class="p-6 md:p-12">
+    <h1 class="text-3xl font-semibold pt-8 mb-6">My Shifts</h1>
 
+    <h1 class="text-xl font-semibold text-slate-400 pt-8">Current Shifts</h1>
+    {#if currentSchedules.length > 0}
+      <div class="md:grid grid-cols-3">
+        {#each currentSchedules as bus}
+          <BusScheduleCard {bus} />
+        {/each}
+      </div>
+    {:else}
+      <p class="text-gray-500">No current schedules</p>
+    {/if}
 
-  <h1 class="text-2xl font-semibold text-center text-slate-400 pt-8">Shifts</h1>
-  <div class="md:grid grid-cols-3">
-    {#each busScheduleList as bus}
-      <BusScheduleCard {bus} />
-    {/each}
+    <hr class="my-8 border-gray-200">
+
+    <h1 class="text-xl font-semibold text-slate-400 pt-8">Upcoming Shifts</h1>
+    {#if upcomingSchedules.length > 0}
+      <div class="md:grid grid-cols-3">
+        {#each upcomingSchedules as bus}
+          <BusScheduleCard {bus} />
+        {/each}
+      </div>
+    {:else}
+      <p class="text-gray-500">No upcoming schedules</p>
+    {/if}
   </div>
-</div>
