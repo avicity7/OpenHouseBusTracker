@@ -125,7 +125,7 @@
       </div>
       <div class="h-1 bg-stone-300 w-full rounded-full mt-12 flex items-center relative z-0">
         <div class="h-1 bg-red-600 absolute rounded-full" style={`width: ${width}%`}></div>
-        <div class={`grid grid-cols-${stops.length} w-full`}>
+        <div class={"grid w-full "+"grid-cols-"+stops.length}>
           {#each stops as stop}
             <div class="mx-auto">
               <div class={"h-6 w-6 rounded-full " + (stop.Order <= events[0].Order && events[0].EventId != 1 && !(events[0].Order == stops.length && events[0].EventId == 3)? "bg-red-600" : "bg-stone-300")}></div> 
