@@ -202,3 +202,50 @@ func GetScheduleByID(id int) (structs.UpdateSchedule, error) {
 
 	return schedule, nil
 }
+
+func GetScheduleByUser(email string) ([]structs.Schedule, error) {
+    var schedules []structs.Schedule
+
+    query := `
+        SELECT
+			bs.bus_schedule_id,
+            eh.carplate,
+            d.driver_name,
+            bs.route_name,
+            bs.start_time,
+            bs.end_time
+        FROM 
+            event_helper eh
+        JOIN 
+            bus_schedule bs ON eh.carplate = bs.carplate 
+        JOIN 
+            driver d ON bs.driver_id = d.driver_id
+        WHERE 
+            eh.email = $1
+    `
+
+    rows, err := config.Dbpool.Query(context.Background(), query, email)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    for rows.Next() {
+        var schedule structs.Schedule
+        err := rows.Scan(
+            &schedule.BusScheduleId,
+            &schedule.Carplate,
+            &schedule.DriverName,
+            &schedule.RouteName,
+            &schedule.StartTime,
+            &schedule.EndTime,
+        )
+        if err != nil {
+            return nil, err
+        }
+        schedules = append(schedules, schedule)
+    }
+
+    return schedules, nil
+}
+
