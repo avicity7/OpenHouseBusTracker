@@ -34,8 +34,8 @@ export const actions = {
     const DriverIdString = form.get('driver_id');
     const DriverId = DriverIdString ? +DriverIdString : null;
       
-    const StartTime = form.get('start_time') + ":00Z";
-    const EndTime = form.get('end_time') + ":00Z";
+    const StartTime = form.get('start_time') + ":00+08:00";
+    const EndTime = form.get('end_time') + ":00+08:00";
 
     // console.log('Retrieved start_time:', StartTime);
     // console.log('Retrieved end_time:', EndTime);       
