@@ -6,7 +6,8 @@ export type AuthedResponse = {
   }
 }
 export type Bus = {
-  BusId: string,
+  Carplate: string,
+  Status: boolean
 }
 
 export type User = {
@@ -67,6 +68,7 @@ export type RouteStop = {
   StopName: string,
   Order: number
 }
+
 
 // export type Schedule = {
 //   BusId: number;
