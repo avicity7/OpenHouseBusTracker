@@ -71,26 +71,6 @@ func DeleteFollowBus(email string) error {
 	return nil
 }
 
-func GetBuses() ([]structs.EventBus, error) {
-	var output []structs.EventBus
-
-	query := `
-		SELECT * FROM bus
-	`
-	rows, err := config.Dbpool.Query(context.Background(), query)
-	if err != nil {
-		return []structs.EventBus{}, err
-	}
-
-	for rows.Next() {
-		var eventBus structs.EventBus
-		rows.Scan(&eventBus.Carplate, &eventBus.Status)
-		output = append(output, eventBus)
-	}
-
-	return output, nil
-}
-
 func GetRouteSteps(routeName string) ([]structs.RouteStep, error) {
 	var output []structs.RouteStep
 
