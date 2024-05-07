@@ -28,6 +28,7 @@ func main() {
 	routes.Users(r)
 	routes.Schedules(r)
 	routes.Driver(r)
+	routes.Event(r)
 
 	env := os.Getenv("ENV")
 	if env == "PROD" {
