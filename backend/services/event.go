@@ -120,10 +120,12 @@ func GetEvents(scheduleId int) ([]structs.Event, error) {
 	var output []structs.Event
 
 	query := `
-		SELECT stop_name, event_id, "timestamp"  FROM bus_schedule bs
+		SELECT rs.stop_name, rs."order", event_id, "timestamp" FROM bus_schedule bs
 		JOIN "event" e ON e.carplate = bs.carplate 
+		JOIN route_step rs ON rs.route_name = bs.route_name AND rs.stop_name = e.stop_name
 		WHERE bs.bus_schedule_id = @ScheduleId
 		AND "timestamp" BETWEEN bs.start_time AND bs.end_time 
+		ORDER BY "timestamp" ASC
 	`
 	args := pgx.NamedArgs{
 		"ScheduleId": scheduleId,
@@ -136,9 +138,30 @@ func GetEvents(scheduleId int) ([]structs.Event, error) {
 
 	for rows.Next() {
 		var event structs.Event
-		rows.Scan(&event.StopName, &event.EventId, &event.Timestamp)
+		rows.Scan(&event.StopName, &event.Order, &event.EventId, &event.Timestamp)
 		output = append(output, event)
 	}
 
 	return output, nil
+}
+
+func CreateEvent(carplate string, routeName string, eventId int, stopName string) error {
+	query := `
+		INSERT INTO event("timestamp", carplate, route_name, event_id, stop_name)
+		VALUES (NOW() AT TIME ZONE 'Etc/GMT-8', @Carplate, @RouteName, @EventId, @StopName) 
+	`
+
+	args := pgx.NamedArgs{
+		"Carplate":  carplate,
+		"RouteName": routeName,
+		"EventId":   eventId,
+		"StopName":  stopName,
+	}
+
+	_, err := config.Dbpool.Exec(context.Background(), query, args)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

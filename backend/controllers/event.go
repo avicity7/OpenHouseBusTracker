@@ -119,3 +119,23 @@ func GetEvents(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 	w.Write(parsed)
 }
+
+func CreateEvent(w http.ResponseWriter, r *http.Request) {
+	var input structs.EventInput
+
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Error on Decoding", 500)
+		return
+	}
+
+	err = services.CreateEvent(input.Carplate, input.RouteName, input.EventId, input.StopName)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Error on Service", 500)
+		return
+	}
+
+	w.WriteHeader(200)
+}

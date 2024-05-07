@@ -119,8 +119,16 @@ type RouteStep struct {
 
 type Event struct {
 	StopName  string
+	Order     int
 	EventId   int
 	Timestamp time.Time
+}
+
+type EventInput struct {
+	Carplate  string
+	RouteName string
+	EventId   int
+	StopName  string
 }
 
 // could try to use clearer seperation of structs / reduce structs needed
