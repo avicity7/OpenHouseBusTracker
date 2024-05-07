@@ -49,8 +49,8 @@
     // using toLocaleString() is much cleaner
     function formatTimestamp(timestamp: string): string {
         const utcDate = new Date(timestamp);
-        const localDate = new Date(utcDate.getTime() + (utcDate.getTimezoneOffset() * 60000)); 
-        const formattedDate = localDate.toLocaleString();
+        // const localDate = new Date(utcDate.getTime() + (utcDate.getTimezoneOffset() * 60000)); 
+        const formattedDate = utcDate.toLocaleString();
         return formattedDate;
     }
 
