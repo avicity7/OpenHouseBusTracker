@@ -40,7 +40,6 @@
     } else {
       width = baseWidth * events[0].Order
     }
-    loaded = true
   }
 
   const createEvent = async() => {
@@ -83,6 +82,7 @@
 
   onMount(async () => {
     await getEvents()
+    loaded = true
   })
 </script>
 
@@ -128,7 +128,7 @@
         <div class={`grid grid-cols-${stops.length} w-full`}>
           {#each stops as stop}
             <div class="mx-auto">
-              <div class={"h-6 w-6 rounded-full " + (stop.Order <= events[0].Order && !(events[0].Order == stops.length && events[0].EventId == 3)? "bg-red-600" : "bg-stone-300")}></div> 
+              <div class={"h-6 w-6 rounded-full " + (stop.Order <= events[0].Order && events[0].EventId != 1 && !(events[0].Order == stops.length && events[0].EventId == 3)? "bg-red-600" : "bg-stone-300")}></div> 
               <div class="absolute">{stop.StopName}</div>
             </div>
           {/each}

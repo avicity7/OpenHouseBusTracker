@@ -125,7 +125,7 @@ func GetEvents(scheduleId int) ([]structs.Event, error) {
 		JOIN route_step rs ON rs.route_name = bs.route_name AND rs.stop_name = e.stop_name
 		WHERE bs.bus_schedule_id = @ScheduleId
 		AND "timestamp" BETWEEN bs.start_time AND bs.end_time 
-		ORDER BY "timestamp" ASC
+		ORDER BY "timestamp" DESC
 	`
 	args := pgx.NamedArgs{
 		"ScheduleId": scheduleId,
