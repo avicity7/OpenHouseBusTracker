@@ -34,7 +34,7 @@
       }
     let baseWidth = Math.floor(100 / (stops.length))
     if (events[0].EventId == 1 || events[0].EventId == 3 && events[0].Order == stops.length) {
-      width = baseWidth / 3
+      width = baseWidth / 4
     } else if (events[0].EventId == 2) {
       width = baseWidth * events[0].Order - (baseWidth / 2)
     } else {
@@ -140,19 +140,21 @@
         {:else}
           <h2>Current stop:</h2>
         {/if}
-        {#if events[0].Order != 0}
-          {#if events[0].EventId == 3}
-            {#if events[0].Order != stops.length}
-              <h1>{stops[events[0].Order].StopName}</h1>
+        <div class="text-4xl font-semibold mt-4">
+          {#if events[0].Order != 0}
+            {#if events[0].EventId == 3}
+              {#if events[0].Order != stops.length}
+                <h1>{stops[events[0].Order].StopName}</h1>
+              {:else}
+                <h1>{stops[0].StopName}</h1>
+              {/if}
             {:else}
-              <h1>{stops[0].StopName}</h1>
+              <h1>{stops[events[0].Order - 1].StopName}</h1>
             {/if}
           {:else}
-            <h1>{stops[events[0].Order - 1].StopName}</h1>
+            <h1>{stops[0].StopName}</h1>
           {/if}
-        {:else}
-          <h1>{stops[0].StopName}</h1>
-        {/if}
+        </div>
       </div>
       <div class="mt-8 items-center mx-auto">
         {#if events[0].Order == 0}
