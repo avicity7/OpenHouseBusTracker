@@ -57,44 +57,73 @@ type AuthedResponse struct {
 }
 
 type Schedule struct {
-	BusScheduleId      int
-	Carplate   string
-	RouteName  string
+	BusScheduleId int
+	Carplate      string
+	RouteName     string
+	DriverName    string
+	StartTime     time.Time
+	EndTime       time.Time
+}
+
+type NewSchedule struct {
+	Carplate  string
+	RouteName string
+	DriverId  int
+	StartTime time.Time
+	EndTime   time.Time
+}
+
+type UpdateSchedule struct {
+	BusScheduleId int
+	Carplate      string
+	RouteName     string
+	DriverId      int
+	StartTime     time.Time
+	EndTime       time.Time
+}
+
+type ScheduleDropdownData struct {
+	Carplate  string
+	RouteName string
+	Driver    []Driver
+}
+
+type Driver struct {
+	DriverId   int
 	DriverName string
+}
+
+type FollowBus struct {
+	Carplate string
+	Email    string
+}
+
+type EventBus struct {
+	Carplate string
+	Status   bool
+}
+
+type EventSchedule struct {
+	ScheduleId int
+	Carplate   string
+	DriverName string
+	RouteName  string
 	StartTime  time.Time
 	EndTime    time.Time
 }
 
-type NewSchedule struct {
-  Carplate  string   
-  RouteName string    
-  DriverId  int       
-  StartTime time.Time 
-  EndTime   time.Time 
+type RouteStep struct {
+	StopName string
+	Order    int
 }
 
-type UpdateSchedule struct {
-  BusScheduleId int      
-  Carplate      string   
-  RouteName     string   
-  DriverId      int      
-  StartTime     time.Time 
-  EndTime       time.Time 
-}
-
-type ScheduleDropdownData struct {
-  Carplate  string  
-  RouteName string   
-  Driver   []Driver 
-}
-
-type Driver struct {
- DriverId   int    
- DriverName string 
+type Event struct {
+	StopName  string
+	EventId   int
+	Timestamp time.Time
 }
 
 // could try to use clearer seperation of structs / reduce structs needed
-
 
 // type Schedule struct {
 // 	BusId      int

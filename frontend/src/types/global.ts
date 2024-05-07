@@ -42,6 +42,19 @@ export type Session = {
   Role: string
 } | null
 
+export type FollowBus = {
+  Carplate: string,
+  DriverName: string,
+  RouteName: string,
+  StartTime: string,
+  EndTime: string
+} | null
+
+export type EventBus = {
+  Carplate: string,
+  Status: boolean
+} 
+
 // export type Schedule = {
 //   BusId: number;
 //   RouteId: number;
