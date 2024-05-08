@@ -26,6 +26,8 @@ func main() {
 	routes.TestRoute(r)
 	routes.Auth(r)
 	routes.Users(r)
+	routes.Routes(r)
+	routes.RouteSteps(r)
 	routes.Schedules(r)
 	routes.Driver(r)
 	routes.Event(r)

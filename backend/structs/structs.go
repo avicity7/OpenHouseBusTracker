@@ -132,6 +132,10 @@ type EventInput struct {
 	StopName  string
 }
 
+type Route struct {
+	RouteName string 
+}
+
 // could try to use clearer seperation of structs / reduce structs needed
 
 // type Schedule struct {
@@ -159,3 +163,8 @@ type EventInput struct {
 // 	StartTime time.Time `json:"start_time"`
 // 	EndTime   time.Time `json:"end_time"`
 // }
+
+//ref
+//type Route struct {
+//    RouteName string `json:"route_name"`
+//}
