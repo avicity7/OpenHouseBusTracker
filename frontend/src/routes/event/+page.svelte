@@ -80,6 +80,54 @@
     getEvents()
   }
 
+  const createRestartEvent = async() => {
+    let payload = {
+      Carplate: followBus?.Carplate,
+      RouteName: followBus?.RouteName,
+      EventId: 6,
+      StopName: events[0].StopName 
+    }
+    await fetch(`${PUBLIC_BACKEND_URL}:3000/event/create-event`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+      headers: {
+        'content-type': 'application/json'
+      },
+    })
+
+    payload = {
+      Carplate: followBus?.Carplate,
+      RouteName: followBus?.RouteName,
+      EventId: 1,
+      StopName: stops[0].StopName 
+    }
+    await fetch(`${PUBLIC_BACKEND_URL}:3000/event/create-event`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+      headers: {
+        'content-type': 'application/json'
+      },
+    })
+
+    getEvents()
+  }
+
+  const createEmergency = async() => {
+    let payload = {
+      Carplate: followBus?.Carplate,
+      RouteName: followBus?.RouteName,
+      EventId: 5,
+      StopName: events[0].StopName 
+    }
+    await fetch(`${PUBLIC_BACKEND_URL}:3000/event/create-event`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+      headers: {
+        'content-type': 'application/json'
+      },
+    })
+  }
+
   onMount(async () => {
     await getEvents()
     loaded = true
@@ -119,13 +167,19 @@
         <h2 class="text-xl font-semibold">{followBus.DriverName}</h2>
         <h2 class="text-xl font-semibold">{followBus.RouteName}</h2>
       </div>
-      <div class="flex justify-between mt-2">
-        <div>{new Date(followBus.StartTime).toLocaleString()}</div>
-        <div>{new Date(followBus.EndTime).toLocaleString()}</div>
+      <div class="flex justify-between mt-4">
+        <div class="flex flex-col">
+          <p class="font-semibold text-stone-600">Start Time</p>
+          <p class="font-semibold">{new Date(followBus.StartTime).toLocaleString('en-gb', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+        </div>
+        <div class="flex flex-col text-end">
+          <p class="font-semibold text-stone-600">End Time</p>
+          <p class="font-semibold">{new Date(followBus.EndTime).toLocaleString('en-gb', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+        </div>
       </div>
       <div class="h-1 bg-stone-300 w-full rounded-full mt-12 flex items-center relative z-0">
         <div class="h-1 bg-red-600 absolute rounded-full" style={`width: ${width}%`}></div>
-        <div class={"grid w-full "+"grid-cols-"+stops.length}>
+        <div class="grid w-full" style={`grid-template-columns: repeat(${stops.length}, minmax(0, 1fr))`}>
           {#each stops as stop}
             <div class="mx-auto">
               <div class={"h-6 w-6 rounded-full " + (stop.Order <= events[0].Order && events[0].EventId != 1 && !(events[0].Order == stops.length && events[0].EventId == 3)? "bg-red-600" : "bg-stone-300")}></div> 
@@ -136,9 +190,9 @@
       </div>
       <div class="mt-20 flex flex-col items-center">
         {#if events[0].EventId == 3 || events[0].Order == 0 || events[0].EventId == 1}
-          <h2>Next stop:</h2>
+          <h2 class="text-orange-800 font-semibold">On the way to:</h2>
         {:else}
-          <h2>Current stop:</h2>
+          <h2 class="text-green-800 font-semibold">Picking up passengers at:</h2>
         {/if}
         <div class="text-4xl font-semibold mt-4">
           {#if events[0].Order != 0}
@@ -170,6 +224,15 @@
             Departed
           </button>
         {/if}
+      </div>
+      <button on:click|preventDefault={createRestartEvent} class="mx-auto mt-8 text-stone-400 hover:text-red-600">
+        <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><path fill="currentColor" d="M18.258 3.508a.75.75 0 0 1 .463.693v4.243a.75.75 0 0 1-.75.75h-4.243a.75.75 0 0 1-.53-1.28L14.8 6.31a7.25 7.25 0 1 0 4.393 5.783a.75.75 0 0 1 1.488-.187A8.75 8.75 0 1 1 15.93 5.18l1.51-1.51a.75.75 0 0 1 .817-.162"/></svg>
+      </button>
+      <div class="flex mx-auto mt-12 text-stone-700 font-medium">
+        <p>Have an emergency?</p>
+        <button class="ml-1 text-red-700 hover:text-red-800" on:click|preventDefault={createEmergency}>
+          Alert admins
+        </button>
       </div>
     </div>
   {/if}
