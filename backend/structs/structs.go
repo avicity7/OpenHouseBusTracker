@@ -93,6 +93,16 @@ type Driver struct {
  DriverName string 
 }
 
+type Route struct {
+	RouteName string 
+}
+
+type RouteStep struct {
+	RouteName string
+	StopName string
+	Order int
+}
+
 // could try to use clearer seperation of structs / reduce structs needed
 
 
@@ -121,3 +131,8 @@ type Driver struct {
 // 	StartTime time.Time `json:"start_time"`
 // 	EndTime   time.Time `json:"end_time"`
 // }
+
+//ref
+//type Route struct {
+//    RouteName string `json:"route_name"`
+//}
