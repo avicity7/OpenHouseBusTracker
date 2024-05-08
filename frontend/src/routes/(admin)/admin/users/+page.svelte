@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte"
-  import type { Session, User, UserRole } from "../../../types/global";
+  import type { Session, User, UserRole } from "../../../../types/global";
   export let data
   let { backend_uri, session, users, roles } = data
 
@@ -21,10 +21,7 @@
 </script>
 
 <div class="p-6 md:p-12">
-  <h1 class="text-3xl font-semibold">
-    Users
-  </h1>
-  <div class="mt-12 max-w-sm md:max-w-4xl mx-auto bg-white p-2 md:p-8 rounded-lg">
+  <div class="max-w-sm md:max-w-4xl mx-auto bg-white p-2 md:p-8 rounded-lg">
     <table class="w-full">
       <thead>
         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
