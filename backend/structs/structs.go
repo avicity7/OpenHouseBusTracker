@@ -113,8 +113,9 @@ type EventSchedule struct {
 }
 
 type RouteStep struct {
-	StopName string
-	Order    int
+	RouteName string
+	StopName  string
+	Order     int
 }
 
 type Event struct {
