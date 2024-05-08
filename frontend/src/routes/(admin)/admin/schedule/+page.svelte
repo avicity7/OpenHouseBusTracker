@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import type { Schedule } from "../../../types/global";
+    import type { Schedule } from "../../../../types/global";
 
     let busSchedule: Schedule[] = [];
     let filteredSchedules: Schedule[] = [];
@@ -139,8 +139,6 @@
 
 <div class="p-6 md:p-12">
     <div class="flex items-center justify-between mb-4">
-        <h1 class="text-3xl font-semibold mr-4">Bus Schedules</h1>
-    
         {#if selectedSchedules.size > 1}
             <button 
                 class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mr-2 rounded transition duration-300"
