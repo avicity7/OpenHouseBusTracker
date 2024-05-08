@@ -75,7 +75,7 @@ func GetRouteSteps(routeName string) ([]structs.RouteStep, error) {
 	var output []structs.RouteStep
 
 	query := `
-		SELECT stop_name, "order" FROM route_step rs 
+		SELECT * FROM route_step rs 
 		WHERE route_name = @RouteName
 	`
 	args := pgx.NamedArgs{
@@ -89,7 +89,7 @@ func GetRouteSteps(routeName string) ([]structs.RouteStep, error) {
 
 	for rows.Next() {
 		var routeStep structs.RouteStep
-		rows.Scan(&routeStep.StopName, &routeStep.Order)
+		rows.Scan(&routeStep.RouteName, &routeStep.StopName, &routeStep.Order)
 		output = append(output, routeStep)
 	}
 
