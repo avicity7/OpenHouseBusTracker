@@ -157,6 +157,43 @@ func GetScheduleByID(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
+func GetScheduleByUser(w http.ResponseWriter, r *http.Request) {
+    email := chi.URLParam(r, "email")
+    if email == "" {
+        w.WriteHeader(http.StatusBadRequest)
+        return
+    }
+
+    value, found := config.Cache.Get("CurrentUserSchedules:" + email)
+    if found {
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusOK)
+        w.Write(value.([]byte))
+        return
+    }
+
+    schedules, err := services.GetScheduleByUser(email)
+    if err != nil {
+        fmt.Println(err)
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+
+    response, err := json.Marshal(schedules)
+    if err != nil {
+        fmt.Println(err)
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+
+    config.Cache.Set("CurrentUserSchedules:"+email, response, cache.DefaultExpiration)
+
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    w.Write(response)
+}
+
+
 
 //test caching - bulk delete fails
 

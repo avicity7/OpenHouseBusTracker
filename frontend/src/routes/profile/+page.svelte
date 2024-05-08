@@ -43,14 +43,14 @@
           type="text"
           autocomplete="off"
           name="email"
-          class="px-3 border-2 border-zinc-200 rounded-full focus:border-purple-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
+          class="px-3 border-2 border-zinc-200 rounded-full focus:border-red-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
         />
         <div class="font-medium mb-4 mt-8">Password</div>
         <input
-          type="text"
+          type="password"
           autocomplete="off"
           name="password"
-          class="px-3 border-2 border-zinc-200 rounded-full focus:border-purple-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
+          class="px-3 border-2 border-zinc-200 rounded-full focus:border-red-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
         />
         <button
           class="py-1 bg-red-800 hover:bg-red-900 font-medium text-white rounded-full mt-6"
