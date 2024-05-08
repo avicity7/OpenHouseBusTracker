@@ -41,7 +41,7 @@
   })
 </script>
 
-<nav class="z-10 text-md p-3 px-6 justify-between flex flex-row items-center sticky top-0 backdrop-opacity-95 backdrop-blur-md border-0 border-b-2 border-stone-200">
+<nav class="z-10 text-md p-3 px-6 justify-between flex flex-row items-center sticky top-0 bg-white border-0 border-b-2 border-stone-200">
   <a href="/" class="text-red-600 font-bold text-2xl">
     SP
   </a>
