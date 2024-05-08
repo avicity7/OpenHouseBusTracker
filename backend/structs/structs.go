@@ -136,12 +136,6 @@ type Route struct {
 	RouteName string 
 }
 
-type RouteStep struct {
-	RouteName string
-	StopName string
-	Order int
-}
-
 // could try to use clearer seperation of structs / reduce structs needed
 
 // type Schedule struct {
