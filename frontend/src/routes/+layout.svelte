@@ -36,7 +36,7 @@
   onMount(() => {
     detectColorScheme()
     if (session != undefined) {
-      // getProfile()
+      getProfile()
     }
   })
 </script>
