@@ -50,6 +50,7 @@
     // using toLocaleString() is much cleaner
     function formatTimestamp(timestamp: string): string {
         const utcDate = new Date(timestamp);
+        // const localDate = new Date(utcDate.getTime() + (utcDate.getTimezoneOffset() * 60000)); 
         const formattedDate = utcDate.toLocaleString();
         return formattedDate;
     }
@@ -241,7 +242,7 @@
                                 <input type="checkbox" checked={selectedSchedules.has(schedule.BusScheduleId)} on:change={() => {
                                     toggleSelection(schedule.BusScheduleId);
                                     console.log("Updated selected schedules:", selectedSchedules);
-                                }} />                
+                                }} />                     
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">{schedule.BusScheduleId}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{schedule.Carplate}</td>

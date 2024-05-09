@@ -136,25 +136,6 @@ type Route struct {
 	RouteName string 
 }
 
-type EventHelper struct {
-	Carplate string
-	Email string
-	StartTime time.Time
-	EndTime time.Time
-}
-
-type EventHelperUpdate struct {
-    OldCarplate   string
-    OldEmail      string
-    OldStartTime  time.Time
-    OldEndTime    time.Time
-
-    NewCarplate   string
-    NewEmail      string
-    NewStartTime  time.Time
-    NewEndTime    time.Time
-}
-
 // could try to use clearer seperation of structs / reduce structs needed
 
 // type Schedule struct {
