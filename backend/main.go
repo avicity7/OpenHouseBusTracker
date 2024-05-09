@@ -32,6 +32,7 @@ func main() {
 	routes.Driver(r)
 	routes.Event(r)
 	routes.Bus(r)
+	routes.EventHelper(r)
 
 	env := os.Getenv("ENV")
 	if env == "PROD" {
