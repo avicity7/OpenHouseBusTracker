@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import type { Schedule, Driver } from "../../../../types/global";
+    import type { Schedule, Driver } from "../../../../../types/global";
 
     export let data;
 
