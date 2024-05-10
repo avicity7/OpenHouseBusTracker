@@ -31,18 +31,18 @@ func GetFollowBus(email string) (structs.EventSchedule, error) {
 	var eventSchedule structs.EventSchedule
 
 	query := `
-		SELECT bus_schedule_id, eh.carplate, driver_name, route_name, start_time, end_time FROM event_helper eh
+		SELECT bus_schedule_id, eh.carplate, driver_name, route_name, bs.start_time, bs.end_time FROM event_helper eh
 		JOIN bus_schedule bs ON eh.carplate = bs.carplate 
 		JOIN driver d ON bs.driver_id = d.driver_id 
-		WHERE email = 'karlorjalo@gmail.com'
-		AND NOW() AT TIME ZONE 'Etc/GMT-8' BETWEEN start_time AND end_time
+		WHERE email = @Email
+		AND NOW() AT TIME ZONE 'Etc/GMT-8' BETWEEN bs.start_time AND bs.end_time
 	`
 
 	args := pgx.NamedArgs{
 		"Email": email,
 	}
 
-	err := config.Dbpool.QueryRow(context.Background(), query, args).Scan(&eventSchedule.ScheduleId, &eventSchedule.Carplate, &eventSchedule.DriverName, &eventSchedule.RouteName, &eventSchedule.StartTime, &eventSchedule.EndTime)
+	err := config.Dbpool.QueryRow(context.Background(), query, args).Scan(&eventSchedule.ScheduleId, &eventSchedule.Carplate, &eventSchedule.DriverName, &eventSchedule.RouteName, &eventSchedule.BusStartTime, &eventSchedule.BusEndTime)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return structs.EventSchedule{}, nil
@@ -51,6 +51,31 @@ func GetFollowBus(email string) (structs.EventSchedule, error) {
 	}
 
 	return eventSchedule, nil
+}
+
+func GetAllFollowBus() ([]structs.FollowBusEvent, error) {
+	var output []structs.FollowBusEvent
+
+	query := `
+		SELECT bs.bus_schedule_id, bs.carplate, d.driver_name, route_name, email, bs.start_time AS "bus_start_time", bs.end_time AS "bus_end_time", eh.start_time AS "student_start_time", eh.end_time AS "student_end_time" FROM bus_schedule bs 
+		JOIN event_helper eh ON bs.carplate = eh.carplate
+		JOIN driver d ON bs.driver_id = d.driver_id
+		WHERE NOW() AT TIME ZONE 'Etc/GMT-8' BETWEEN bs.start_time AND bs.end_time
+		AND eh.start_time >= bs.start_time 
+	`
+
+	rows, err := config.Dbpool.Query(context.Background(), query)
+	if err != nil {
+		return []structs.FollowBusEvent{}, err
+	}
+
+	for rows.Next() {
+		var followBus structs.FollowBusEvent
+		rows.Scan(&followBus.ScheduleId, &followBus.Carplate, &followBus.DriverName, &followBus.RouteName, &followBus.Email, &followBus.BusStartTime, &followBus.BusEndTime, &followBus.StudentStartTime, &followBus.StudentEndTime)
+		output = append(output, followBus)
+	}
+
+	return output, nil
 }
 
 func DeleteFollowBus(email string) error {
@@ -142,6 +167,8 @@ func CreateEvent(carplate string, routeName string, eventId int, stopName string
 	if err != nil {
 		return err
 	}
+
+	config.Melody.Broadcast([]byte("refresh"))
 
 	return nil
 }
