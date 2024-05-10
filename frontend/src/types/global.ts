@@ -69,6 +69,12 @@ export type RouteStop = {
   Order: number
 }
 
+export type EventHelper = {
+  Carplate: string,
+  Email: string,
+  StartTime: string,
+  EndTime: string
+}
 
 // export type Schedule = {
 //   BusId: number;
