@@ -6,7 +6,7 @@
   import type { User } from '../types/global';
   import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
   export let data
-  let account:User = {Email: "", Role: "", VerificationToken: "" }
+  let account:User = { Email: "", Role: "", VerificationToken: "" }
   let { session, backend_uri } = data
   let menu = false
 

@@ -1,4 +1,4 @@
-import { PUBLIC_BACKEND_URL, PUBLIC_MAPBOX_KEY } from '$env/static/public'
+import { PUBLIC_BACKEND_URL, PUBLIC_MAPBOX_KEY, PUBLIC_ENV } from '$env/static/public'
 import { redirect } from '@sveltejs/kit'
 
 export const load = async (event) => {
@@ -6,6 +6,7 @@ export const load = async (event) => {
   const session = event.locals.session
   const backend_uri = PUBLIC_BACKEND_URL 
   const mapbox_key = PUBLIC_MAPBOX_KEY
+  const env = PUBLIC_ENV
   
   if (path.includes("admin") && session?.Role != "admin") {
     redirect(301, "/")
@@ -14,6 +15,7 @@ export const load = async (event) => {
   return {
     backend_uri,
     session,
-    mapbox_key
+    mapbox_key,
+    env
   }
 }
