@@ -112,3 +112,22 @@ func DeleteEventHelper(w http.ResponseWriter, r *http.Request) {
     w.WriteHeader(http.StatusOK)
     fmt.Fprintf(w, "Event Helpers deleted successfully")
 }
+
+func GetEventHelperDropdownData(w http.ResponseWriter, r *http.Request) {
+	dropdownData, err := services.GetEventHelperDropdownData()
+
+	if err != nil {
+		http.Error(w, "Failed to fetch dropdown data", http.StatusInternalServerError)
+		return
+	}
+
+	response, err := json.Marshal(dropdownData)
+	if err != nil {
+		http.Error(w, "Failed to marshal dropdown data", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+}
