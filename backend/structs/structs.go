@@ -104,12 +104,12 @@ type EventBus struct {
 }
 
 type EventSchedule struct {
-	ScheduleId int
-	Carplate   string
-	DriverName string
-	RouteName  string
-	StartTime  time.Time
-	EndTime    time.Time
+	ScheduleId   int
+	Carplate     string
+	DriverName   string
+	RouteName    string
+	BusStartTime time.Time
+	BusEndTime   time.Time
 }
 
 type RouteStep struct {
@@ -133,26 +133,38 @@ type EventInput struct {
 }
 
 type Route struct {
-	RouteName string 
+	RouteName string
 }
 
 type EventHelper struct {
-	Carplate string
-	Email string
+	Carplate  string
+	Email     string
 	StartTime time.Time
-	EndTime time.Time
+	EndTime   time.Time
 }
 
 type EventHelperUpdate struct {
-    OldCarplate   string
-    OldEmail      string
-    OldStartTime  time.Time
-    OldEndTime    time.Time
+	OldCarplate  string
+	OldEmail     string
+	OldStartTime time.Time
+	OldEndTime   time.Time
 
-    NewCarplate   string
-    NewEmail      string
-    NewStartTime  time.Time
-    NewEndTime    time.Time
+	NewCarplate  string
+	NewEmail     string
+	NewStartTime time.Time
+	NewEndTime   time.Time
+}
+
+type FollowBusEvent struct {
+	ScheduleId       int
+	Carplate         string
+	DriverName       string
+	RouteName        string
+	Email            string
+	BusStartTime     time.Time
+	BusEndTime       time.Time
+	StudentStartTime time.Time
+	StudentEndTime   time.Time
 }
 
 type EventHelperDropdownData struct {
