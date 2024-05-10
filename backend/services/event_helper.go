@@ -114,3 +114,46 @@ func DeleteEventHelper(eventHelper structs.EventHelper) error {
 
     return nil
 }
+
+func GetEventHelperDropdownData() ([]structs.EventHelperDropdownData, error) {
+	var dropdownData []structs.EventHelperDropdownData
+
+	query := `
+        SELECT 
+            b.carplate,
+            NULL AS email
+        FROM 
+            bus b
+
+        UNION ALL
+
+        SELECT 
+            NULL AS carplate,
+            u.email
+        FROM 
+            user_table u;
+    `
+
+	rows, err := config.Dbpool.Query(context.Background(), query)
+	if err != nil {
+		fmt.Println("Error executing query:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var data structs.EventHelperDropdownData
+		err := rows.Scan(
+			&data.Carplate,
+			&data.Email,
+		)
+		if err != nil {
+			fmt.Println("Error scanning row:", err)
+			return nil, err
+		}
+		dropdownData = append(dropdownData, data)
+
+	}
+
+	return dropdownData, nil
+}

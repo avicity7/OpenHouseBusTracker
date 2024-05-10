@@ -155,6 +155,11 @@ type EventHelperUpdate struct {
     NewEndTime    time.Time
 }
 
+type EventHelperDropdownData struct {
+	Carplate *string
+	Email *string
+}
+
 // could try to use clearer seperation of structs / reduce structs needed
 
 // type Schedule struct {

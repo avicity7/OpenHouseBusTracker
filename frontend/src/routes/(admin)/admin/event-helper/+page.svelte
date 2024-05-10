@@ -1,9 +1,33 @@
 <script lang="ts">
     import { onMount } from 'svelte'
     import type { EventHelper } from "../../../../types/global";
+    import ToolTip from '../../../../components/ToolTip.svelte';
 
     export let data;
+    const { backend_uri} = data
     let eventHelper: EventHelper[] = [];
+
+    async function deleteEventHelper(eventHelperToDelete: EventHelper) {
+        try {
+            const response = await fetch(`${backend_uri}:3000/event-helpers/delete-helper`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(eventHelperToDelete)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete event helper');
+            }
+
+            eventHelper = eventHelper.filter(item => item !== eventHelperToDelete);
+
+            console.log("Deleted Event Helper:", eventHelperToDelete);
+        } catch (error) {
+            console.error('Error deleting event helper:', error);
+        }
+    }
 
     function formatTimestamp(timestamp: string): string {
         const utcDate = new Date(timestamp);
@@ -14,11 +38,8 @@
         if (data && data.data){
             eventHelper = data.data
         }
-        console.log("data inside event helper data",data)
     })
 </script>
-
-<h1>Event helper</h1>
 
 <div class="p-6 md:p-12">
     <div class="flex items-center justify-between mb-4">
@@ -30,8 +51,8 @@
                 Bulk Delete
             </button>
         {/if} -->
-        <a href="schedule/add-schedule" class="border-2 border-black text-black text-xl px-4 py-2 rounded-full hover:bg-gray-200 mr-2">
-            +
+        <a href="event-helper/add-helper" class="border-black text-black font-semibold text-md px-6 py-2 rounded-xl bg-red-600 hover:bg-red-800 mr-2">
+            Add Event Helper
         </a>    
 
         <!-- <div class="ml-auto">
@@ -92,7 +113,7 @@
                                         </svg>
                                         </ToolTip>
                                     </a> -->
-                                    <!-- <button class="text-slate-500 hover:text-red-600 text-2xl" on:click={() => deleteSchedule(schedule.BusScheduleId)}>
+                                    <button class="text-slate-500 hover:text-red-600 text-2xl" on:click={() => deleteEventHelper(helper)}>
                                         <ToolTip text="Delete Schedule"> 
                                         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}>
@@ -103,7 +124,7 @@
                                             </svg>
                                         </svg>
                                         </ToolTip>
-                                    </button> -->
+                                    </button>
                                 </div>
                             </td>                 
                         </tr>
