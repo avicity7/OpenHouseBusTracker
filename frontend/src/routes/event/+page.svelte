@@ -4,7 +4,7 @@
   import type { EventBus } from '../../types/global.js';
 	import type { WebSocketServer } from 'vite';
   export let data
-  const { session, followBus, buses, stops, backend_uri } = data
+  const { session, followBus, buses, stops, backend_uri, env } = data
 
   let selectedBus: EventBus = {
     Carplate: '',
@@ -27,7 +27,7 @@
   }
 
   onMount(() => {
-    ws = new WebSocket(`ws://${backend_uri.split("//")[1]}:3000/ws`)
+    ws = new WebSocket(`${env == "PROD" ? "wss" : "ws"}://${backend_uri.split("//")[1]}:3000/ws`)
   })
 </script>
 
