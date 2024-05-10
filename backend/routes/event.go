@@ -12,9 +12,11 @@ func Event(r chi.Router) {
 		r.Put("/create-follow-bus", http.HandlerFunc(controllers.CreateFollowBus))
 		r.Put("/create-event", http.HandlerFunc(controllers.CreateEvent))
 		r.Get("/get-follow-bus/{email}", http.HandlerFunc(controllers.GetFollowBus))
+		r.Get("/get-all-follow-bus", http.HandlerFunc(controllers.GetAllFollowBus))
 		r.Get("/get-buses", http.HandlerFunc(controllers.GetBuses))
 		r.Get("/get-route-steps/{routeName}", http.HandlerFunc(controllers.GetRouteSteps))
 		r.Get("/get-events/{scheduleId}", http.HandlerFunc(controllers.GetEvents))
+		r.Get("/get-all-stops", http.HandlerFunc(controllers.GetAllStops))
 		r.Delete("/delete-follow-bus/{email}", http.HandlerFunc(controllers.DeleteFollowBus))
 	})
 }
