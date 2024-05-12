@@ -67,15 +67,30 @@ func CreateEventHelper(w http.ResponseWriter, r *http.Request) {
 
 
 func UpdateEventHelper(w http.ResponseWriter, r *http.Request) {
+    fmt.Println("Received request body:", r.Body)
     var eventHelper structs.EventHelperUpdate    
     err := json.NewDecoder(r.Body).Decode(&eventHelper)
     if err != nil {
+        fmt.Println("Error decoding request body:", err)
+        fmt.Println("Request body:", r.Body)
         http.Error(w, "Invalid request body", http.StatusBadRequest)
         fmt.Println("Error decoding request body:", err)
         return
     }
 
     fmt.Printf("Received update request for event helper: %+v\n", eventHelper)
+
+    fmt.Println("Executing SQL query:")
+    fmt.Println("UPDATE event_helper SET carplate = $1, email = $2, start_time = $3, end_time = $4 WHERE carplate = $5 AND email = $6 AND start_time = $7 AND end_time = $8")
+    fmt.Println("Values:")
+    fmt.Println("NewCarplate:", eventHelper.NewCarplate)
+    fmt.Println("NewEmail:", eventHelper.NewEmail)
+    fmt.Println("NewStartTime:", eventHelper.NewStartTime)
+    fmt.Println("NewEndTime:", eventHelper.NewEndTime)
+    fmt.Println("OldCarplate:", eventHelper.OldCarplate)
+    fmt.Println("OldEmail:", eventHelper.OldEmail)
+    fmt.Println("OldStartTime:", eventHelper.OldStartTime)
+    fmt.Println("OldEndTime:", eventHelper.OldEndTime)
 
     err = services.UpdateEventHelper(eventHelper)
     if err != nil {
