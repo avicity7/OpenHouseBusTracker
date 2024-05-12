@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"server/config"
 	"server/services"
 	"server/structs"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/patrickmn/go-cache"
 )
 
 // Add Driver
@@ -19,24 +21,33 @@ func AddDriver(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
 	err = services.AddDriver(driver)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	config.Cache.Delete("drivers")
 	fmt.Fprintln(w, "Driver added successfully")
 }
 
 // Get Driver
 func GetDriver(w http.ResponseWriter, r *http.Request) {
+	if data, found := config.Cache.Get("drivers"); found {
+		if drivers, ok := data.([]structs.Driver); ok {
+			w.Header().Set("Content-Type", "application/json")
+			if err := json.NewEncoder(w).Encode(drivers); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			return
+		}
+	}
 	drivers, err := services.GetDriver()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	config.Cache.Set("drivers", drivers, cache.DefaultExpiration)
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(drivers); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -84,13 +95,13 @@ func UpdateDriver(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	config.Cache.Delete("drivers")
 	fmt.Fprintln(w, "Driver updated successfully")
-	w.WriteHeader(http.StatusOK)
 }
 
 // Delete Driver
 func DeleteDriver(w http.ResponseWriter, r *http.Request) {
-	driverID := chi.URLParam(r, "id") // Retrieve driverID from URL param
+	driverID := chi.URLParam(r, "id")
 
 	id, err := strconv.Atoi(driverID)
 	if err != nil {
@@ -122,5 +133,6 @@ func DeleteDriver(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	config.Cache.Delete("drivers")
 	fmt.Fprintln(w, "Driver deleted successfully")
 }

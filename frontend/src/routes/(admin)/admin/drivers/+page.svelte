@@ -17,14 +17,14 @@
 
     do {
       newDriverName = prompt(`${nameExistsMessage}Enter the name of the new driver:`);
-      if (!newDriverName) return; // If the user cancels, exit
+      if (!newDriverName) return; 
       const trimmedName = newDriverName.trim();
-      if (trimmedName === '') return; // If the name is empty, exit
+      if (trimmedName === '') return; 
 
       // Check if the name already exists
       const existingDriver = $drivers.find(driver => driver.DriverName.toLowerCase() === trimmedName.toLowerCase());
       if (existingDriver) {
-        nameExistsMessage = `${trimmedName} already exists in the database. Please choose a new name.`;
+        nameExistsMessage = `${trimmedName} already exists in the database. `;
       } else {
         // Proceed to add the driver if the name doesn't exist
         const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/driver/add-driver`, {
@@ -63,15 +63,15 @@
     let nameExistsMessage = ''; 
 
     do {
-      updatedName = prompt(`${nameExistsMessage}Enter the new name:`, name) || ''; // Prompt for a new name with indication
+      updatedName = prompt(`${nameExistsMessage}Enter the new name:`, name) || ''; 
 
-      if (!updatedName) return; // Handle cancellation
-
+      if (!updatedName) return; 
+      
       // Check if the updated name already exists for another driver
       const existingDriver = $drivers.find(driver => driver.DriverName.toLowerCase() === updatedName.toLowerCase());
 
       if (existingDriver && updatedName.toLowerCase() !== name.toLowerCase()) {
-        nameExistsMessage = `${updatedName} already exists in the database. Please choose a new name.`;
+        nameExistsMessage = `${updatedName} already exists in the database. `;
       } else if (updatedName.toLowerCase() === name.toLowerCase()) {
         nameExistsMessage = 'Name has no changes. ';
       } else {
@@ -125,7 +125,7 @@
 
 </script>
 
-<div class="mx-auto px-8">
+<div class="mx-auto px-8 m-2">
   <div class="flex items-center">
     <div class="ml-auto">
       <input type="text" class="ml-4 p-6 m-3 rounded-full focus:outline-none w-500" bind:value={search} placeholder="Type to search drivers....">
