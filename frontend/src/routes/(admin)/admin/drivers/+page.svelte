@@ -125,7 +125,7 @@
 
 </script>
 
-<div class="mx-auto px-8 m-2">
+<div class="mx-auto px-8 relative">
   <div class="flex items-center">
     <div class="ml-auto">
       <input type="text" class="ml-4 p-6 m-3 rounded-full focus:outline-none w-500" bind:value={search} placeholder="Type to search drivers....">
@@ -162,5 +162,5 @@
       </div>
     </div>
   {/if}
-  <button class="fixed bottom-8 right-4 bg-red-500 text-white text-3xl font-semibold w-16 h-16 rounded-full flex items-center justify-center shadow-2xl" on:click={addDriver}>+</button>
+  <button class="absolute top-0 mt-4 ml-4 bg-red-700 hover:bg-red-800 text-white text-3xl font-semibold w-16 h-16 rounded-full flex items-center justify-center shadow-2xl" on:click={addDriver}>+</button>
 </div>

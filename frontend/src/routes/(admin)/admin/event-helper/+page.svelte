@@ -2,18 +2,10 @@
     import { onMount } from 'svelte'
     import type { EventHelper } from "../../../../types/global";
     import ToolTip from '../../../../components/ToolTip.svelte';
-	import { writable } from 'svelte/store';
-    import { goto } from '$app/navigation';
 
     export let data;
     const { backend_uri} = data
     let eventHelper: EventHelper[] = [];
-    // export const selectedHelper = writable(-1);
-
-    // function handleUpdateClick(index: number) {
-    //     selectedHelper.set(index);
-    //     goto(`update-helper/${index}`)
-    // }
 
     async function deleteEventHelper(eventHelperToDelete: EventHelper) {
         try {
@@ -51,47 +43,15 @@
 
 <div class="p-6 md:p-12">
     <div class="flex items-center justify-between mb-4">
-        <!-- {#if selectedSchedules.size > 1}
-            <button 
-                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mr-2 rounded transition duration-300"
-                on:click={bulkDelete}
-            >
-                Bulk Delete
-            </button>
-        {/if} -->
-        <a href="event-helper/add-helper" class="border-black text-black font-semibold text-md px-6 py-2 rounded-xl bg-red-600 hover:bg-red-800 mr-2">
+        <a href="event-helper/add-helper" class="border-black text-white font-semibold text-md px-6 py-2 rounded-xl bg-red-700 hover:bg-red-800 mr-2">
             Add Event Helper
         </a>    
-
-        <!-- <div class="ml-auto">
-            <select class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={selectedRoute} on:change ={filterSchedules}>
-                <option value="">All Routes</option>
-                {#each getUniqueRoutes() as route}
-                    <option value={route}>{route}</option>
-                {/each}
-            </select>
-            <select class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={selectedCarplate} on:change={filterSchedules}>
-                <option value="">All Carplates</option>
-                {#each getUniqueCarplates() as carplate}
-                    <option value={carplate}>{carplate}</option>
-                {/each}
-            </select>
-            <input type="datetime" placeholder="Start Time" class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={startTime} on:input={filterSchedules}>
-            <input type="datetime" placeholder="End Time" class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={endTime} on:input={filterSchedules}>
-        </div> -->
-        
-        <!-- <div class="ml-auto">
-            <input type="text" placeholder="Search..." class="border border-gray-300 rounded-md px-3 py-2 w-60" bind:value={searchTerm} on:input={filterSchedules}>
-        </div> -->
     </div>
 
     <div class="mt-8">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        <!-- <input type="checkbox" on:click={toggleSelectAll} /> -->
-                    </th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus Carplate</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student Email</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Time</th>
@@ -102,12 +62,6 @@
             <tbody class="bg-white divide-y divide-gray-200">
                     {#each eventHelper as helper}
                         <tr class="hover:bg-gray-100">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <!-- <input type="checkbox" checked={selectedSchedules.has(schedule.BusScheduleId)} on:change={() => {
-                                    toggleSelection(schedule.BusScheduleId);
-                                    console.log("Updated selected schedules:", selectedSchedules);
-                                }} />                      -->
-                            </td>
                             <td class="px-6 py-4 whitespace-nowrap">{helper.Carplate}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{helper.Email}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(helper.StartTime)}</td>
