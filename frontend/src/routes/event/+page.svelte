@@ -36,10 +36,11 @@
     Bus Event
   </h1>
   {#if followBus == null || followBus.Carplate == ''}
-    <div>
-      <form on:submit={createFollowBus}>
+    <div class="w-full mt-28 flex">
+      <form on:submit={createFollowBus} class="mx-auto flex flex-col">
         <select
           bind:value={selectedBus}
+          class="rounded-lg border-2 border-stone-400"
         >
           {#each buses as bus}
             <option 
@@ -50,7 +51,7 @@
             </option>
           {/each}
         </select>
-        <button type="submit">
+        <button type="submit" class="mt-12 bg-red-700 hover:bg-red-800 text-white rounded-md">
           Follow Bus
         </button>
       </form>
