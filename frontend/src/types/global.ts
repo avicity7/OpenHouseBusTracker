@@ -65,8 +65,13 @@ export type Event = {
 }
 
 export type RouteStop = {
+  RouteName: string,
   StopName: string,
   Order: number
+}
+
+export type Route = {
+  RouteName: string
 }
 
 

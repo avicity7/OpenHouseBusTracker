@@ -3,10 +3,20 @@ package services
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"server/config"
 	"server/structs"
 	// "github.com/jackc/pgx/v5"
 )
+
+func CreateRoute(routeName *structs.Route) error {
+	_, err := config.Dbpool.Exec(context.Background(), `INSERT INTO route (route_name) VALUES ($1)`, routeName)
+	if err != nil {
+		fmt.Println("Error creating route:", err)
+		return err
+	}
+	return nil
+}
 
 // Query to fetch all routes
 func GetAllRoutes() ([]structs.Route, error) {
@@ -42,4 +52,24 @@ func GetRouteByName(routeName string) (*structs.Route, error) {
 	}
 
 	return &route, nil
+}
+
+// update route
+func UpdateRoute(routeName string) error {
+	_, err := config.Dbpool.Exec(context.Background(), `UPDATE route SET route_name = $1 WHERE route_name = $2`, routeName)
+	if err != nil {
+		fmt.Println("Error updating route step:", err)
+		return err
+	}
+	return nil
+}
+
+// delete route
+func DeleteRoute(routeName string) error {
+	_, err := config.Dbpool.Exec(context.Background(), `DELETE FROM route WHERE route_name = $1`, routeName)
+	if err != nil {
+		fmt.Println("Error deleting route step:", err)
+		return err
+	}
+	return nil
 }

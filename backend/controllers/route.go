@@ -4,11 +4,26 @@ import (
 	"encoding/json"
 	"net/http"
 	"server/services"
+	"server/structs"
 
 	"github.com/go-chi/chi/v5"
 )
 
 // "github.com/jackc/pgx/v5"
+
+// create
+func CreateRouteHandler(w http.ResponseWriter, r *http.Request) {
+	var route structs.Route
+	if err := json.NewDecoder(r.Body).Decode(&route); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+	if err := services.CreateRoute(&route); err != nil {
+		http.Error(w, "Failed to create route", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+}
 
 // for all routes
 func GetAllRoutesHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +45,7 @@ func GetAllRoutesHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
-// GET requests to fetch a route by its name
+// get requests to fetch a route by its name
 func GetRouteByNameHandler(w http.ResponseWriter, r *http.Request) {
 	routeName := chi.URLParam(r, "name")
 
@@ -55,4 +70,14 @@ func GetRouteByNameHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(response)
+}
+
+// delete
+func DeleteRouteHandler(w http.ResponseWriter, r *http.Request) {
+	routeName := chi.URLParam(r, "route_name")
+	if err := services.DeleteRoute(routeName); err != nil {
+		http.Error(w, "Failed to delete route", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }
