@@ -3,7 +3,7 @@
   import '../../node_modules/mapbox-gl/dist/mapbox-gl.css';
   import { page } from '$app/stores';  
   import { onMount } from 'svelte';
-  import type { User } from '../types/global';
+  import type { User } from '$lib/types/global';
   import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
   export let data
   let account:User = { Email: "", Role: "", VerificationToken: "" }

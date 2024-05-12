@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { EventBus, Event, RouteStop, FollowBusEvent } from '../types/global.js'
+  import type { EventBus, Event, RouteStep, FollowBusEvent } from '$lib/types/global.js'
   import { PUBLIC_BACKEND_URL } from '$env/static/public'
 	import { onMount } from 'svelte';
   export let data
   const { session } = data
-  export let stops: Array<RouteStop>
+  export let stops: Array<RouteStep>
   export let followBus: FollowBusEvent 
   export let isEditable: boolean
   export let ws: WebSocket

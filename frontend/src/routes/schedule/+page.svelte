@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import BusScheduleCard from "../../components/busScheduleCard.svelte";
-	import type { Schedule } from "../../types/global";
+  import BusScheduleCard from "$lib/components/BusScheduleCard.svelte"
+  import type { Schedule } from "$lib/types/global";
 
   export let data: { data: Schedule[] };
 

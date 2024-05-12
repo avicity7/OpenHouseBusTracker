@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte'
-    import type { EventHelper } from "../../../../types/global";
-    import ToolTip from '../../../../components/ToolTip.svelte';
+    import type { EventHelper } from "$lib/types/global";
+    import ToolTip from '$lib/components/ToolTip.svelte';
 
     export let data;
     const { backend_uri} = data

@@ -7,8 +7,7 @@
   <a href="/admin/drivers" class={"px-8 py-2 mb-4 rounded-r-full font-medium "+($page.url.pathname == '/admin/drivers' ? "text-white bg-red-800" : "hover:text-red-700")}>Drivers</a>
   <a href="/admin/buses" class={"px-8 py-2 mb-4 rounded-r-full font-medium "+($page.url.pathname == '/admin/buses' ? "text-white bg-red-800" : "hover:text-red-700")}>Buses</a>
   <a href="/admin/bus-routes" class={"px-8 py-2 mb-4 rounded-r-full font-medium "+($page.url.pathname == '/admin/bus-routes' ? "text-white bg-red-800" : "hover:text-red-700")}>Routes</a>
-  <a href="/admin/event-helper" class={"px-8 py-2 mb-4 rounded-r-full font-medium "+($page.url.pathname == '/admin/event-helper' ? "text-white bg-red-800" : "hover:text-red-700")}>Event Helper</a>
 </aside>
-<aside class="ml-40">
+<aside class="ml-28">
   <slot />
 </aside>
