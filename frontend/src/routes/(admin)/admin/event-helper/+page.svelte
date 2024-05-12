@@ -2,10 +2,18 @@
     import { onMount } from 'svelte'
     import type { EventHelper } from "../../../../types/global";
     import ToolTip from '../../../../components/ToolTip.svelte';
+	import { writable } from 'svelte/store';
+    import { goto } from '$app/navigation';
 
     export let data;
     const { backend_uri} = data
     let eventHelper: EventHelper[] = [];
+    // export const selectedHelper = writable(-1);
+
+    // function handleUpdateClick(index: number) {
+    //     selectedHelper.set(index);
+    //     goto(`update-helper/${index}`)
+    // }
 
     async function deleteEventHelper(eventHelperToDelete: EventHelper) {
         try {
@@ -106,13 +114,13 @@
                             <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(helper.EndTime)}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex items-center">
-                                    <!-- <a href={`schedule/update-schedule/${schedule.BusScheduleId}`} class="text-slate-500 hover:text-green-500 mr-8"> -->
-                                        <!-- <ToolTip text="Update Schedule"> 
+                                    <a href={`event-helper/update-helper/${encodeURIComponent(JSON.stringify(helper))}`} class="text-slate-500 hover:text-green-500 mr-8">
+                                        <ToolTip text="Update Schedule"> 
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3"/>
                                         </svg>
                                         </ToolTip>
-                                    </a> -->
+                                    </a>
                                     <button class="text-slate-500 hover:text-red-600 text-2xl" on:click={() => deleteEventHelper(helper)}>
                                         <ToolTip text="Delete Schedule"> 
                                         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}>

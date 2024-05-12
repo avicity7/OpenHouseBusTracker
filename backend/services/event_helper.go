@@ -56,7 +56,7 @@ func CreateEventHelper(eventHelper structs.EventHelper) error {
 	return nil
 }
 
-// not sure why it isnt working, could be json decoding issue or struct
+// working, timestamp ingestion issue
 func UpdateEventHelper(eventHelper structs.EventHelperUpdate) error {
     query := `
         UPDATE event_helper
@@ -81,6 +81,8 @@ func UpdateEventHelper(eventHelper structs.EventHelperUpdate) error {
         eventHelper.OldStartTime,
         eventHelper.OldEndTime,
     )
+
+    fmt.Println("here is carplate", eventHelper.NewCarplate);
 
     if err != nil {
         fmt.Println("Error updating event helper:", err)
