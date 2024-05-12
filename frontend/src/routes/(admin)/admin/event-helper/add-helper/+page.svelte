@@ -34,6 +34,7 @@
     onMount(() => {
         setEventHelperDropdownOptions(data.data)
         })
+
 </script>
 
 <div class="flex justify-center items-center h-full mt-20">
@@ -58,6 +59,7 @@
             </select>
         </div>
 
+        <!-- step in the input field works but it doesnt change the timepicker options, it just checks if the selected time is divisible by 30 mins and show an error if it is -->
         <div class="mb-4">
             <label for="startTime" class="block text-sm font-medium mb-1">Start Time:</label>
             <input type="datetime-local" id="start_time" name="start_time" required class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"/>
