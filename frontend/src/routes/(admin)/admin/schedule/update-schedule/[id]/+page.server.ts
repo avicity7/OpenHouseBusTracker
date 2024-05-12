@@ -1,5 +1,5 @@
 import { error, type Load } from '@sveltejs/kit';
-import type { Schedule } from '../../../../../types/global';
+import type { Schedule } from '../../../../../../types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 // used page.server.ts instead of page.js for the need of updated information and fast ssr

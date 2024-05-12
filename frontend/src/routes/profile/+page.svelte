@@ -40,6 +40,7 @@
       <form class="flex flex-col pl-6 md:pl-24 mb-20" method="POST" action="?/login">
         <div class="font-medium mb-4">Email</div>
         <input
+          data-testid="sign-in-email-input"
           type="text"
           autocomplete="off"
           name="email"
@@ -47,6 +48,7 @@
         />
         <div class="font-medium mb-4 mt-8">Password</div>
         <input
+          data-testid="sign-in-password-input"
           type="password"
           autocomplete="off"
           name="password"

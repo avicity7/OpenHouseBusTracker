@@ -1,25 +1,27 @@
 <script lang="ts">
   export let data
   let { buses, backend_uri } = data
-  import type { Bus } from '../../../types/global.js';
+  import type { Bus } from '../../../../types/global.js';
   
   const getBuses = async() => {
     const response = await fetch(`${backend_uri}:3000/bus/get-buses`)
     buses = await response.json() as Array<Bus>  
-  }
-  
-  const deleteBus = async(carplate: string) => {
-    await fetch(`${backend_uri}:3000/bus/delete-bus/${carplate}`, {
-      method: 'DELETE'
-    })
-    getBuses()
-  }
-</script>
-<div class="p-6 md:p-12">
-  <h1 class="text-3xl font-semibold">
-    Buses
-  </h1>
-  <div class="mt-12 max-w-sm md:max-w-4xl mx-auto bg-white p-2 md:p-8 rounded-lg">
+    }
+    
+    const deleteBus = async(carplate: string) => {
+      await fetch(`${backend_uri}:3000/bus/delete-bus/${carplate}`, {
+        method: 'DELETE'
+      })
+      getBuses()
+    }
+  </script>
+<div>
+  <div class="max-w-4xl flex justify-end mx-auto">
+    <a href="/admin/buses/create-bus" class="w-fit bg-red-700 hover:bg-red-800 px-8 py-2 my-6 text-white rounded-md">
+      Add Bus
+    </a>
+  </div>
+  <div class="max-w-sm md:max-w-4xl mx-auto bg-white p-2 rounded-lg">
     <table class="w-full">
       <thead>
         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Carplate</th>
@@ -51,7 +53,3 @@
     </table>
   </div>
 </div>
-
-<a href="/admin/buses/create-bus" class="fixed bottom-0 right-0 w-fit bg-red-700 hover:bg-red-800 px-8 py-2 m-12 text-white rounded-md">
-  Add Bus
-</a>

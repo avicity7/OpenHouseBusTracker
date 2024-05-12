@@ -26,7 +26,6 @@ func GetDriver() ([]structs.Driver, error) {
 		return nil, err
 	}
 	defer rows.Close()
-
 	for rows.Next() {
 		var driver structs.Driver
 		if err := rows.Scan(&driver.DriverId, &driver.DriverName); err != nil {
@@ -37,7 +36,6 @@ func GetDriver() ([]structs.Driver, error) {
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
-
 	return drivers, nil
 }
 

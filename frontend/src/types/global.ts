@@ -50,7 +50,19 @@ export type FollowBus = {
   RouteName: string,
   StartTime: string,
   EndTime: string
-} | null
+}
+
+export type FollowBusEvent = {
+  ScheduleId: number,
+  Carplate: string,
+  DriverName: string,
+  RouteName: string,
+  Email: string,
+  BusStartTime: string,
+  BusEndTime: string,
+  StudentStartTime: string,
+  StudentEndTime: string,
+}
 
 export type EventBus = {
   Carplate: string,
@@ -66,6 +78,7 @@ export type Event = {
 
 export type RouteStop = {
   RouteName: string,
+  RouteName: string,
   StopName: string,
   Order: number
 }
@@ -74,6 +87,12 @@ export type Route = {
   RouteName: string
 }
 
+export type EventHelper = {
+  Carplate: string,
+  Email: string,
+  StartTime: string,
+  EndTime: string
+}
 
 // export type Schedule = {
 //   BusId: number;
