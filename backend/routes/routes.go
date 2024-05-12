@@ -12,5 +12,7 @@ func Routes(r *chi.Mux) {
 	r.Route("/routes", func(r chi.Router) {
 		r.Get("/", http.HandlerFunc(controllers.GetAllRoutesHandler))
 		r.Get("/{name}", http.HandlerFunc(controllers.GetRouteByNameHandler))
+		r.Post("/create-route", controllers.CreateRouteHandler)
+		r.Delete("/{route-name}", controllers.DeleteRouteHandler)
 	})
 }
