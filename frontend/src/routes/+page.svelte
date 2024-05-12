@@ -2,8 +2,8 @@
   export let data 
   const { backend_uri, stops, env } = data
 	import { onMount } from "svelte";
-  import EventTracker from "../components/eventTracker.svelte";
-  import type { FollowBusEvent } from "../types/global";
+  import EventTracker from "$lib/components/EventTracker.svelte"
+  import type { FollowBusEvent } from "$lib/types/global.js"
 
   let busList: Array<FollowBusEvent> = []
   let ws: WebSocket

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import type { EventHelper } from "../../../../../../types/global";
+    import type { EventHelper } from "$lib/types/global";
 	import { page } from "$app/stores";
 
     export let data;

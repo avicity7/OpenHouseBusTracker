@@ -1,5 +1,5 @@
 import type { Load } from '@sveltejs/kit';
-import type { EventHelper } from '../../../../types/global';
+import type { EventHelper } from '../../../../lib/types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 export const load: Load = async ({ fetch }) => {

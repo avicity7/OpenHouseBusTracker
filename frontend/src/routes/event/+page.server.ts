@@ -1,9 +1,9 @@
 import { PUBLIC_BACKEND_URL } from '$env/static/public'
-import type { EventBus, FollowBusEvent, RouteStop } from '../../types/global.js'
+import type { EventBus, FollowBusEvent, RouteStep } from '$lib/types/global.js'
 
 export const load = async ({ locals, fetch }) => {
   let followBus: FollowBusEvent = {} as FollowBusEvent
-  let stops: Array<RouteStop> = []
+  let stops: Array<RouteStep> = []
 
   if (locals.session?.Email != undefined) {
     let response = await fetch(`${PUBLIC_BACKEND_URL}:3000/event/get-follow-bus/${locals.session?.Email}`, {
@@ -21,7 +21,7 @@ export const load = async ({ locals, fetch }) => {
             'content-type': 'application/json'
           },
         })
-        stops = await response.json() as Array<RouteStop>
+        stops = await response.json() as Array<RouteStep>
       }
     }
   }

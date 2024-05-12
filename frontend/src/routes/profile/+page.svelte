@@ -1,6 +1,5 @@
 <script lang='ts'>
   import { Avatar, Spinner } from 'flowbite-svelte';
-  import type { User } from '../../types/global.js';
   export let data
   let { backend_uri, session, account } = data;
 	import { onMount } from 'svelte';

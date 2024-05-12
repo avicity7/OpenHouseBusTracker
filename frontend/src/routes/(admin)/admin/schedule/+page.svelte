@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import type { Schedule } from "../../../../types/global";
-    import ToolTip from "../../../../components/ToolTip.svelte";
+    import type { Schedule } from "$lib/types/global.js";
+    import ToolTip from "$lib/components/ToolTip.svelte";
 
     let busSchedule: Schedule[] = [];
     let filteredSchedules: Schedule[] = [];

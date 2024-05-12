@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-  import EventTracker from '../../components/eventTracker.svelte';
-  import type { EventBus } from '../../types/global.js';
+  import EventTracker from '$lib/components/EventTracker.svelte'
+  import type { EventBus } from '$lib/types/global.js'
 	import type { WebSocketServer } from 'vite';
   export let data
   const { session, followBus, buses, stops, backend_uri, env } = data

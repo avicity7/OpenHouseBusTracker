@@ -1,7 +1,7 @@
 <script lang="ts">
   export let data
   let { buses, backend_uri } = data
-  import type { Bus } from '../../../../types/global.js';
+  import type { Bus } from '../../../../lib/types/global.js';
   
   const getBuses = async() => {
     const response = await fetch(`${backend_uri}:3000/bus/get-buses`)
@@ -16,7 +16,7 @@
     }
   </script>
 <div>
-  <div class="max-w-4xl flex justify-end mx-auto">
+  <div class="max-w-md md:max-w-4xl flex mx-auto">
     <a href="/admin/buses/create-bus" class="w-fit bg-red-700 hover:bg-red-800 px-8 py-2 my-6 text-white rounded-md">
       Add Bus
     </a>

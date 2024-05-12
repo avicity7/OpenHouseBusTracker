@@ -76,8 +76,7 @@ export type Event = {
   Timestamp: string
 }
 
-export type RouteStop = {
-  RouteName: string,
+export type RouteStep = {
   RouteName: string,
   StopName: string,
   Order: number

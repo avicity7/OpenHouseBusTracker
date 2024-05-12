@@ -5,18 +5,21 @@
     let routing: string
   
     const createRoute = async() => {
-      await fetch(`${backend_uri}:3000/route/create-route/${routing}`, {
-        method: 'PUT'
+      await fetch(`${backend_uri}:3000/route/create-route`, {
+        method: 'POST',
+        body: JSON.stringify({
+            RouteName: routing
+        })
       })
       location.replace('/admin/bus-routes')
     }
   </script>
   <div class="flex justify-center items-center h-full">
-      <div class="bg-white shadow rounded-lg p-8 w-full md:w-3/4 lg:w-2/3 xl:w-1/3">
-          <h1 class="text-2xl font-semibold mb-4">Add New Bus</h1>
+      <div class="bg-white shadow rounded-lg p-8 w-full md:w-3/4 lg:w-2/3 xl:w-1/3 mt-12">
+          <h1 class="text-2xl font-semibold mb-4">Add New Route</h1>
           <form on:submit|preventDefault={createRoute}>
               <div class="mb-4">
-                  <label for="AddiingRoute" class="block text-sm font-medium mb-1">Create Route</label>
+                  <label for="AddiingRoute" class="block text-sm font-medium mb-1">Route Name</label>
                   <input
                       type="text"
                       required

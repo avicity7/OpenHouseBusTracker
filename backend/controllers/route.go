@@ -18,7 +18,7 @@ func CreateRouteHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-	if err := services.CreateRoute(&route); err != nil {
+	if err := services.CreateRoute(route); err != nil {
 		http.Error(w, "Failed to create route", http.StatusInternalServerError)
 		return
 	}

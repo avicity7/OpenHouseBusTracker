@@ -9,8 +9,8 @@ import (
 	// "github.com/jackc/pgx/v5"
 )
 
-func CreateRoute(routeName *structs.Route) error {
-	_, err := config.Dbpool.Exec(context.Background(), `INSERT INTO route (route_name) VALUES ($1)`, routeName)
+func CreateRoute(route structs.Route) error {
+	_, err := config.Dbpool.Exec(context.Background(), `INSERT INTO route (route_name) VALUES ($1)`, route.RouteName)
 	if err != nil {
 		fmt.Println("Error creating route:", err)
 		return err
@@ -42,16 +42,16 @@ func GetAllRoutes() ([]structs.Route, error) {
 }
 
 // retrieves a route by its name from the Dbpool
-func GetRouteByName(routeName string) (*structs.Route, error) {
+func GetRouteByName(routeName string) (structs.Route, error) {
 	var route structs.Route
 	err := config.Dbpool.QueryRow(context.Background(), "SELECT route_name FROM route WHERE route_name = $1", routeName).Scan(&route.RouteName)
 	if err == sql.ErrNoRows {
-		return nil, nil
+		return structs.Route{}, nil
 	} else if err != nil {
-		return nil, err
+		return structs.Route{}, err
 	}
 
-	return &route, nil
+	return route, nil
 }
 
 // update route

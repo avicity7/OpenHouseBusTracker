@@ -1,5 +1,5 @@
 import { PUBLIC_BACKEND_URL } from "$env/static/public"
-import type { Bus } from "../../../../types/global"
+import type { Bus } from "../../../../lib/types/global"
 
 export const load = async() => {
   const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/bus/get-buses`)

@@ -6,12 +6,13 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func RouteSteps(r chi.Router) {
-	r.Route("/route-steps", func(r chi.Router) {
-		r.Get("/{route_name}", controllers.GetAllRouteStepsHandler)
+func RouteStep(r chi.Router) {
+	r.Route("/route-step", func(r chi.Router) {
+		r.Get("/", controllers.GetAllRouteStepsHandler)
+		r.Get("/get-all-stops", controllers.GetAllStopNames)
 		r.Get("/{route_name}/{stop_name}", controllers.GetRouteStepHandler)
-		r.Put("/create-route-step", controllers.CreateRouteStepHandler)
+		r.Post("/create-route-step", controllers.CreateRouteStepHandler)
 		r.Put("/update-route-step", controllers.UpdateRouteStepHandler)
-		r.Delete("/{route_name}/{stop_name}", controllers.DeleteRouteStepHandler)
+		r.Delete("/delete-route-step/{route_name}/{stop_name}", controllers.DeleteRouteStepHandler)
 	})
 }
