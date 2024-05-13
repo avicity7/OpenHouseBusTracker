@@ -1,4 +1,4 @@
-import type { EventHelper } from '../../../../../../lib/types/global';
+import type { EventHelper } from '$lib/types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 import { redirect } from '@sveltejs/kit';
 
@@ -9,9 +9,9 @@ export const load = async ({ fetch }) => {
             throw new Error("Failed to fetch event helpers");
         }
         
-        const data = await response.json() as EventHelper[];
+        const dropdownData = await response.json() as EventHelper[];
         return {
-            data
+            dropdownData
         };
 
     } catch (error) {

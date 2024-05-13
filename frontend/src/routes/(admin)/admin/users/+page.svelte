@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte"
-  import type { Session, User, UserRole } from "../../../../lib/types/global";
+  import type { Session, User, UserRole } from "$lib/types/global";
   export let data
   let { backend_uri, session, users, roles } = data
 

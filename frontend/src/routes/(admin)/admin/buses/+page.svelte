@@ -1,7 +1,7 @@
 <script lang="ts">
   export let data
   let { buses, backend_uri } = data
-  import type { Bus } from '../../../../lib/types/global.js';
+  import type { Bus } from '$lib/types/global.js';
   
   const getBuses = async() => {
     const response = await fetch(`${backend_uri}:3000/bus/get-buses`)

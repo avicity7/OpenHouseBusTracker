@@ -4,8 +4,6 @@
 
     export let data;
 
-
-
     let carplates: string[] = [];
     let routeNames: string[] = [];
     let drivers: Driver[] = [];

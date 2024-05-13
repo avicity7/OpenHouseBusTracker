@@ -3,7 +3,7 @@
 	import type { EventHelper } from '$lib/types/global';
 
 	export let data
-  const { dropdownData } = data
+  	const { dropdownData } = data
 
 	let carplates: string[] = [];
 	let emails: string[] = [];
@@ -13,6 +13,7 @@
 
 	function setEventHelperDropdownOptions() {
 		if (!dropdownData) return;
+		
 		const uniqueCarplates = new Set<string>();
 		const uniqueEmails = new Set<string>();
 

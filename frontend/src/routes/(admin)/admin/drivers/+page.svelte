@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, createEventDispatcher } from 'svelte';
   import { writable } from 'svelte/store';
-  import type { Driver } from '../../../../types/global';
+  import type { Driver } from '$lib/types/global';
   import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
   let drivers = writable<Driver[]>([]);
