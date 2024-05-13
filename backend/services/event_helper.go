@@ -25,8 +25,7 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
         err := rows.Scan(
             &eventHelper.Carplate,
             &eventHelper.Email,
-            &eventHelper.StartTime,
-            &eventHelper.EndTime,
+            &eventHelper.Shift,
         )
         if err != nil {
             return nil, err
@@ -38,14 +37,13 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
 
 func CreateEventHelper(eventHelper structs.EventHelper) error {
 	query := `
-		INSERT INTO event_helper (carplate, email, start_time, end_time) 
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO event_helper (carplate, email, shift) 
+		VALUES ($1, $2, $3)
     `
 	_, err := config.Dbpool.Exec(context.Background(), query,
 		eventHelper.Carplate,
 		eventHelper.Email,
-		eventHelper.StartTime,
-		eventHelper.EndTime,
+		eventHelper.Shift,
 	)
 
 	if err != nil {
@@ -63,23 +61,19 @@ func UpdateEventHelper(eventHelper structs.EventHelperUpdate) error {
         SET 
             carplate = $1,
             email = $2,
-            start_time = $3,
-            end_time = $4
+            shift = $3
         WHERE
-            carplate = $5
-            AND email = $6
-            AND start_time = $7
-            AND end_time = $8
+            carplate = $4
+            AND email = $5
+            AND shift = $6
     `
     _, err := config.Dbpool.Exec(context.Background(), query,
         eventHelper.NewCarplate, 
         eventHelper.NewEmail,    
-        eventHelper.NewStartTime,
-        eventHelper.NewEndTime,  
+        eventHelper.NewShift,  
         eventHelper.OldCarplate,
         eventHelper.OldEmail,
-        eventHelper.OldStartTime,
-        eventHelper.OldEndTime,
+        eventHelper.OldShift,
     )
 
     fmt.Println("here is carplate", eventHelper.NewCarplate);
@@ -99,14 +93,12 @@ func DeleteEventHelper(eventHelper structs.EventHelper) error {
         WHERE
             carplate = $1
             AND email = $2
-            AND start_time = $3
-            AND end_time = $4
+            AND shift = $3
     `
     _, err := config.Dbpool.Exec(context.Background(), query,
         eventHelper.Carplate,
         eventHelper.Email,
-        eventHelper.StartTime,
-        eventHelper.EndTime,
+        eventHelper.Shift,
     )
 
     if err != nil {

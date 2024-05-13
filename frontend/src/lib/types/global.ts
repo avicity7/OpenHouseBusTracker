@@ -16,7 +16,6 @@ export type User = {
   VerificationToken: string
 }
 
-
 export type UserRole = {
   RoleId: number,
   Description: string 
@@ -89,8 +88,7 @@ export type Route = {
 export type EventHelper = {
   Carplate: string,
   Email: string,
-  StartTime: string,
-  EndTime: string
+  Shift: boolean
 }
 
 // export type Schedule = {

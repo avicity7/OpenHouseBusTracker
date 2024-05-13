@@ -139,20 +139,17 @@ type Route struct {
 type EventHelper struct {
 	Carplate  string
 	Email     string
-	StartTime time.Time
-	EndTime   time.Time
+	Shift 	  bool
 }
 
 type EventHelperUpdate struct {
 	OldCarplate  string
 	OldEmail     string
-	OldStartTime time.Time
-	OldEndTime   time.Time
+	OldShift	 bool
 
 	NewCarplate  string
 	NewEmail     string
-	NewStartTime time.Time
-	NewEndTime   time.Time
+	NewShift 	 bool
 }
 
 type FollowBusEvent struct {
