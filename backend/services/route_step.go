@@ -36,7 +36,7 @@ func GetAllRouteSteps(routeName string) ([]structs.RouteStep, error) {
 	return routeSteps, nil
 }
 
-func GetAllStops() ([]string, error) {
+func GetAllStops() ([]structs.Stop, error) {
 	rows, err := config.Dbpool.Query(context.Background(), `SELECT * FROM stop`)
 	if err != nil {
 		fmt.Println("Error fetching route steps:", err)
@@ -44,10 +44,10 @@ func GetAllStops() ([]string, error) {
 	}
 	defer rows.Close()
 
-	var stops []string
+	var stops []structs.Stop
 	for rows.Next() {
-		var stop string
-		if err := rows.Scan(&stop); err != nil {
+		var stop structs.Stop
+		if err := rows.Scan(&stop.StopName, &stop.Lng, &stop.Lat); err != nil {
 			fmt.Println("Error scanning route step row:", err)
 			return nil, err
 		}
