@@ -1,4 +1,4 @@
-import { error, type Load } from '@sveltejs/kit';
+import { error, redirect, type Load } from '@sveltejs/kit';
 import type { Schedule } from '../../../../../../lib/types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
@@ -83,8 +83,8 @@ export const actions = {
         const RouteName = form.get('route_name');
         const DriverIdString = form.get('driver_id');
         const DriverId = DriverIdString ? +DriverIdString : null;
-        const StartTime = form.get('start_time') + ":00Z";
-        const EndTime = form.get('end_time') + ":00Z";
+        const StartTime = form.get('start_time') + ":00+08:00";
+        const EndTime = form.get('end_time') + ":00+08:00";
         
         const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/update-schedule`, {
           method: "PUT",
@@ -104,6 +104,8 @@ export const actions = {
             console.log(error)
           throw new Error("Failed to create bus schedule");
         }
+
+        redirect(301, '/admin/schedule')
       }
   }
 

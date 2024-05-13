@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import type { Schedule, Driver } from "../../../../../../types/global";
+    import type { Schedule, Driver } from "$lib/types/global";
 
     export let data: {
         dropdownData: { data: Schedule[] } | undefined;
@@ -54,15 +54,17 @@
             selectedCarplate = Carplate;
             selectedRouteName = RouteName;
             selectedDriverId = DriverId;
-            selectedStartTime = new Date(StartTime).toISOString().slice(0, 16);
-            selectedEndTime = new Date(EndTime).toISOString().slice(0, 16);
+            
+            selectedStartTime =StartTime.split('+')[0];
+        
+            selectedEndTime = EndTime.split('+')[0];
         }
     });
 
 </script>
 
-<div class="flex justify-center items-center h-full mt-24">
-    <div class="bg-white shadow-md rounded-lg p-8 w-full md:w-3/4 lg:w-2/3 xl:w-1/3">
+<div class="flex justify-center items-center h-full">
+    <div class="bg-white shadow-md rounded-lg p-8 w-full md:w-3/4 lg:w-2/3 xl:w-1/3 mt-24">
         <h1 class="text-2xl font-semibold mb-4">Update Select Bus Schedule</h1>
         <form method="POST" action="?/updateBusSchedule">
             <div class="mb-4">

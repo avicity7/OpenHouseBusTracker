@@ -55,8 +55,8 @@
     
 </script>
 
-<div class="flex justify-center items-center h-full mt-24">
-    <div class="bg-white shadow-md rounded-lg p-8 w-full md:w-3/4 lg:w-2/3 xl:w-1/3">
+<div class="flex justify-center items-center h-full">
+    <div class="bg-white shadow-md rounded-lg p-8 w-full md:w-3/4 lg:w-2/3 xl:w-1/3 mt-24">
         <h1 class="text-2xl font-semibold mb-4">Update Selected Event Helper</h1>
         <form method="POST" action="?/updateEventHelper">
             <input type="hidden" name="old_carplate" value={helper.Carplate}>

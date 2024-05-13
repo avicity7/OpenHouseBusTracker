@@ -147,7 +147,7 @@
                 Bulk Delete
             </button>
         {/if}
-        <a href="schedule/add-schedule" class="border-2 border-black text-black text-xl px-4 py-2 rounded-full hover:bg-gray-200 mr-2">
+        <a href="/admin/schedule/add-schedule" class="border-2 border-black text-black text-xl px-4 py-2 rounded-full hover:bg-gray-200 mr-2">
             +
         </a>    
 

@@ -1,5 +1,6 @@
 import type { EventHelper } from '../../../../../../lib/types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
+import { redirect } from '@sveltejs/kit';
 
 export const load = async ({ fetch }) => {
     try {
@@ -47,10 +48,11 @@ export const actions = {
             })
       });
     
-      // whats the correct way of navigating in server side svelte? goto and redirect doesnt work
       if (!response.ok) {
         throw new Error("Failed to update event helper");
       }
+
+      redirect(301, '/admin/event-helper')
     }    
   }
   
