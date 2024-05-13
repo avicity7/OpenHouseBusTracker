@@ -93,6 +93,12 @@ export type EventHelper = {
   EndTime: string
 }
 
+export type Stop = {
+  StopName: string,
+  Lng: number,
+  Lat: number,
+}
+
 // export type Schedule = {
 //   BusId: number;
 //   RouteId: number;

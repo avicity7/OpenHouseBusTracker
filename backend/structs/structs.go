@@ -169,7 +169,13 @@ type FollowBusEvent struct {
 
 type EventHelperDropdownData struct {
 	Carplate *string
-	Email *string
+	Email    *string
+}
+
+type Stop struct {
+	StopName string
+	Lng      float64
+	Lat      float64
 }
 
 // could try to use clearer seperation of structs / reduce structs needed
