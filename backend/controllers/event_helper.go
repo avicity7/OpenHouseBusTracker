@@ -81,16 +81,13 @@ func UpdateEventHelper(w http.ResponseWriter, r *http.Request) {
     fmt.Printf("Received update request for event helper: %+v\n", eventHelper)
 
     fmt.Println("Executing SQL query:")
-    fmt.Println("UPDATE event_helper SET carplate = $1, email = $2, start_time = $3, end_time = $4 WHERE carplate = $5 AND email = $6 AND start_time = $7 AND end_time = $8")
     fmt.Println("Values:")
     fmt.Println("NewCarplate:", eventHelper.NewCarplate)
     fmt.Println("NewEmail:", eventHelper.NewEmail)
-    fmt.Println("NewStartTime:", eventHelper.NewStartTime)
-    fmt.Println("NewEndTime:", eventHelper.NewEndTime)
+    fmt.Println("NewShift:", eventHelper.NewShift)
     fmt.Println("OldCarplate:", eventHelper.OldCarplate)
     fmt.Println("OldEmail:", eventHelper.OldEmail)
-    fmt.Println("OldStartTime:", eventHelper.OldStartTime)
-    fmt.Println("OldEndTime:", eventHelper.OldEndTime)
+    fmt.Println("OldShift:", eventHelper.OldShift)
 
     err = services.UpdateEventHelper(eventHelper)
     if err != nil {

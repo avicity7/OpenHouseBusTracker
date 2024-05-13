@@ -30,21 +30,26 @@ export const actions = {
   
       const Carplate = form.get('carplate');
       const Email = form.get('email');
-      const StartTime = form.get('start_time') + ":00+08:00";
-      const EndTime = form.get('end_time') + ":00+08:00";
-  
+      const ShiftString = form.get('shift');
+
+      const Shift = ShiftString === 'true';
+
+      const OldCarplate = form.get('old_carplate');
+      const OldEmail = form.get('old_email');
+      const OldShiftString =  form.get('old_shift');
+
+      const OldShift = OldShiftString === 'true';
+
       const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/event-helpers/update-helper`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             NewCarplate: Carplate,
             NewEmail: Email,
-            NewStartTime: StartTime,
-            NewEndTime: EndTime,
-            OldCarplate: form.get('old_carplate'),
-            OldEmail: form.get('old_email'),
-            OldStartTime: form.get('old_start_time'),
-            OldEndTime: form.get('old_end_time'),
+            NewShift: Shift,
+            OldCarplate,
+            OldEmail,
+            OldShift,
             })
       });
     

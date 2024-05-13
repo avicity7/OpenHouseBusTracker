@@ -9,9 +9,9 @@ export const load: Load = async ({ fetch }) => {
             throw new Error("Failed to fetch event helpers");
         }
         
-        const data = await response.json() as EventHelper[];
+        const helperData = await response.json() as EventHelper[];
         return {
-            data
+            helperData
         };
 
     } catch (error) {

@@ -10,6 +10,8 @@
 
 	let selectedCarplate: string | null = null;
 	let selectedEmail: string | null = null;
+	let selectedShift: boolean | null = null;
+
 
 	function setEventHelperDropdownOptions() {
 		if (!dropdownData) return;
@@ -40,7 +42,7 @@
 <div class="flex justify-center items-center h-full">
 	<div class="bg-white shadow-md rounded-lg p-8 w-full md:w-3/4 lg:w-2/3 xl:w-1/3 mt-20">
 		<h1 class="text-2xl font-semibold mb-4">Add New Event Helper</h1>
-		<form method="POST" action="?/createEventHelper" on:submit={() => {location.replace('/admin/event-helper')}}>
+		<form method="POST" action="?/createEventHelper">
 			<div class="mb-4">
 				<label for="carplate" class="block text-sm font-medium mb-1">Carplate:</label>
 				<select
@@ -69,27 +71,17 @@
 				</select>
 			</div>
 
-			<!-- step in the input field works but it doesnt change the timepicker options, it just checks if the selected time is divisible by 30 mins and show an error if it is -->
 			<div class="mb-4">
-				<label for="startTime" class="block text-sm font-medium mb-1">Start Time:</label>
-				<input
-					type="datetime-local"
-					id="start_time"
-					name="start_time"
-					required
+				<label for="shift" class="block text-sm font-medium mb-1">Shift:</label>
+				<select
+					id="shift"
+					name="shift"
+					bind:value={selectedShift}
 					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-				/>
-			</div>
-
-			<div class="mb-4">
-				<label for="endTime" class="block text-sm font-medium mb-1">End Time:</label>
-				<input
-					type="datetime-local"
-					id="end_time"
-					name="end_time"
-					required
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-				/>
+				>
+					<option value="true">AM</option>
+					<option value="false">PM</option>
+				</select>
 			</div>
 
 			<div class="mt-4 flex justify-center">
