@@ -1,6 +1,7 @@
 // import type { Load } from '@sveltejs/kit';
 import type { EventHelper } from '../../../../../lib/types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
+import { redirect } from '@sveltejs/kit';
 
 export const load = async ({ fetch }) => {
     try {
@@ -9,10 +10,10 @@ export const load = async ({ fetch }) => {
             throw new Error("Failed to fetch event helpers");
         }
         
-        const data = await response.json() as EventHelper[];
+        const dropdownData = await response.json() as EventHelper[];
         return {
-            data
-        };
+            dropdownData
+        }
 
     } catch (error) {
         console.error(error);
@@ -48,5 +49,7 @@ export const actions = {
       if (!response.ok) {
         throw new Error("Failed to create event helper");
       }
+
+      redirect(301, '/admin/event-helper')
     }    
   }
