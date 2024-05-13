@@ -1,5 +1,4 @@
-// import type { Load } from '@sveltejs/kit';
-import type { EventHelper } from '../../../../../lib/types/global';
+import type { EventHelper } from '$lib/types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 import { redirect } from '@sveltejs/kit';
 

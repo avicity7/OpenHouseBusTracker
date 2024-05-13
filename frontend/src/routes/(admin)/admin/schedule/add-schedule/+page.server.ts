@@ -1,5 +1,5 @@
-import type { Load } from '@sveltejs/kit';
-import type { Schedule } from '../../../../../lib/types/global';
+import { redirect, type Load } from '@sveltejs/kit';
+import type { Schedule } from '$lib/types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 // For initial load using SSR
@@ -54,6 +54,8 @@ export const actions = {
     if (!response.ok) {
       throw new Error("Failed to create bus schedule");
     }
+
+    redirect(301, '/admin/schedule')
   }    
 }
 

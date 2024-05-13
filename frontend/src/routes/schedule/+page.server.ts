@@ -1,4 +1,4 @@
-import type { Schedule } from '$lib/types/global.js';
+import type { Schedule } from '$lib/types/global.ts';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 export const load = async ({ fetch, locals }) => {

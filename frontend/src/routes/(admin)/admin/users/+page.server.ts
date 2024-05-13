@@ -1,5 +1,5 @@
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
-import type { AuthedResponse, UserRole } from '../../../../lib/types/global';
+import type { AuthedResponse, UserRole } from '$lib/types/global';
 export const load = async ({fetch, cookies}) => {
   const getUsers = new Promise<AuthedResponse>((resolve) => {
     fetch(`${PUBLIC_BACKEND_URL}:3000/users/get-users`, {

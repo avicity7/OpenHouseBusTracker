@@ -4,6 +4,7 @@
 	import { page } from "$app/stores";
 
     export let data;
+    const { dropdownData } = data;
 
     let helper = {
         Carplate: '',
@@ -19,13 +20,13 @@
     let selectedStartTime = "";
     let selectedEndTime = "";
 
-    function setEventHelperDropdownOptions(data: EventHelper[] | undefined) {
-        if (!data) return;
+    function setEventHelperDropdownOptions() {
+        if (!dropdownData) return;
 
         const uniqueCarplates = new Set<string>();
         const uniqueEmails = new Set<string>();
 
-        data.forEach(({ Carplate, Email }: EventHelper) => {
+        dropdownData.forEach(({ Carplate, Email }: EventHelper) => {
 
             if (Carplate) {
                 uniqueCarplates.add(Carplate);
@@ -47,16 +48,16 @@
         selectedStartTime = helper.StartTime.split('T')[0] + 'T' + helper.StartTime.split('T')[1].slice(0, 5);
         selectedEndTime = helper.EndTime.split('T')[0] + 'T' + helper.EndTime.split('T')[1].slice(0, 5);
 
-        if (data && data.data) {
-            setEventHelperDropdownOptions(data.data)
+        if (dropdownData) {
+            setEventHelperDropdownOptions()
         }
         
     });
     
 </script>
 
-<div class="flex justify-center items-center h-full mt-24">
-    <div class="bg-white shadow-md rounded-lg p-8 w-full md:w-3/4 lg:w-2/3 xl:w-1/3">
+<div class="flex justify-center items-center h-full">
+    <div class="bg-white shadow-md rounded-lg p-8 w-full md:w-3/4 lg:w-2/3 xl:w-1/3 mt-24">
         <h1 class="text-2xl font-semibold mb-4">Update Selected Event Helper</h1>
         <form method="POST" action="?/updateEventHelper">
             <input type="hidden" name="old_carplate" value={helper.Carplate}>

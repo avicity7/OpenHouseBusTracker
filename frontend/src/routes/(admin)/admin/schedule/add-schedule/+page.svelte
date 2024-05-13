@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import type { Schedule, Driver } from "../../../../../types/global";
+    import type { Schedule, Driver } from "$lib/types/global.js";
 
     export let data;
 
@@ -43,8 +43,8 @@
     });
 </script>
 
-<div class="flex justify-center items-center h-full mt-20">
-    <div class="bg-white shadow-md rounded-lg p-8 w-full md:w-3/4 lg:w-2/3 xl:w-1/3">
+<div class="flex justify-center items-center h-full">
+    <div class="bg-white shadow-md rounded-lg p-8 w-full md:w-3/4 lg:w-2/3 xl:w-1/3 mt-20">
         <h1 class="text-2xl font-semibold mb-4">Add New Bus Schedule</h1>
         <form method="POST" action="?/createBusSchedule">
         <div class="mb-4">

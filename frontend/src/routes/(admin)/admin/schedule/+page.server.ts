@@ -1,5 +1,5 @@
 import type { Load } from '@sveltejs/kit';
-import type { Schedule } from '../../../../lib/types/global';
+import type { Schedule } from '$lib/types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 

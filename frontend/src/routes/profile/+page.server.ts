@@ -1,5 +1,5 @@
 import { PUBLIC_BACKEND_URL } from '$env/static/public'
-import type { User } from '../../lib/types/global.js'
+import type { User } from '$lib/types/global.ts'
 
 export const actions = {
   login: async ({ request, cookies, locals }) => {
