@@ -167,18 +167,13 @@
 }
 </style>
 
-<div class="p-6 md:p-12">
-  <h1 class="text-3xl font-semibold">
-    Bus Tracker
-  </h1>
-  <div>
-    <div class="map-wrap">
-      <div class="map absolute w-[87.5%] h-[80%]" bind:this={mapContainer} />
-    </div>
-    {#if !loaded}
-      <div class="w-full flex mt-24">
-        <p class="m-auto text-stone-500 font-semibold">Loading</p>
-      </div>
-    {/if} 
-  </div>
+
+<div class="map-wrap h-[93%]">
+  <div class="map w-full h-[93%]" bind:this={mapContainer} />
+  <div class="absolute top-0 mt-24 ml-8 bg-white rounded-md text-xl px-8 py-3 font-semibold">Bus Tracker</div>
 </div>
+{#if !loaded}
+  <div class="flex p-24">
+    <p class="m-auto text-stone-500 font-semibold">Loading</p>
+  </div>
+{/if} 
