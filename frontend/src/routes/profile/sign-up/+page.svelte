@@ -15,6 +15,13 @@
     method='POST'
     action="?/signUp"
   >
+    <div class="font-medium mb-4 mt-8">Name</div>
+    <input 
+      type="text"
+      autocomplete="off"
+      name="name"
+      class="border-2 border-zinc-200 rounded-full focus:border-red-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
+    />
     <div class="font-medium mb-4 mt-8">Email</div>
     <input 
       type="text"

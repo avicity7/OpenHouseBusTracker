@@ -11,6 +11,7 @@ export type Bus = {
 }
 
 export type User = {
+  Name: string,
   Email: string,
   Role: string,
   VerificationToken: string
