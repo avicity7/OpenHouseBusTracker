@@ -67,7 +67,9 @@ func BulkCreateUsers(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	
+	config.Cache.Delete("Users")
+	
 	w.WriteHeader(http.StatusCreated)
 }
 
