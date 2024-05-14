@@ -9,30 +9,30 @@ import (
 )
 
 func GetEventHelpers() ([]structs.EventHelper, error) {
-    var eventHelpers []structs.EventHelper
+	var eventHelpers []structs.EventHelper
 
-    query := `
+	query := `
         SELECT * FROM event_helper
     `
-    rows, err := config.Dbpool.Query(context.Background(), query)
-    if err != nil {
-        return nil, err
-    }
-    defer rows.Close()
+	rows, err := config.Dbpool.Query(context.Background(), query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
-    for rows.Next() {
-        var eventHelper structs.EventHelper
-        err := rows.Scan(
-            &eventHelper.Carplate,
-            &eventHelper.Email,
-            &eventHelper.Shift,
-        )
-        if err != nil {
-            return nil, err
-        }
-        eventHelpers = append(eventHelpers, eventHelper)
-    }
-    return eventHelpers, nil
+	for rows.Next() {
+		var eventHelper structs.EventHelper
+		err := rows.Scan(
+			&eventHelper.Carplate,
+			&eventHelper.Email,
+			&eventHelper.Shift,
+		)
+		if err != nil {
+			return nil, err
+		}
+		eventHelpers = append(eventHelpers, eventHelper)
+	}
+	return eventHelpers, nil
 }
 
 func CreateEventHelper(eventHelper structs.EventHelper) error {
@@ -56,7 +56,7 @@ func CreateEventHelper(eventHelper structs.EventHelper) error {
 
 // working, timestamp ingestion issue
 func UpdateEventHelper(eventHelper structs.EventHelperUpdate) error {
-    query := `
+	query := `
         UPDATE event_helper
         SET 
             carplate = $1,
@@ -67,46 +67,46 @@ func UpdateEventHelper(eventHelper structs.EventHelperUpdate) error {
             AND email = $5
             AND shift = $6
     `
-    _, err := config.Dbpool.Exec(context.Background(), query,
-        eventHelper.NewCarplate, 
-        eventHelper.NewEmail,    
-        eventHelper.NewShift,  
-        eventHelper.OldCarplate,
-        eventHelper.OldEmail,
-        eventHelper.OldShift,
-    )
+	_, err := config.Dbpool.Exec(context.Background(), query,
+		eventHelper.NewCarplate,
+		eventHelper.NewEmail,
+		eventHelper.NewShift,
+		eventHelper.OldCarplate,
+		eventHelper.OldEmail,
+		eventHelper.OldShift,
+	)
 
-    fmt.Println("here is carplate", eventHelper.NewCarplate);
+	fmt.Println("here is carplate", eventHelper.NewCarplate)
 
-    if err != nil {
-        fmt.Println("Error updating event helper:", err)
-        return err
-    }
+	if err != nil {
+		fmt.Println("Error updating event helper:", err)
+		return err
+	}
 
-    return nil
+	return nil
 }
 
 // need to think bout how to make it take a body of ids with composite keys
 func DeleteEventHelper(eventHelper structs.EventHelper) error {
-    query := `
+	query := `
         DELETE FROM event_helper
         WHERE
             carplate = $1
             AND email = $2
             AND shift = $3
     `
-    _, err := config.Dbpool.Exec(context.Background(), query,
-        eventHelper.Carplate,
-        eventHelper.Email,
-        eventHelper.Shift,
-    )
+	_, err := config.Dbpool.Exec(context.Background(), query,
+		eventHelper.Carplate,
+		eventHelper.Email,
+		eventHelper.Shift,
+	)
 
-    if err != nil {
-        fmt.Println("Error deleting event helper:", err)
-        return err
-    }
+	if err != nil {
+		fmt.Println("Error deleting event helper:", err)
+		return err
+	}
 
-    return nil
+	return nil
 }
 
 func GetEventHelperDropdownData() ([]structs.EventHelperDropdownData, error) {

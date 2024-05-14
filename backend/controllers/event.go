@@ -141,24 +141,11 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllStops(w http.ResponseWriter, r *http.Request) {
-	routes, err := services.GetAllRoutes()
+	output, err := services.GetAllStops()
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Error getting routes", 500)
 		return
-	}
-
-	var output [][]structs.RouteStep
-
-	for _, route := range routes {
-		stops, err := services.GetAllRouteSteps(route.RouteName)
-		if err != nil {
-			fmt.Println(err)
-			http.Error(w, "Error getting route steps", 500)
-			return
-		}
-
-		output = append(output, stops)
 	}
 
 	parsed, err := json.Marshal(output)
@@ -170,4 +157,22 @@ func GetAllStops(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(200)
 	w.Write(parsed)
+}
+
+func GetCurrentBuses(w http.ResponseWriter, r *http.Request) {
+	currentBuses, err := services.GetCurrentBuses()
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(500)
+		return
+	}
+
+	formatted, err := json.Marshal(currentBuses)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+
+	w.WriteHeader(200)
+	w.Write(formatted)
 }
