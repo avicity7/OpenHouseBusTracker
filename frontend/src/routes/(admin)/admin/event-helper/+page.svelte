@@ -4,7 +4,7 @@
     import ToolTip from '$lib/components/ToolTip.svelte';
 
     export let data;
-    const { backend_uri} = data
+    const { backend_uri, helperData } = data
     let eventHelper: EventHelper[] = [];
 
     async function deleteEventHelper(eventHelperToDelete: EventHelper) {
@@ -29,14 +29,15 @@
         }
     }
 
-    function formatTimestamp(timestamp: string): string {
-        const utcDate = new Date(timestamp);
-        const formattedDate = utcDate.toLocaleString();
-        return formattedDate;
-    }
+    // function formatTimestamp(timestamp: string): string {
+    //     const utcDate = new Date(timestamp);
+    //     const formattedDate = utcDate.toLocaleString();
+    //     return formattedDate;
+    // }
+
     onMount(() => {
-        if (data && data.data){
-            eventHelper = data.data
+        if (helperData){
+            eventHelper = helperData    
         }
     })
 </script>
@@ -54,8 +55,7 @@
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus Carplate</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student Email</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Time</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Time</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shift</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
@@ -64,8 +64,7 @@
                         <tr class="hover:bg-gray-100">
                             <td class="px-6 py-4 whitespace-nowrap">{helper.Carplate}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{helper.Email}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(helper.StartTime)}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">{formatTimestamp(helper.EndTime)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{helper.Shift ? 'AM' : 'PM'}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 <div class="flex items-center">
                                     <a href={`event-helper/update-helper/${encodeURIComponent(JSON.stringify(helper))}`} class="text-slate-500 hover:text-green-500 mr-8">
