@@ -116,6 +116,8 @@ type RouteStep struct {
 	RouteName string
 	StopName  string
 	Order     int
+	Lng       float64
+	Lat       float64
 }
 
 type Event struct {
@@ -134,6 +136,7 @@ type EventInput struct {
 
 type Route struct {
 	RouteName string
+	Color     string
 }
 
 type EventHelper struct {
