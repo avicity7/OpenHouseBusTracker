@@ -3,7 +3,9 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
 	"server/config"
 	"server/services"
 	"server/structs"
@@ -38,6 +40,37 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 	w.Write(formatted)
 }
+
+func BulkCreateUsers(w http.ResponseWriter, r *http.Request) {
+	file, _, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	tempFile, err := os.CreateTemp("", "users-*.csv")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer tempFile.Close()
+
+	_, err = io.Copy(tempFile, file)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = services.BulkCreateUsers(tempFile.Name())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+}
+
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	var login structs.Login

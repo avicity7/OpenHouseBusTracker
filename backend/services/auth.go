@@ -2,11 +2,15 @@ package services
 
 import (
 	"context"
+	"encoding/csv"
+	"errors"
 	"fmt"
+	"io"
 	"os"
 	"server/config"
 	"server/structs"
 	"server/utils"
+	// "strconv"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -119,6 +123,86 @@ func CreateUser(user structs.NewUser) error {
 	return nil
 }
 
+func BulkCreateUsers(csvFilePath string) error {
+	file, err := os.Open(csvFilePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	if _, err := reader.Read(); err != nil {
+		return err
+	}
+
+	tx, err := config.Dbpool.Begin(context.Background())
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback(context.Background())
+
+	for {
+		record, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+
+		if len(record) < 3 {
+			return errors.New("invalid record length")
+		}
+
+		// role, err := strconv.Atoi(record[3])
+		// if err != nil {
+		// 	return err
+		// }
+
+		user := structs.NewUser{
+			Name:     record[0],
+			Email:    record[1],
+			Password: record[2],
+			Role:     0,
+		}
+
+		err = createUserInTransaction(tx, user)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = tx.Commit(context.Background())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+
+func createUserInTransaction(tx pgx.Tx, user structs.NewUser) error {
+	query := `
+		INSERT INTO user_table (name, email, password, role_id, verification_token) 
+		VALUES ($1, $2, $3, $4, $5)
+	`
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
+	if err != nil {
+		return err
+	}
+
+	verificationToken := utils.GenerateRandomToken(20)
+
+	_, err = tx.Exec(context.Background(), query, user.Name, user.Email, hashedPassword, user.Role, verificationToken)
+	if err != nil {
+		return err
+	}
+
+	utils.SendEmail(verificationToken, user.Email)
+	return nil
+}
+
 func GetUser(email string) (structs.ReturnedUser, error) {
 	var user structs.ReturnedUser
 	query := `
@@ -194,3 +278,5 @@ func VerifyEmail(verification_token string) (string, error) {
 	}
 	return username, nil
 }
+
+
