@@ -3,6 +3,8 @@
   export let data
   let { backend_uri, session, users, roles } = data
 
+  let csvFile: HTMLInputElement | null = null; 
+
   const updateUserRole = async(user: User) => {
     let roleInt = roles.find((role) => role.Description == user.Role)?.RoleId
     await fetch(`${backend_uri}:3000/users/update-user`, {
@@ -19,9 +21,33 @@
     })
   }
 
+  const uploadCSV = async () => {
+    if (!csvFile || !csvFile.files || csvFile.files.length === 0) {
+      alert('Please select a file.');
+      return;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', csvFile.files[0]);
+
+    const response = await fetch(`${backend_uri}:3000/auth/bulk-create-users`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (response.ok) {
+      console.log('Users imported successfully');
+    } else {
+      const error = await response.text();
+      console.log('Error importing users: ', error);
+    }
+  };
+
 </script>
 
 <div class="p-6 md:p-12">
+  <input type="file" bind:this={csvFile} />
+  <button on:click={uploadCSV}>Upload CSV</button>
   <div class="max-w-sm md:max-w-4xl mx-auto bg-white p-2 md:p-8 rounded-lg">
     <table class="w-full">
       <thead>
