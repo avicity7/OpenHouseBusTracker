@@ -31,11 +31,12 @@ func GetFollowBus(email string) (structs.EventSchedule, error) {
 	var eventSchedule structs.EventSchedule
 
 	query := `
-		SELECT bus_schedule_id, eh.carplate, driver_name, route_name, bs.start_time, bs.end_time FROM event_helper eh
-		JOIN bus_schedule bs ON eh.carplate = bs.carplate 
-		JOIN driver d ON bs.driver_id = d.driver_id 
-		WHERE email = @Email
-		AND NOW() AT TIME ZONE 'Etc/GMT-8' BETWEEN bs.start_time AND bs.end_time
+	SELECT bus_schedule_id, eh.carplate, driver_name, route_name, bs.start_time, bs.end_time FROM event_helper eh
+	JOIN bus_schedule bs ON eh.carplate = bs.carplate 
+	JOIN driver d ON bs.driver_id = d.driver_id 
+	WHERE email = 'karlorjalo@gmail.com'
+	AND shift = NOT (CURRENT_TIME AT TIME ZONE 'Etc/GMT-8' >= '12:00:00')
+	AND NOW() AT TIME ZONE 'Etc/GMT-8' BETWEEN bs.start_time AND bs.end_time
 	`
 
 	args := pgx.NamedArgs{
@@ -170,4 +171,31 @@ func CreateEvent(carplate string, routeName string, eventId int, stopName string
 	config.Melody.Broadcast([]byte("refresh"))
 
 	return nil
+}
+
+func GetCurrentBuses() ([]structs.CurrentBus, error) {
+	query := `
+		WITH ranked AS (
+			SELECT *, ROW_NUMBER() OVER (PARTITION BY carplate ORDER BY timestamp DESC) row_num FROM "event" e
+		)
+		SELECT carplate, r.route_name, color, event_id, lng, lat FROM ranked r
+		JOIN stop ON stop.stop_name = r.stop_name
+		JOIN route ON route.route_name = r.route_name
+		WHERE row_num = 1
+	`
+
+	var currentBuses []structs.CurrentBus
+
+	rows, err := config.Dbpool.Query(context.Background(), query)
+	if err != nil {
+		return []structs.CurrentBus{}, err
+	}
+
+	for rows.Next() {
+		var currentBus structs.CurrentBus
+		rows.Scan(&currentBus.Carplate, &currentBus.RouteName, &currentBus.Color, &currentBus.EventId, &currentBus.Lng, &currentBus.Lat)
+		currentBuses = append(currentBuses, currentBus)
+	}
+
+	return currentBuses, nil
 }

@@ -3,14 +3,14 @@ package structs
 import "time"
 
 type NewUser struct {
-	Name 	 string
+	Name     string
 	Email    string
 	Password string
 	Role     int
 }
 
 type User struct {
-	Name 			  string
+	Name              string
 	Email             string
 	Password          string
 	Role              string
@@ -18,7 +18,7 @@ type User struct {
 }
 
 type ReturnedUser struct {
-	Name 		      string
+	Name              string
 	Email             string
 	Role              string
 	VerificationToken string
@@ -143,19 +143,19 @@ type Route struct {
 }
 
 type EventHelper struct {
-	Carplate  string
-	Email     string
-	Shift 	  bool
+	Carplate string
+	Email    string
+	Shift    bool
 }
 
 type EventHelperUpdate struct {
-	OldCarplate  string
-	OldEmail     string
-	OldShift	 bool
+	OldCarplate string
+	OldEmail    string
+	OldShift    bool
 
-	NewCarplate  string
-	NewEmail     string
-	NewShift 	 bool
+	NewCarplate string
+	NewEmail    string
+	NewShift    bool
 }
 
 type FollowBusEvent struct {
@@ -179,6 +179,15 @@ type Stop struct {
 	StopName string
 	Lng      float64
 	Lat      float64
+}
+
+type CurrentBus struct {
+	Carplate  string
+	RouteName string
+	Color     string
+	EventId   int
+	Lng       float64
+	Lat       float64
 }
 
 // could try to use clearer seperation of structs / reduce structs needed

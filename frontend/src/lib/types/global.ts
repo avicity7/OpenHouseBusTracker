@@ -101,6 +101,15 @@ export type Stop = {
   Lat: number,
 }
 
+export type CurrentBus = {
+  Carplate: string,
+  RouteName: string,
+  Color: string,
+  EventId: number,
+  Lat: number,
+  Lng: number
+}
+
 // export type Schedule = {
 //   BusId: number;
 //   RouteId: number;

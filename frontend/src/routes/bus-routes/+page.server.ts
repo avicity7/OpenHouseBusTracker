@@ -65,7 +65,7 @@ export const load = async ({ fetch }) => {
         parsed = await response.json()
         coords.push(parsed.matchings[0].geometry)
       }
-  
+      
       coordCollection.push(coords)
     }
   }
