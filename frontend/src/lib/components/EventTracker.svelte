@@ -8,6 +8,7 @@
   export let followBus: FollowBusEvent 
   export let isEditable: boolean
   export let ws: WebSocket
+  let infoOpened = false
 
   let events: Array<Event> = [{'StopName': '', 'Order': 0, 'EventId': 0, 'Timestamp': ''}]
   let width = 0,
@@ -130,23 +131,36 @@
 
 <div class="p-6 md:p-12">
   <div class="bg-white max-w-4xl mx-auto flex flex-col rounded-lg p-8 mt-8">
-    <div class="flex justify-between">
+    <div class="flex justify-between items-center">
       <h1 class="text-2xl">{followBus?.Carplate}</h1>
+      {#if !infoOpened}
+        <button on:click={() => { infoOpened = true }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M11 17h2v-6h-2zm1-8q.425 0 .713-.288T13 8t-.288-.712T12 7t-.712.288T11 8t.288.713T12 9m0 13q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8"/></svg>
+        </button>
+      {:else}
+        <button on:click={() => { infoOpened = false }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path fill="currentColor" d="M18.3 5.71a.996.996 0 0 0-1.41 0L12 10.59L7.11 5.7A.996.996 0 1 0 5.7 7.11L10.59 12L5.7 16.89a.996.996 0 1 0 1.41 1.41L12 13.41l4.89 4.89a.996.996 0 1 0 1.41-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4"/></svg>
+        </button>
+      {/if}
     </div>
-    <div class="flex justify-between mt-1">
-      <h2 class="text-xl font-semibold">{followBus.DriverName}</h2>
-      <h2 class="text-xl font-semibold">{followBus.RouteName}</h2>
-    </div>
-    <div class="flex justify-between mt-4">
-      <div class="flex flex-col">
-        <p class="font-semibold text-stone-600">Start Time</p>
-        <p class="font-semibold">{new Date(followBus.BusStartTime).toLocaleString('en-gb', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+    {#if infoOpened}
+      <div class="mt-4 border-2 border-stone-200 p-4 rounded-lg">
+        <div class="flex justify-between mt-1">
+          <h2 class="text-xl font-semibold">{followBus.DriverName}</h2>
+          <h2 class="text-xl font-semibold text-end">{followBus.RouteName}</h2>
+        </div>
+        <div class="flex justify-between mt-4">
+          <div class="flex flex-col">
+            <p class="font-semibold text-stone-600">Start Time</p>
+            <p class="font-semibold">{new Date(followBus.BusStartTime).toLocaleString('en-gb', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+          </div>
+          <div class="flex flex-col text-end">
+            <p class="font-semibold text-stone-600">End Time</p>
+            <p class="font-semibold">{new Date(followBus.BusEndTime).toLocaleString('en-gb', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+          </div>
+        </div>
       </div>
-      <div class="flex flex-col text-end">
-        <p class="font-semibold text-stone-600">End Time</p>
-        <p class="font-semibold">{new Date(followBus.BusEndTime).toLocaleString('en-gb', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
-      </div>
-    </div>
+    {/if}
     <div class="h-1 bg-stone-300 w-full rounded-full mt-12 flex items-center relative z-0">
       <div class="h-1 bg-red-600 absolute rounded-full" style={`width: ${width}%`}></div>
       <div class="grid w-full" style={`grid-template-columns: repeat(${stops.length}, minmax(0, 1fr))`}>
@@ -199,12 +213,12 @@
       <button on:click|preventDefault={createRestartEvent} class="mx-auto mt-8 text-stone-400 hover:text-red-600">
         <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><path fill="currentColor" d="M18.258 3.508a.75.75 0 0 1 .463.693v4.243a.75.75 0 0 1-.75.75h-4.243a.75.75 0 0 1-.53-1.28L14.8 6.31a7.25 7.25 0 1 0 4.393 5.783a.75.75 0 0 1 1.488-.187A8.75 8.75 0 1 1 15.93 5.18l1.51-1.51a.75.75 0 0 1 .817-.162"/></svg>
       </button>
-      <div class="flex mx-auto mt-12 text-stone-700 font-medium">
+      <!-- <div class="flex mx-auto mt-12 text-stone-700 font-medium">
         <p>Have an emergency?</p>
         <button class="ml-1 text-red-700 hover:text-red-800" on:click|preventDefault={createEmergency}>
           Alert admins
         </button>
-      </div>
+      </div> -->
     {/if}
   </div>
 </div>
