@@ -9,9 +9,9 @@
   })
 </script>
 <div class="max-w-xl text-zinc-800 pt-16">
-  <h1 class="w-screen pt-12 pl-6 md:pl-24 font-bold text-3xl mb-24">Sign Up</h1>
+  <h1 class="w-screen p-12 md:pl-24 font-bold text-3xl">Sign Up</h1>
   <form 
-    class="flex flex-col pl-6 md:pl-24 mb-20"
+    class="flex flex-col p-12 md:pl-24 pt-0"
     method='POST'
     action="?/signUp"
   >

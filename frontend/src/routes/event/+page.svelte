@@ -32,9 +32,6 @@
 </script>
 
 <div class="p-6 md:p-12">
-  <h1 class="text-3xl font-semibold">
-    Bus Event
-  </h1>
   {#if followBus == null || followBus.Carplate == ''}
     <div class="w-full mt-28 flex">
       <form on:submit={createFollowBus} class="mx-auto flex flex-col">

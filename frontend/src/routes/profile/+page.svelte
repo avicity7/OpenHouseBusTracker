@@ -11,7 +11,7 @@
   })
 </script>
 
-<div class="bg-zinc-100 flex flex-col justify-center dark:bg-zinc-800 pb-32 pt-[8rem]">
+<div class="bg-zinc-100 flex flex-col justify-center dark:bg-zinc-800 pt-16">
   <div class="font-albert max-w-xl text-zinc-800 dark:text-zinc-100">
     {#if session && account.Email != ''}
       <div class="ml-6 mr-6 md:mr-0 md:ml-24 flex flex-col">
@@ -36,8 +36,8 @@
           </form>
       </div>
     {:else}
-      <h1 class="w-full pt-12 pl-6 md:pl-24 font-bold text-3xl mb-24">Sign in</h1>
-      <form class="flex flex-col pl-6 md:pl-24 mb-20" method="POST" action="?/login">
+      <h1 class="w-full p-12 md:pl-24 font-bold text-3xl">Sign in</h1>
+      <form class="flex flex-col p-12 md:pl-24 pt-0" method="POST" action="?/login">
         <div class="font-medium mb-4">Email</div>
         <input
           data-testid="sign-in-email-input"
