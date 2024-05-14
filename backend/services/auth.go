@@ -20,6 +20,7 @@ func CreateAccessToken(user structs.ReturnedUser) []byte {
 
 	access_token, err := jwt.NewBuilder().
 		Issuer("server").
+		Claim("Name", user.Name).
 		Claim("Email", user.Email).
 		Claim("Role", user.Role).
 		Expiration(time.Now().Add(24 * time.Second)).
@@ -41,6 +42,7 @@ func CreateRefreshToken(user structs.ReturnedUser) []byte {
 
 	refresh_token, err := jwt.NewBuilder().
 		Issuer("server").
+		Claim("Name", user.Name).
 		Claim("Email", user.Email).
 		Claim("Role", user.Role).
 		Expiration(time.Now().Add(168 * time.Hour)).
@@ -85,11 +87,11 @@ func VerifyAccess(access []byte) error {
 	_ = parsed_access
 	return nil
 }
-
+ 
 func CreateUser(user structs.NewUser) error {
 	query := `
-		INSERT INTO user_table (email, password, role_id, verification_token) 
-		VALUES (@Email, @Password, @Role, @VerificationToken)
+		INSERT INTO user_table (name, email, password, role_id, verification_token) 
+		VALUES (@Name, @Email, @Password, @Role, @VerificationToken)
 	`
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
@@ -100,6 +102,7 @@ func CreateUser(user structs.NewUser) error {
 	verification_token := utils.GenerateRandomToken(20)
 
 	args := pgx.NamedArgs{
+		"Name": 			 user.Name,
 		"Email":             user.Email,
 		"Password":          hashedPassword,
 		"Role":              user.Role,
@@ -119,7 +122,7 @@ func CreateUser(user structs.NewUser) error {
 func GetUser(email string) (structs.ReturnedUser, error) {
 	var user structs.ReturnedUser
 	query := `
-		SELECT email, role_name, verification_token FROM user_table 
+		SELECT name, email, role_name, verification_token FROM user_table 
 		JOIN user_role ON user_table.role_id = user_role.role_id 
 		WHERE email = @Email
 	`
@@ -127,7 +130,7 @@ func GetUser(email string) (structs.ReturnedUser, error) {
 		"Email": email,
 	}
 
-	err := config.Dbpool.QueryRow(context.Background(), query, args).Scan(&user.Email, &user.Role, &user.VerificationToken)
+	err := config.Dbpool.QueryRow(context.Background(), query, args).Scan(&user.Name, &user.Email, &user.Role, &user.VerificationToken)
 	if err != nil {
 		return structs.ReturnedUser{}, err
 	}
@@ -138,7 +141,7 @@ func GetUser(email string) (structs.ReturnedUser, error) {
 func Login(login structs.Login) (structs.ReturnedUser, error) {
 	var user structs.User
 	query := `
-		SELECT email, password, role_name, verification_token FROM user_table 
+		SELECT name, email, password, role_name, verification_token FROM user_table 
 		JOIN user_role ON user_table.role_id = user_role.role_id 
 		WHERE email = @Email
 	`
@@ -146,7 +149,7 @@ func Login(login structs.Login) (structs.ReturnedUser, error) {
 		"Email": login.Email,
 	}
 
-	err := config.Dbpool.QueryRow(context.Background(), query, args).Scan(&user.Email, &user.Password, &user.Role, &user.VerificationToken)
+	err := config.Dbpool.QueryRow(context.Background(), query, args).Scan(&user.Name, &user.Email, &user.Password, &user.Role, &user.VerificationToken)
 	if err != nil {
 		return structs.ReturnedUser{}, err
 	}
@@ -157,6 +160,7 @@ func Login(login structs.Login) (structs.ReturnedUser, error) {
 	}
 
 	returnedUser := structs.ReturnedUser{
+		Name: 			   user.Name,	
 		Email:             user.Email,
 		Role:              user.Role,
 		VerificationToken: user.VerificationToken,
