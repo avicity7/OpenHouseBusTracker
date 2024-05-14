@@ -1,20 +1,35 @@
 <script lang="ts">
   export let data
-  let { buses, backend_uri } = data
+  let { buses, backend_uri, env } = data
   import type { Bus } from '$lib/types/global.js';
+	import { onMount } from 'svelte';
+	let ws: WebSocket;
   
   const getBuses = async() => {
     const response = await fetch(`${backend_uri}:3000/bus/get-buses`)
     buses = await response.json() as Array<Bus>  
-    }
+  }
     
-    const deleteBus = async(carplate: string) => {
-      await fetch(`${backend_uri}:3000/bus/delete-bus/${carplate}`, {
-        method: 'DELETE'
-      })
-      getBuses()
+  const deleteBus = async(carplate: string) => {
+    await fetch(`${backend_uri}:3000/bus/delete-bus/${carplate}`, {
+      method: 'DELETE'
+    })
+    getBuses()
+  }
+
+  onMount(() => {
+		ws = new WebSocket(`${env == 'PROD' ? 'wss' : 'ws'}://${backend_uri.split('//')[1]}:3000/ws`);
+
+    ws.onmessage = async (msg) => {
+      let parts = msg.data.split(' ');
+      if (parts[0] == 'refresh') {
+        getBuses()
+      }
     }
-  </script>
+  })
+
+    
+</script>
 <div>
   <div class="max-w-md md:max-w-4xl flex mx-auto">
     <a href="/admin/buses/create-bus" class="w-fit bg-red-700 hover:bg-red-800 px-8 py-2 my-6 text-white rounded-md">
