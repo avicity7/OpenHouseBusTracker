@@ -70,6 +70,7 @@ func UpdateUserRole(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(500)
 	}
 	config.Cache.Delete("Users")
+	config.Cache.Delete(user.Email)
 
 	w.WriteHeader(200)
 }

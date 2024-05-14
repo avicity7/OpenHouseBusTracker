@@ -10,9 +10,9 @@ export const load: Load = async ({ fetch }) => {
             throw new Error("Failed to fetch dropdown data");
         }
         
-        const data = await response.json() as Schedule[];
+        const dropdownData = await response.json() as Schedule[];
         return {
-            data
+            dropdownData
         };
 
     } catch (error) {

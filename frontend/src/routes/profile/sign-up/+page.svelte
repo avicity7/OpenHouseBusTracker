@@ -20,21 +20,21 @@
       type="text"
       autocomplete="off"
       name="name"
-      class="border-2 border-zinc-200 rounded-full focus:border-red-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
+      class="px-3 border-2 border-zinc-200 rounded-full focus:border-red-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
     />
     <div class="font-medium mb-4 mt-8">Email</div>
     <input 
       type="text"
       autocomplete="off"
       name="email"
-      class="border-2 border-zinc-200 rounded-full focus:border-red-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
+      class="px-3 border-2 border-zinc-200 rounded-full focus:border-red-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
     />
     <div class="font-medium mb-4 mt-8">Password</div>
     <input 
       type="password"
       autocomplete="off"
       name="password"
-      class="border-2 border-zinc-200 rounded-full focus:border-red-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
+      class="px-3 border-2 border-zinc-200 rounded-full focus:border-red-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
     />
     <button class="py-1 bg-red-800 hover:bg-red-900 font-medium text-white rounded-full mt-6" type="submit">Sign up</button>
     <div class="text-zinc-400 font-medium text-sm mx-6 md:mx-24 mt-8 text-center">
