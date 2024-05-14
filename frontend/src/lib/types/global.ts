@@ -79,11 +79,14 @@ export type Event = {
 export type RouteStep = {
   RouteName: string,
   StopName: string,
-  Order: number
+  Order: number,
+  Lng: number,
+  Lat: number
 }
 
 export type Route = {
-  RouteName: string
+  RouteName: string,
+  Color: string
 }
 
 export type EventHelper = {

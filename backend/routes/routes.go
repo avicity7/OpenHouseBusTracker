@@ -13,6 +13,6 @@ func Route(r *chi.Mux) {
 		r.Get("/", http.HandlerFunc(controllers.GetAllRoutesHandler))
 		r.Get("/{name}", http.HandlerFunc(controllers.GetRouteByNameHandler))
 		r.Post("/create-route", controllers.CreateRouteHandler)
-		r.Delete("/delete-route/{route-name}", controllers.DeleteRouteHandler)
+		r.Delete("/delete-route/{route_name}", controllers.DeleteRouteHandler)
 	})
 }

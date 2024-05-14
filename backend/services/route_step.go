@@ -12,7 +12,11 @@ import (
 )
 
 func GetAllRouteSteps(routeName string) ([]structs.RouteStep, error) {
-	rows, err := config.Dbpool.Query(context.Background(), `SELECT route_name, stop_name, "order" FROM route_step ORDER BY "order" ASC`)
+	rows, err := config.Dbpool.Query(context.Background(), `
+		SELECT route_name, stop.stop_name, "order", lng, lat FROM route_step rs
+		JOIN stop ON rs.stop_name = stop.stop_name 
+		ORDER BY "order" ASC
+	`)
 	if err != nil {
 		fmt.Println("Error fetching route steps:", err)
 		return nil, err
@@ -22,7 +26,7 @@ func GetAllRouteSteps(routeName string) ([]structs.RouteStep, error) {
 	var routeSteps []structs.RouteStep
 	for rows.Next() {
 		var routeStep structs.RouteStep
-		if err := rows.Scan(&routeStep.RouteName, &routeStep.StopName, &routeStep.Order); err != nil {
+		if err := rows.Scan(&routeStep.RouteName, &routeStep.StopName, &routeStep.Order, &routeStep.Lng, &routeStep.Lat); err != nil {
 			fmt.Println("Error scanning route step row:", err)
 			return nil, err
 		}

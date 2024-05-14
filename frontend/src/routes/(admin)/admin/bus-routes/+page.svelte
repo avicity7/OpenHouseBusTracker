@@ -6,6 +6,7 @@
   await fetch(`${backend_uri}:3000/route/delete-route/${selectedRoute}`, {
       method: 'DELETE'
     })
+    location.reload()
  }
 
  const deleteRouteStep = async (selectedRoute: string, selectedStop: string) => {

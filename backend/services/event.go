@@ -61,7 +61,6 @@ func GetAllFollowBus() ([]structs.FollowBusEvent, error) {
 		JOIN event_helper eh ON bs.carplate = eh.carplate
 		JOIN driver d ON bs.driver_id = d.driver_id
 		WHERE NOW() AT TIME ZONE 'Etc/GMT-8' BETWEEN bs.start_time AND bs.end_time
-		AND eh.start_time >= bs.start_time 
 	`
 
 	rows, err := config.Dbpool.Query(context.Background(), query)
