@@ -9,15 +9,22 @@ export const load = async ({ fetch, locals }) => {
             throw new Error("Email not found in session");
         }
 
-        const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/get-user-schedule/${email}`);
-        if (!response.ok) {
+        const currentResponse = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/get-user-schedule/${email}`);
+        if (!currentResponse.ok) {
             throw new Error("Failed to fetch current schedules");
         }
         
-        const data = await response.json() as Schedule[];
-        
+        const futureResponse = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/get-future-user-schedule/${email}`);
+        if (!futureResponse.ok) {
+            throw new Error("Failed to fetch future schedules");
+        }
+
+        const currentSchedules = await currentResponse.json() as Schedule[];
+        const futureSchedules = await futureResponse.json() as Schedule[];
+
         return {
-          data
+            currentSchedules,
+            futureSchedules
         };
 
     } catch (error) {

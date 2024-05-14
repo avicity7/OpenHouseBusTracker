@@ -166,8 +166,6 @@ func GetDropdownData() ([]structs.ScheduleDropdownData, error) {
 func GetScheduleByID(id int) (structs.UpdateSchedule, error) {
 	var schedule structs.UpdateSchedule
 
-	fmt.Println("Received schedule ID in service:", id)
-
 	query := `
 	SELECT 
 		bs.bus_schedule_id,
@@ -207,21 +205,92 @@ func GetScheduleByUser(email string) ([]structs.Schedule, error) {
     var schedules []structs.Schedule
 
     query := `
-        SELECT
-			bs.bus_schedule_id,
-            eh.carplate,
-            d.driver_name,
-            bs.route_name,
-            bs.start_time,
-            bs.end_time
-        FROM 
-            event_helper eh
-        JOIN 
-            bus_schedule bs ON eh.carplate = bs.carplate 
-        JOIN 
-            driver d ON bs.driver_id = d.driver_id
-        WHERE 
-            eh.email = $1
+		SELECT 
+			bus_schedule_id,
+		 	eh.carplate,
+			driver_name, 
+			route_name, 
+			bs.start_time, 
+			bs.end_time 
+		FROM 
+			event_helper eh
+		JOIN 
+			bus_schedule bs ON eh.carplate = bs.carplate 
+		JOIN 
+			driver d ON bs.driver_id = d.driver_id 
+		WHERE 
+			email = $1
+		AND 
+			shift = NOT (CURRENT_TIME AT TIME ZONE 'Etc/GMT-8' >= '12:00:00')
+		AND 
+			NOW() AT TIME ZONE 'Etc/GMT-8' BETWEEN bs.start_time AND bs.end_time
+    `
+
+    rows, err := config.Dbpool.Query(context.Background(), query, email)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    for rows.Next() {
+        var schedule structs.Schedule
+        err := rows.Scan(
+            &schedule.BusScheduleId,
+            &schedule.Carplate,
+            &schedule.DriverName,
+            &schedule.RouteName,
+            &schedule.StartTime,
+            &schedule.EndTime,
+        )
+        if err != nil {
+            return nil, err
+        }
+        schedules = append(schedules, schedule)
+    }
+
+    return schedules, nil
+}
+
+func GetFutureScheduleByUser(email string) ([]structs.Schedule, error) {
+    var schedules []structs.Schedule
+
+    query := `
+		WITH current_shifts AS (
+			SELECT 
+				bs.bus_schedule_id
+			FROM 
+				event_helper eh
+			JOIN 
+				bus_schedule bs ON eh.carplate = bs.carplate 
+			JOIN 
+				driver d ON bs.driver_id = d.driver_id 
+			WHERE 
+				email = $1
+			AND 
+				shift = NOT (CURRENT_TIME AT TIME ZONE 'Etc/GMT-8' >= '12:00:00')
+			AND 
+				NOW() AT TIME ZONE 'Etc/GMT-8' BETWEEN bs.start_time AND bs.end_time
+		)
+		
+		SELECT 
+			bus_schedule_id,
+			eh.carplate, 
+			driver_name, 
+			route_name, 
+			bs.start_time, 
+			bs.end_time 
+		FROM 
+			event_helper eh
+		JOIN 
+			bus_schedule bs ON eh.carplate = bs.carplate 
+		JOIN 
+			driver d ON bs.driver_id = d.driver_id 
+		WHERE 
+			email = $1
+		AND 
+			bs.start_time > NOW() AT TIME ZONE 'Etc/GMT-8'
+		AND 
+			bs.bus_schedule_id NOT IN (SELECT bus_schedule_id FROM current_shifts);
     `
 
     rows, err := config.Dbpool.Query(context.Background(), query, email)
