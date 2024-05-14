@@ -71,3 +71,22 @@ func DeleteBus(carplate string) error {
 	}
 	return nil
 }
+
+func UpdateBusStatus(status bool, carplate string) error {
+	query := `
+		UPDATE bus
+		SET status = @Status 
+		WHERE carplate = @Carplate
+	`
+
+	args := pgx.NamedArgs{
+		"Carplate": carplate,
+		"Status":   status,
+	}
+	_, err := config.Dbpool.Exec(context.Background(), query, args)
+	if err != nil {
+		fmt.Println("error adding driver:", err)
+		return err
+	}
+	return nil
+}

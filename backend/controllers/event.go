@@ -137,6 +137,21 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var status bool
+
+	if input.EventId == 4 || input.EventId == 5 {
+		status = false
+	} else if input.EventId == 1 || input.EventId == 2 {
+		status = true
+	}
+
+	err = services.UpdateBusStatus(status, input.Carplate)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "Error on update bus", 500)
+		return
+	}
+
 	w.WriteHeader(200)
 }
 

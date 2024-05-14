@@ -68,28 +68,13 @@
     getEvents()
   }
 
-  const createRestartEvent = async() => {
+  const createSpecificEvent = async(eventId: number) => {
     let payload = {
       Carplate: followBus?.Carplate,
       RouteName: followBus?.RouteName,
-      EventId: 6,
+      EventId: eventId,
       StopName: events[0].StopName 
     }
-    await fetch(`${PUBLIC_BACKEND_URL}:3000/event/create-event`, {
-      method: 'PUT',
-      body: JSON.stringify(payload),
-      headers: {
-        'content-type': 'application/json'
-      },
-    })
-
-    payload = {
-      Carplate: followBus?.Carplate,
-      RouteName: followBus?.RouteName,
-      EventId: 1,
-      StopName: stops[0].StopName 
-    }
-
     await fetch(`${PUBLIC_BACKEND_URL}:3000/event/create-event`, {
       method: 'PUT',
       body: JSON.stringify(payload),
@@ -101,20 +86,10 @@
     getEvents()
   }
 
-  const createEmergency = async() => {
-    let payload = {
-      Carplate: followBus?.Carplate,
-      RouteName: followBus?.RouteName,
-      EventId: 5,
-      StopName: events[0].StopName 
-    }
-    await fetch(`${PUBLIC_BACKEND_URL}:3000/event/create-event`, {
-      method: 'PUT',
-      body: JSON.stringify(payload),
-      headers: {
-        'content-type': 'application/json'
-      },
-    })
+
+  const createRestartEvent = () => {
+    createSpecificEvent(6)
+    createSpecificEvent(1)
   }
 
   onMount(async () => {
@@ -201,18 +176,35 @@
             Start Tour
           </button>
         {:else if events[0].EventId == 1 || events[0].EventId == 3}
-          <button class="bg-red-700 hover:bg-red-800 px-12 py-2 rounded-lg text-white" on:click={createEvent}>
+          <button class="bg-red-700 hover:bg-red-800 px-20 py-2 rounded-lg text-white" on:click={createEvent}>
             Arrived
           </button>
         {:else if events[0].EventId == 2}
-          <button class="bg-blue-700 hover:bg-blue-800 px-12 py-2 rounded-lg text-white" on:click={createEvent}>
+          <button class="bg-blue-700 hover:bg-blue-800 px-20 py-2 rounded-lg text-white" on:click={createEvent}>
             Departed
           </button>
         {/if}
       </div>
-      <button on:click|preventDefault={createRestartEvent} class="mx-auto mt-8 text-stone-400 hover:text-red-600">
-        <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><path fill="currentColor" d="M18.258 3.508a.75.75 0 0 1 .463.693v4.243a.75.75 0 0 1-.75.75h-4.243a.75.75 0 0 1-.53-1.28L14.8 6.31a7.25 7.25 0 1 0 4.393 5.783a.75.75 0 0 1 1.488-.187A8.75 8.75 0 1 1 15.93 5.18l1.51-1.51a.75.75 0 0 1 .817-.162"/></svg>
-      </button>
+      {#if events[0].EventId == 1 || events[0].EventId == 2 || events[0].EventId == 3}
+        <button on:click|preventDefault={createRestartEvent} class="mx-auto mt-8 text-stone-400 hover:text-red-600">
+          <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><path fill="currentColor" d="M18.258 3.508a.75.75 0 0 1 .463.693v4.243a.75.75 0 0 1-.75.75h-4.243a.75.75 0 0 1-.53-1.28L14.8 6.31a7.25 7.25 0 1 0 4.393 5.783a.75.75 0 0 1 1.488-.187A8.75 8.75 0 1 1 15.93 5.18l1.51-1.51a.75.75 0 0 1 .817-.162"/></svg>
+        </button>
+      {/if}
+      {#if events[0].Order != 0}
+        {#if events[0].EventId != 5}
+          <div class="flex flex-row mt-10">
+            <button class="mx-auto bg-orange-700 hover:bg-orange-800 px-20 py-2 rounded-lg text-white" on:click={() => createSpecificEvent(5)}>
+              Start break
+            </button>
+          </div>
+        {:else if events[0].EventId == 5}
+          <div class="flex flex-row mt-10">
+            <button class="mx-auto bg-green-700 hover:bg-green-800 px-20 py-2 rounded-lg text-white" on:click={() => createSpecificEvent(2)}>
+              End break
+            </button>
+          </div>
+        {/if}
+      {/if}
       <!-- <div class="flex mx-auto mt-12 text-stone-700 font-medium">
         <p>Have an emergency?</p>
         <button class="ml-1 text-red-700 hover:text-red-800" on:click|preventDefault={createEmergency}>
