@@ -33,25 +33,8 @@
 
 <div class="p-6 md:p-12">
   {#if followBus == null || followBus.Carplate == ''}
-    <div class="w-full mt-28 flex">
-      <form on:submit={createFollowBus} class="mx-auto flex flex-col">
-        <select
-          bind:value={selectedBus}
-          class="rounded-lg border-2 border-stone-400"
-        >
-          {#each buses as bus}
-            <option 
-              value={bus.Carplate}
-              selected={selectedBus.Carplate == bus.Carplate}
-            >
-              {bus.Carplate}
-            </option>
-          {/each}
-        </select>
-        <button type="submit" class="mt-12 bg-red-700 hover:bg-red-800 text-white rounded-md">
-          Follow Bus
-        </button>
-      </form>
+    <div class="mt-24 flex flex-col m-auto items-center">
+      <p class="text-stone-500 font-semibold">You're not assigned to any bus yet!</p>
     </div>
   {:else}
     <EventTracker {data} {followBus} {stops} {ws} isEditable={true}/>
