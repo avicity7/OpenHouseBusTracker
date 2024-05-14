@@ -39,6 +39,7 @@ export const actions = {
 
 export const load = async ({ locals, fetch }) => {
   let account: User = {
+    Name: '',
     Email: '',
     Role: '',
     VerificationToken: ''

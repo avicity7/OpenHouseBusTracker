@@ -32,9 +32,9 @@
         >
           {#each stops as stop}
             <option 
-              value={stop}
+              value={stop.StopName}
             >
-              {stop}
+              {stop.StopName}
             </option>
           {/each}
         </select>

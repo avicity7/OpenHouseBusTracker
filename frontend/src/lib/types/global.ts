@@ -11,6 +11,7 @@ export type Bus = {
 }
 
 export type User = {
+  Name: string,
   Email: string,
   Role: string,
   VerificationToken: string
@@ -78,11 +79,14 @@ export type Event = {
 export type RouteStep = {
   RouteName: string,
   StopName: string,
-  Order: number
+  Order: number,
+  Lng: number,
+  Lat: number
 }
 
 export type Route = {
-  RouteName: string
+  RouteName: string,
+  Color: string
 }
 
 export type EventHelper = {

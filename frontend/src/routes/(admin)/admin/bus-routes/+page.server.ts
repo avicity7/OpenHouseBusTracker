@@ -4,9 +4,15 @@ import type { Route, RouteStep } from "$lib/types/global"
 export const load = async () => {
 
   let response = await fetch(`${PUBLIC_BACKEND_URL}:3000/route/`)
-  const routes = await response.json() as Array<Route>
+  let routes = await response.json() as Array<Route>
+  if (!routes) {
+    routes = []
+  }
   response = await fetch(`${PUBLIC_BACKEND_URL}:3000/route-step/`)
-  const routeSteps = await response.json() as Array<RouteStep>
+  let routeSteps = await response.json() as Array<RouteStep>
+  if (!routeSteps) {
+    routeSteps = []
+  }
 
   return {
     routes,

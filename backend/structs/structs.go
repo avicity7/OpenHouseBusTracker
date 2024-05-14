@@ -3,12 +3,14 @@ package structs
 import "time"
 
 type NewUser struct {
+	Name 	 string
 	Email    string
 	Password string
 	Role     int
 }
 
 type User struct {
+	Name 			  string
 	Email             string
 	Password          string
 	Role              string
@@ -16,6 +18,7 @@ type User struct {
 }
 
 type ReturnedUser struct {
+	Name 		      string
 	Email             string
 	Role              string
 	VerificationToken string
@@ -116,6 +119,8 @@ type RouteStep struct {
 	RouteName string
 	StopName  string
 	Order     int
+	Lng       float64
+	Lat       float64
 }
 
 type Event struct {
@@ -134,6 +139,7 @@ type EventInput struct {
 
 type Route struct {
 	RouteName string
+	Color     string
 }
 
 type EventHelper struct {

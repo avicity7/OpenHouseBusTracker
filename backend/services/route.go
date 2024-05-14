@@ -10,7 +10,7 @@ import (
 )
 
 func CreateRoute(route structs.Route) error {
-	_, err := config.Dbpool.Exec(context.Background(), `INSERT INTO route (route_name) VALUES ($1)`, route.RouteName)
+	_, err := config.Dbpool.Exec(context.Background(), `INSERT INTO route (route_name, color) VALUES ($1, $2)`, route.RouteName, route.Color)
 	if err != nil {
 		fmt.Println("Error creating route:", err)
 		return err
@@ -20,7 +20,7 @@ func CreateRoute(route structs.Route) error {
 
 // Query to fetch all routes
 func GetAllRoutes() ([]structs.Route, error) {
-	rows, err := config.Dbpool.Query(context.Background(), "SELECT route_name FROM route")
+	rows, err := config.Dbpool.Query(context.Background(), "SELECT * FROM route")
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func GetAllRoutes() ([]structs.Route, error) {
 	var routes []structs.Route
 	for rows.Next() {
 		var route structs.Route
-		if err := rows.Scan(&route.RouteName); err != nil {
+		if err := rows.Scan(&route.RouteName, &route.Color); err != nil {
 			return nil, err
 		}
 		routes = append(routes, route)
