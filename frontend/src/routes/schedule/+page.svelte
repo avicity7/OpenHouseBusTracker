@@ -11,7 +11,7 @@
   <h1 class="text-3xl font-semibold pt-8 mb-6">My Shifts</h1>
 
   <h1 class="text-xl font-semibold text-slate-400 pt-8">Current Shifts</h1>
-  {#if currentSchedules.length > 0}
+  {#if currentSchedules && currentSchedules.length > 0}
     <div class="md:grid grid-cols-3">
       {#each currentSchedules as bus}
         <BusScheduleCard {bus} />
@@ -24,7 +24,7 @@
   <hr class="my-8 border-gray-200">
 
   <h1 class="text-xl font-semibold text-slate-400 pt-8">Upcoming Shifts</h1>
-  {#if futureSchedules.length > 0}
+  {#if futureSchedules && futureSchedules.length > 0}
     <div class="md:grid grid-cols-3">
       {#each futureSchedules as bus}
         <BusScheduleCard {bus} />
