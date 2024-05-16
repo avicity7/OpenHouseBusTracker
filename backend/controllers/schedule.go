@@ -59,6 +59,8 @@ func CreateBusSchedule(w http.ResponseWriter, r *http.Request) {
     }
 
     config.Cache.Delete("Schedules")
+    config.Cache.Delete("CurrentUserSchedules")
+    config.Cache.Delete("FutureUserSchedules")
 
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusCreated)
@@ -83,6 +85,8 @@ func UpdateBusSchedule(w http.ResponseWriter, r *http.Request) {
     }
 
     config.Cache.Delete("Schedules")
+    config.Cache.Delete("CurrentUserSchedules")
+    config.Cache.Delete("FutureUserSchedules")
 
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
@@ -104,6 +108,8 @@ func DeleteBusSchedule(w http.ResponseWriter, r *http.Request) {
     }
 
     config.Cache.Delete("Schedules")
+    config.Cache.Delete("CurrentUserSchedules")
+    config.Cache.Delete("FutureUserSchedules")
 
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
