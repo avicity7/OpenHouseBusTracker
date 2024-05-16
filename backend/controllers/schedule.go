@@ -170,7 +170,7 @@ func GetScheduleByUser(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    value, found := config.Cache.Get("CurrentUserSchedules:" + email)
+    value, found := config.Cache.Get("CurrentUserSchedules")
     if found {
         w.Header().Set("Content-Type", "application/json")
         w.WriteHeader(http.StatusOK)
@@ -192,7 +192,7 @@ func GetScheduleByUser(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    config.Cache.Set("CurrentUserSchedules:"+email, response, cache.DefaultExpiration)
+    config.Cache.Set("CurrentUserSchedules", response, cache.DefaultExpiration)
 
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
@@ -207,7 +207,7 @@ func GetFutureScheduleByUser(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    value, found := config.Cache.Get("FutureUserSchedules:" + email)
+    value, found := config.Cache.Get("FutureUserSchedules")
     if found {
         w.Header().Set("Content-Type", "application/json")
         w.WriteHeader(http.StatusOK)
@@ -229,7 +229,7 @@ func GetFutureScheduleByUser(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    config.Cache.Set("FutureUserSchedules:"+email, response, cache.DefaultExpiration)
+    config.Cache.Set("FutureUserSchedules", response, cache.DefaultExpiration)
 
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
