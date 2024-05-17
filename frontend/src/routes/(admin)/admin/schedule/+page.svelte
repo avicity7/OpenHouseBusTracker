@@ -168,7 +168,7 @@
         </div>
         
         <div class="ml-auto">
-            <input type="text" placeholder="Search..." class="border border-gray-300 rounded-md px-3 py-2 w-60" bind:value={searchTerm} on:input={filterSchedules}>
+            <input type="text" placeholder="Search Drivers..." class="border border-gray-300 rounded-md px-3 py-2 w-60" bind:value={searchTerm} on:input={filterSchedules}>
         </div>
     </div>
 
@@ -179,7 +179,6 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         <input type="checkbox" on:click={toggleSelectAll} />
                     </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus Schedule ID</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus Carplate</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route Description</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver Name</th>
@@ -198,7 +197,6 @@
                                     console.log("Updated selected schedules:", selectedSchedules);
                                 }} />                     
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">{schedule.BusScheduleId}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{schedule.Carplate}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{schedule.RouteName}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{schedule.DriverName}</td>
@@ -242,7 +240,7 @@
                                     console.log("Updated selected schedules:", selectedSchedules);
                                 }} />                     
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">{schedule.BusScheduleId}</td>
+                            
                             <td class="px-6 py-4 whitespace-nowrap">{schedule.Carplate}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{schedule.RouteName}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{schedule.DriverName}</td>
