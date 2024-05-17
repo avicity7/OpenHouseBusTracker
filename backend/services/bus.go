@@ -28,6 +28,7 @@ func GetBuses() ([]structs.EventBus, error) {
 
 	query := `
 		SELECT * FROM bus
+		ORDER BY carplate DESC
 	`
 	rows, err := config.Dbpool.Query(context.Background(), query)
 	if err != nil {
