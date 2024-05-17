@@ -1,4 +1,7 @@
 <script lang="ts">
+  import ToolTip from '$lib/components/ToolTip.svelte';
+	import { text } from '@sveltejs/kit';
+
   export let data
   const { routes, routeSteps, backend_uri } = data
 
@@ -23,7 +26,7 @@
     Routes
   </h1>
   <div class="mt-12 mb-4 max-w-sm md:max-w-4xl mx-auto">
-    <a href="/admin/bus-routes/create-route" class="bg-red-700 hover:bg-red-800 px-8 py-2 text-white rounded-md">
+    <a href="/admin/bus-routes/create-route" class="bg-red-700 hover:bg-red-800 px-8 py-2 text-white font-semibold rounded-md">
       Add Routes
     </a>
   </div>
@@ -37,8 +40,9 @@
         {#each routes as route}
           <tr>
             <td class="px-4 py-6">{route.RouteName}</td>
-            <td class="px-4 py-6">
+            <td class="px-6 py-6">
               <button class="text-slate-500 hover:text-red-600 text-2xl" on:click={()=>{deleteRoute(route.RouteName)}}>
+                <ToolTip text="Delete Route">
                   <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}>
                           <g fill="none">
@@ -47,6 +51,7 @@
                           </g>
                       </svg>
                   </svg>
+                </ToolTip>
               </button>
             </td>
           </tr>
@@ -62,7 +67,7 @@
     {route.RouteName}
   </h1>
   <div class="mt-8 mb-4 max-w-sm md:max-w-4xl mx-auto">
-    <a href={`/admin/bus-routes/create-route-step/${route.RouteName}`} class="bg-red-700 hover:bg-red-800 px-8 py-2 text-white rounded-md">
+    <a href={`/admin/bus-routes/create-route-step/${route.RouteName}`} class="bg-red-700 hover:bg-red-800 px-8 py-2 text-white font-semibold rounded-md">
       Add Route Step
     </a>
   </div>
@@ -77,8 +82,9 @@
           {#if routeStep.RouteName == route.RouteName}
             <tr>
               <td class="px-4 py-6">{routeStep.StopName}</td>
-              <td class="px-4 py-6">
+              <td class="px-6 py-6">
                 <button class="text-slate-500 hover:text-red-600 text-2xl" on:click={()=>{deleteRouteStep(route.RouteName, routeStep.StopName)}}>
+                  <ToolTip text="Delete Route Step">
                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}>
                             <g fill="none">
@@ -87,6 +93,7 @@
                             </g>
                         </svg>
                     </svg>
+                  </ToolTip>
                 </button>
               </td>
             </tr>

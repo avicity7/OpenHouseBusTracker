@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Session, User, UserRole } from "$lib/types/global";
+
   export let data
   let { backend_uri, session, users, roles } = data
 
@@ -56,7 +57,7 @@
     <label class="relative cursor-pointer text-black font-semibold py-2 rounded-md text-sm">
       <input type="file" bind:this={csvFile} class=""/>
     </label>
-    <button on:click={uploadCSV} class="bg-red-700 text-white font-semibold py-2 px-4 rounded-md text-sm hover:bg-red-800">
+    <button on:click={uploadCSV} disabled={isLoading} class="bg-red-700 text-white font-semibold py-2 px-4 rounded-md text-sm hover:bg-red-800 disabled:opacity-75 disabled:cursor-not-allowed disabled:pointer-events-none">
       {#if isLoading}
         <svg aria-hidden="true" role="status" class="inline w-4 h-4 me-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"/>
@@ -65,9 +66,47 @@
       {/if}
       Upload CSV
     </button>  
-  </div>  
+  </div> 
 
-  <div class="max-w-sm md:max-w-4xl mx-auto bg-white p-2 md:p-8 rounded-lg">
+  <div class="mt-2">
+    <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+                {#each users as user}
+                    <tr class="hover:bg-gray-100">
+                        <td class="px-6 py-4 whitespace-nowrap">{user.Name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{user.Email}</td>
+                        <td class="py-6">
+                          <select
+                            class=" hover:bg-gray-100"
+                            bind:value={user.Role}
+                            on:change={() => {updateUserRole(user)}}
+                          >
+                            {#each roles as role}
+                              <option 
+                                value={role.Description}
+                                selected={user.Role == role.Description ?? role.Description}
+                              >
+                                {role.Description}
+                              </option>
+                            {/each}
+                          </select>
+                        </td>      
+                    </tr>
+                {/each}
+        </tbody>
+    </table>
+  </div>
+</div>
+
+
+  <!-- <div class="max-w-sm md:max-w-4xl mx-auto bg-white p-2 md:p-8 rounded-lg">
     <table class="w-full">
       <thead>
         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
@@ -98,5 +137,4 @@
         {/each}
       </tbody>
     </table>
-  </div>
-</div>
+  </div> -->
