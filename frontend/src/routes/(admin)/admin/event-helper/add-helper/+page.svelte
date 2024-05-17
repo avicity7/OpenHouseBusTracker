@@ -12,7 +12,6 @@
 	let selectedEmail: string | null = null;
 	let selectedShift: boolean | null = null;
 
-
 	function setEventHelperDropdownOptions() {
 		if (!dropdownData) return;
 		
