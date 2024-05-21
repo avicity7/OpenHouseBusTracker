@@ -80,12 +80,14 @@
       </button>
       <button class="flex flex-col items-end" on:click={() => { menu = false }}>
         <a href="/bus-routes" class={"mb-5 font-medium "+($page.url.pathname == '/bus-routes' ? "text-red-700" : "hover:text-red-700")}>Routes</a>
+        <!-- might not need routes  -->
         {#if session?.Role == "admin"}
-          <a href="/admin/users" class={"mb-5 font-medium "+($page.url.pathname == '/admin/users' ? "text-red-700" : "hover:text-red-700")}>Users</a>
-          <a href="/admin/schedule" class={"mb-5 font-medium "+($page.url.pathname == '/admin/schedule' ? "text-red-700" : "hover:text-red-700")}>Schedule</a>
+          <a href="/admin/users" class={"mb-5 font-medium "+($page.url.pathname == '/admin/users' ? "text-red-700" : "hover:text-red-700")}>Manage</a>
+          <!-- <a href="/admin/schedule" class={"mb-5 font-medium "+($page.url.pathname == '/admin/schedule' ? "text-red-700" : "hover:text-red-700")}>Schedule</a> -->
         {/if}
         <a href="/profile" class={"mb-5 font-medium "+($page.url.pathname == '/profile' ? "text-red-700" : "hover:text-red-700")}>Profile</a>
         {#if session?.Role == "user"}
+          <a href="/schedule" class={"mb-5 font-medium "+($page.url.pathname == '/schedule' ? "text-red-700" : "hover:text-red-700")}>Bus Schedule</a>
           <a href="/event" class="bg-red-700 hover:bg-red-800 rounded-full px-3 py-1 text-white ">Follow Bus</a>
         {/if}
       </button>
