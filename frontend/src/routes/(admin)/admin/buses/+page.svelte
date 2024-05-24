@@ -8,7 +8,9 @@
   
   const getBuses = async() => {
     const response = await fetch(`${backend_uri}:3000/bus/get-buses`)
-    buses = await response.json() as Array<Bus>  
+    if (response) {
+      buses = await response.json() as Array<Bus>  
+    }
   }
     
   const deleteBus = async(carplate: string) => {
