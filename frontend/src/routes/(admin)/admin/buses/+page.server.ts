@@ -5,7 +5,7 @@ export const load = async() => {
   const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/bus/get-buses`)
   let buses: Array<Bus> = []
   const parsed = await response.json() as Array<Bus>
-  if (parsed.length > 0) {
+  if (parsed) {
     buses = parsed
   }
   
