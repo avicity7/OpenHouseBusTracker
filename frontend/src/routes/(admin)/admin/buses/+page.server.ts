@@ -3,7 +3,10 @@ import type { Bus } from "$lib/types/global"
 
 export const load = async() => {
   const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/bus/get-buses`)
-  const buses = await response.json() as Array<Bus>
+  let buses: Array<Bus> = []
+  if (response) {
+    buses = await response.json() as Array<Bus>
+  }
   
   return {
     buses
