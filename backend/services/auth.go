@@ -151,7 +151,7 @@ func BulkCreateUsers(csvFilePath string) error {
 			return err
 		}
 
-		if len(record) < 3 {
+		if len(record) < 2 {
 			return errors.New("invalid record length")
 		}
 
