@@ -1,5 +1,5 @@
 import { PUBLIC_BACKEND_URL } from '$env/static/public'
-import type { User } from '$lib/types/global.ts'
+import type { User, LoginResponse } from '$lib/types/global.ts'
 
 export const actions = {
   login: async ({ request, cookies, locals }) => {
@@ -18,7 +18,7 @@ export const actions = {
     })
     
     try {
-      const parsed = await result.json() as { User: { Email: string, Role: string }, AccessToken: string, RefreshToken: string }
+      const parsed = await result.json() as LoginResponse
       const { User, AccessToken, RefreshToken } = parsed
       cookies.set('accessToken', AccessToken, {path: '/'})
       cookies.set('refreshToken', RefreshToken, {path: '/'}) 
