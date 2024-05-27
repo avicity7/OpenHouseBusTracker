@@ -71,16 +71,15 @@ func CreateJWTPair(user structs.ReturnedUser) ([]byte, []byte) {
 	return access, refresh
 }
 
-func VerifyRefresh(refresh []byte, user structs.ReturnedUser) ([]byte, []byte, error) {
+func VerifyRefresh(refresh []byte) error {
 	secret := os.Getenv("SECRET")
 
 	parsed_refresh, err := jwt.Parse(refresh, jwt.WithKey(jwa.HS256, []byte(secret)))
 	if err != nil {
-		return nil, nil, err
+		return err
 	}
 	_ = parsed_refresh
-	new_access, new_refresh := CreateJWTPair(user)
-	return new_access, new_refresh, nil
+	return nil
 }
 
 func VerifyAccess(access []byte) error {

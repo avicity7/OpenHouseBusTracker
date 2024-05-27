@@ -121,24 +121,3 @@ func VerifyEmail(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
 	}
 }
-
-func VerifyRefresh(w http.ResponseWriter, r *http.Request) {
-	refresh := chi.URLParam(r, "refresh")
-	var user structs.ReturnedUser
-	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	}
-
-	new_access, new_refresh, err := services.VerifyRefresh([]byte(refresh), user)
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	}
-
-	formatted, _ := json.Marshal(structs.LoginResponse{User: user, AccessToken: string(new_access), RefreshToken: string(new_refresh)})
-
-	w.WriteHeader(200)
-	w.Write(formatted)
-}
