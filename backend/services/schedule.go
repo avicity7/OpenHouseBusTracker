@@ -66,7 +66,6 @@ func CreateBusSchedule(schedule structs.NewSchedule) error {
 		schedule.StartTime,
 		schedule.EndTime,
 	)
-
 	if err != nil {
 		fmt.Println("Error inserting schedule:", err)
 		return err
@@ -95,7 +94,6 @@ func UpdateBusSchedule(schedule structs.UpdateSchedule) error {
 		schedule.EndTime,
 		schedule.BusScheduleId,
 	)
-
 	if err != nil {
 		fmt.Println("Error updating schedule:", err)
 		return err
@@ -110,7 +108,6 @@ func DeleteBusSchedule(scheduleID []int) error {
 		WHERE bus_schedule_id = ANY ($1)
     `
 	_, err := config.Dbpool.Exec(context.Background(), query, scheduleID)
-
 	if err != nil {
 		fmt.Println("Error deleting schedule:", err)
 		return err
@@ -202,9 +199,9 @@ func GetScheduleByID(id int) (structs.UpdateSchedule, error) {
 }
 
 func GetScheduleByUser(email string) ([]structs.Schedule, error) {
-    var schedules []structs.Schedule
+	var schedules []structs.Schedule
 
-    query := `
+	query := `
 		SELECT 
 			bus_schedule_id,
 		 	eh.carplate,
@@ -226,35 +223,35 @@ func GetScheduleByUser(email string) ([]structs.Schedule, error) {
 			NOW() AT TIME ZONE 'Etc/GMT-8' BETWEEN bs.start_time AND bs.end_time
     `
 
-    rows, err := config.Dbpool.Query(context.Background(), query, email)
-    if err != nil {
-        return nil, err
-    }
-    defer rows.Close()
+	rows, err := config.Dbpool.Query(context.Background(), query, email)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
-    for rows.Next() {
-        var schedule structs.Schedule
-        err := rows.Scan(
-            &schedule.BusScheduleId,
-            &schedule.Carplate,
-            &schedule.DriverName,
-            &schedule.RouteName,
-            &schedule.StartTime,
-            &schedule.EndTime,
-        )
-        if err != nil {
-            return nil, err
-        }
-        schedules = append(schedules, schedule)
-    }
+	for rows.Next() {
+		var schedule structs.Schedule
+		err := rows.Scan(
+			&schedule.BusScheduleId,
+			&schedule.Carplate,
+			&schedule.DriverName,
+			&schedule.RouteName,
+			&schedule.StartTime,
+			&schedule.EndTime,
+		)
+		if err != nil {
+			return nil, err
+		}
+		schedules = append(schedules, schedule)
+	}
 
-    return schedules, nil
+	return schedules, nil
 }
 
 func GetFutureScheduleByUser(email string) ([]structs.Schedule, error) {
-    var schedules []structs.Schedule
+	var schedules []structs.Schedule
 
-    query := `
+	query := `
 		WITH current_shifts AS (
 			SELECT 
 				bs.bus_schedule_id
@@ -293,28 +290,27 @@ func GetFutureScheduleByUser(email string) ([]structs.Schedule, error) {
 			bs.bus_schedule_id NOT IN (SELECT bus_schedule_id FROM current_shifts);
     `
 
-    rows, err := config.Dbpool.Query(context.Background(), query, email)
-    if err != nil {
-        return nil, err
-    }
-    defer rows.Close()
+	rows, err := config.Dbpool.Query(context.Background(), query, email)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
-    for rows.Next() {
-        var schedule structs.Schedule
-        err := rows.Scan(
-            &schedule.BusScheduleId,
-            &schedule.Carplate,
-            &schedule.DriverName,
-            &schedule.RouteName,
-            &schedule.StartTime,
-            &schedule.EndTime,
-        )
-        if err != nil {
-            return nil, err
-        }
-        schedules = append(schedules, schedule)
-    }
+	for rows.Next() {
+		var schedule structs.Schedule
+		err := rows.Scan(
+			&schedule.BusScheduleId,
+			&schedule.Carplate,
+			&schedule.DriverName,
+			&schedule.RouteName,
+			&schedule.StartTime,
+			&schedule.EndTime,
+		)
+		if err != nil {
+			return nil, err
+		}
+		schedules = append(schedules, schedule)
+	}
 
-    return schedules, nil
+	return schedules, nil
 }
-

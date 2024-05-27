@@ -6,18 +6,10 @@
   import type { User } from '$lib/types/global';
   import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
   export let data
-  let account:User = { Name: "", Email: "", Role: "", VerificationToken: "" }
-  let { session, backend_uri } = data
+  let { session, backend_uri, account } = data
   let menu = false
 
   injectSpeedInsights();
-
-  const getProfile = async () => {
-    const response = await fetch(
-      `${backend_uri}:3000/auth/get-user/${session?.Email}`
-    )
-    account = await response.json()
-  }
 
   const detectColorScheme = () => {
     let theme = "light"

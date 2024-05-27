@@ -45,7 +45,6 @@ func CreateEventHelper(eventHelper structs.EventHelper) error {
 		eventHelper.Email,
 		eventHelper.Shift,
 	)
-
 	if err != nil {
 		fmt.Println("Error inserting event helper:", err)
 		return err
@@ -100,7 +99,6 @@ func DeleteEventHelper(eventHelper structs.EventHelper) error {
 		eventHelper.Email,
 		eventHelper.Shift,
 	)
-
 	if err != nil {
 		fmt.Println("Error deleting event helper:", err)
 		return err

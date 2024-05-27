@@ -110,6 +110,12 @@ export type CurrentBus = {
   Lng: number
 }
 
+export type LoginResponse = {
+  User: { Email: string, Role: string },
+  AccessToken: string, 
+  RefreshToken: string
+}
+
 // export type Schedule = {
 //   BusId: number;
 //   RouteId: number;

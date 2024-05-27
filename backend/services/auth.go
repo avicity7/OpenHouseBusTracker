@@ -10,6 +10,7 @@ import (
 	"server/config"
 	"server/structs"
 	"server/utils"
+
 	// "strconv"
 	"time"
 
@@ -70,15 +71,16 @@ func CreateJWTPair(user structs.ReturnedUser) ([]byte, []byte) {
 	return access, refresh
 }
 
-func VerifyRefresh(refresh []byte) error {
+func VerifyRefresh(refresh []byte, user structs.ReturnedUser) ([]byte, []byte, error) {
 	secret := os.Getenv("SECRET")
 
 	parsed_refresh, err := jwt.Parse(refresh, jwt.WithKey(jwa.HS256, []byte(secret)))
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 	_ = parsed_refresh
-	return nil
+	new_access, new_refresh := CreateJWTPair(user)
+	return new_access, new_refresh, nil
 }
 
 func VerifyAccess(access []byte) error {
@@ -91,7 +93,7 @@ func VerifyAccess(access []byte) error {
 	_ = parsed_access
 	return nil
 }
- 
+
 func CreateUser(user structs.NewUser) error {
 	query := `
 		INSERT INTO user_table (name, email, password, role_id, verification_token) 
@@ -106,7 +108,7 @@ func CreateUser(user structs.NewUser) error {
 	verification_token := utils.GenerateRandomToken(20)
 
 	args := pgx.NamedArgs{
-		"Name": 			 user.Name,
+		"Name":              user.Name,
 		"Email":             user.Email,
 		"Password":          hashedPassword,
 		"Role":              user.Role,
@@ -117,7 +119,7 @@ func CreateUser(user structs.NewUser) error {
 	if err != nil {
 		return err
 	} else {
-		utils.SendEmail(verification_token, user.Email)
+		utils.SendEmail(verification_token, user.Email, "")
 	}
 
 	return nil
@@ -154,15 +156,12 @@ func BulkCreateUsers(csvFilePath string) error {
 			return errors.New("invalid record length")
 		}
 
-		// role, err := strconv.Atoi(record[3])
-		// if err != nil {
-		// 	return err
-		// }
+		pwd := utils.GenerateRandomToken(6)
 
 		user := structs.NewUser{
 			Name:     record[0],
 			Email:    record[1],
-			Password: record[2],
+			Password: pwd,
 			Role:     0,
 		}
 
@@ -170,6 +169,8 @@ func BulkCreateUsers(csvFilePath string) error {
 		if err != nil {
 			return err
 		}
+
+		utils.SendEmail("", record[1], pwd)
 	}
 
 	err = tx.Commit(context.Background())
@@ -179,7 +180,6 @@ func BulkCreateUsers(csvFilePath string) error {
 
 	return nil
 }
-
 
 func createUserInTransaction(tx pgx.Tx, user structs.NewUser) error {
 	query := `
@@ -199,7 +199,7 @@ func createUserInTransaction(tx pgx.Tx, user structs.NewUser) error {
 		return err
 	}
 
-	utils.SendEmail(verificationToken, user.Email)
+	utils.SendEmail(verificationToken, user.Email, "")
 	return nil
 }
 
@@ -244,7 +244,7 @@ func Login(login structs.Login) (structs.ReturnedUser, error) {
 	}
 
 	returnedUser := structs.ReturnedUser{
-		Name: 			   user.Name,	
+		Name:              user.Name,
 		Email:             user.Email,
 		Role:              user.Role,
 		VerificationToken: user.VerificationToken,
@@ -278,5 +278,3 @@ func VerifyEmail(verification_token string) (string, error) {
 	}
 	return username, nil
 }
-
-

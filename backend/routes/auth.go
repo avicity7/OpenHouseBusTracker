@@ -14,5 +14,6 @@ func Auth(r *chi.Mux) {
 		r.Post("/create-user", http.HandlerFunc(controllers.CreateUser))
 		r.Post("/bulk-create-users", http.HandlerFunc(controllers.BulkCreateUsers))
 		r.Post("/login", http.HandlerFunc(controllers.Login))
+		r.Post("/verify-refresh/{refresh}", http.HandlerFunc(controllers.VerifyRefresh))
 	})
 }
