@@ -29,12 +29,6 @@
         }
     }
 
-    // function formatTimestamp(timestamp: string): string {
-    //     const utcDate = new Date(timestamp);
-    //     const formattedDate = utcDate.toLocaleString();
-    //     return formattedDate;
-    // }
-
     onMount(() => {
         if (helperData){
             eventHelper = helperData    
@@ -54,6 +48,7 @@
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus Carplate</th>
+                    <!-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student Name</th> -->
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student Email</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shift</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -63,6 +58,7 @@
                     {#each eventHelper as helper}
                         <tr class="hover:bg-gray-100">
                             <td class="px-6 py-4 whitespace-nowrap">{helper.Carplate}</td>
+                            <!-- <td class="px-6 py-4 whitespace-nowrap">{helper.Name}</td> -->
                             <td class="px-6 py-4 whitespace-nowrap">{helper.Email}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{helper.Shift ? 'AM' : 'PM'}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">

@@ -90,6 +90,7 @@ export type Route = {
 }
 
 export type EventHelper = {
+  Name: string,
   Carplate: string,
   Email: string,
   Shift: boolean
