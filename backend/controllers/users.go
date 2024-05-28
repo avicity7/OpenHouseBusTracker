@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"server/config"
-	"server/middleware"
 	"server/services"
 	"server/structs"
 
@@ -13,29 +12,22 @@ import (
 )
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	accessToken := r.Header.Get("Access")
-	refreshToken := r.Header.Get("Refresh")
-	access, refresh, err := middleware.VerifyJWT(accessToken, refreshToken)
-	if err != nil {
-		w.WriteHeader(500)
+	var output interface{}
+	value, found := config.Cache.Get("Users")
+	if found {
+		output = value
 	} else {
-		var output interface{}
-		value, found := config.Cache.Get("Users")
-		if found {
-			output = value
-		} else {
-			arr, err := services.GetUsers()
-			if err != nil {
-				fmt.Println(err)
-				w.WriteHeader(500)
-			}
-			output = arr
-			config.Cache.Set("Users", arr, cache.DefaultExpiration)
+		arr, err := services.GetUsers()
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(500)
 		}
-		w.WriteHeader(200)
-		formatted, _ := json.Marshal(structs.AuthedResponse{Output: output, Tokens: structs.RefreshTokenResponse{AccessToken: string(access), RefreshToken: string(refresh)}})
-		w.Write(formatted)
+		output = arr
+		config.Cache.Set("Users", arr, cache.DefaultExpiration)
 	}
+	w.WriteHeader(200)
+	formatted, _ := json.Marshal(output)
+	w.Write(formatted)
 }
 
 func GetUserRoles(w http.ResponseWriter, r *http.Request) {

@@ -5,7 +5,7 @@ import {
 	PUBLIC_OSR_KEY
 } from '$env/static/public';
 import { redirect } from '@sveltejs/kit';
-import type { User, LoginResponse } from '$lib/types/global.ts';
+import type { User } from '$lib/types/global.ts';
 
 export const load = async (event) => {
 	const path = event.url.pathname;
@@ -20,14 +20,11 @@ export const load = async (event) => {
 	}
 
 	const getProfile = async () => {
-		let response = await fetch(`${backend_uri}:3000/auth/get-user/${session?.Email}`);
-		let parsed = (await response.json()) as User;
-		if (parsed.Role != session.Role) {
-			response = await fetch(`${backend_uri}:3000/auth/verify-refresh/`);
-		}
+		const response = await fetch(`${backend_uri}:3000/auth/get-user/${session?.Email}`);
+		const parsed = (await response.json()) as User;
 		return parsed;
 	};
-	const account = getProfile();
+	const account = await getProfile();
 
 	return {
 		backend_uri,

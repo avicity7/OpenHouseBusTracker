@@ -10,7 +10,7 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
-func VerifyJWT(access string, refresh string) ([]byte, []byte, error) {
+func VerifyJWT(email string, access string, refresh string) ([]byte, []byte, error) {
 	secret := os.Getenv("SECRET")
 	err := services.VerifyAccess([]byte(access))
 	if err != nil {
