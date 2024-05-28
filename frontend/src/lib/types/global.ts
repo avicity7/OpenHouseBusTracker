@@ -111,7 +111,7 @@ export type CurrentBus = {
 }
 
 export type LoginResponse = {
-  User: { Email: string, Role: string },
+  User: User,
   AccessToken: string, 
   RefreshToken: string
 }

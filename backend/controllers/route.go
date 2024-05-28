@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"server/services"
 	"server/structs"
@@ -29,6 +30,7 @@ func CreateRouteHandler(w http.ResponseWriter, r *http.Request) {
 func GetAllRoutesHandler(w http.ResponseWriter, r *http.Request) {
 	routes, err := services.GetAllRoutes()
 	if err != nil {
+		fmt.Println(err)
 		http.Error(w, "Failed to fetch routes", http.StatusInternalServerError)
 		return
 	}

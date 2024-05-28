@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"server/config"
+	"server/middleware"
 	"server/services"
 	"server/structs"
 
@@ -93,7 +94,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	var output interface{}
+	accessToken := r.Header.Get("Access")
+	refreshToken := r.Header.Get("Refresh")
 	email := chi.URLParam(r, "email")
+	at, rt, err := middleware.VerifyJWT(email, accessToken, refreshToken)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
 	value, found := config.Cache.Get(email)
 	if found {
 		output = value
@@ -106,7 +114,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		output = user
 		config.Cache.Set(email, user, cache.DefaultExpiration)
 	}
-	formatted, _ := json.Marshal(output)
+	formatted, _ := json.Marshal(structs.AuthedResponse{Output: output, Tokens: structs.RefreshTokenResponse{AccessToken: string(at), RefreshToken: string(rt)}})
 	w.Write(formatted)
 }
 
