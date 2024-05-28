@@ -52,11 +52,12 @@ export const load = async ({ locals, fetch }) => {
 				method: 'GET',
 				headers: {
 					'content-type': 'application/json'
-				}
+				},
+				credentials: 'include'
 			}
 		);
 		if (response) {
-			account = (await response.json()) as User;
+			account = (await response.json()).Output as User;
 		}
 	}
 
