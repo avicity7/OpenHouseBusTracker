@@ -28,21 +28,22 @@ export const actions = {
       const form =await request.formData()
   
       const Carplate = form.get('carplate');
-      const Email = form.get('email');
-      const ShiftString = form.get('shift');
-      
+    //   const Email = form.get('email');
+      const ShiftString = form.get('shift');  
       const Shift = ShiftString === 'true';
+      const selectedEmails = form.getAll('email');
 
-      console.log("shift is " + Shift )
-      const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/event-helpers/create-helper`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-                Carplate,
-                Email,
-                Shift,
-            })
-      });
+       const EventHelpers = selectedEmails.map(email => ({
+            Carplate,
+            Email: email,
+            Shift
+        }));
+
+        const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/event-helpers/create-helpers`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ EventHelpers })
+        });
     
       if (!response.ok) {
         throw new Error("Failed to create event helper");

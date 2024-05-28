@@ -12,7 +12,10 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
 	var eventHelpers []structs.EventHelper
 
 	query := `
-        SELECT * FROM event_helper
+		SELECT eh.carplate, ut.email, eh.shift 
+		FROM event_helper eh 
+		JOIN user_table ut 
+		ON eh.email = ut.email	
     `
 	rows, err := config.Dbpool.Query(context.Background(), query)
 	if err != nil {
@@ -23,6 +26,7 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
 	for rows.Next() {
 		var eventHelper structs.EventHelper
 		err := rows.Scan(
+			// &eventHelper.Name,
 			&eventHelper.Carplate,
 			&eventHelper.Email,
 			&eventHelper.Shift,
@@ -35,25 +39,57 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
 	return eventHelpers, nil
 }
 
-func CreateEventHelper(eventHelper structs.EventHelper) error {
-	query := `
-		INSERT INTO event_helper (carplate, email, shift) 
-		VALUES ($1, $2, $3)
-    `
-	_, err := config.Dbpool.Exec(context.Background(), query,
-		eventHelper.Carplate,
-		eventHelper.Email,
-		eventHelper.Shift,
-	)
+// func CreateEventHelper(eventHelper structs.EventHelper) error {
+// 	query := `
+// 		INSERT INTO event_helper (carplate, email, shift) 
+// 		VALUES ($1, $2, $3)
+//     `
+// 	_, err := config.Dbpool.Exec(context.Background(), query,
+// 		eventHelper.Carplate,
+// 		eventHelper.Email,
+// 		eventHelper.Shift,
+// 	)
+// 	if err != nil {
+// 		fmt.Println("Error inserting event helper:", err)
+// 		return err
+// 	}
+
+// 	return nil
+// }
+
+func CreateEventHelpers(eventHelpers []structs.EventHelper) error {
+	tx, err := config.Dbpool.Begin(context.Background())
 	if err != nil {
-		fmt.Println("Error inserting event helper:", err)
+		fmt.Println("Failed to begin transaction:", err)
 		return err
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback(context.Background())
+		} else {
+			tx.Commit(context.Background())
+		}
+	}()
+
+	for _, eventHelper := range eventHelpers {
+		query := `
+			INSERT INTO event_helper (carplate, email, shift) 
+			VALUES ($1, $2, $3)
+		`
+		_, err := tx.Exec(context.Background(), query,
+			eventHelper.Carplate,
+			eventHelper.Email,
+			eventHelper.Shift,
+		)
+		if err != nil {
+			fmt.Println("Error inserting event helper:", err)
+			return err
+		}
 	}
 
 	return nil
 }
 
-// working, timestamp ingestion issue
 func UpdateEventHelper(eventHelper structs.EventHelperUpdate) error {
 	query := `
         UPDATE event_helper

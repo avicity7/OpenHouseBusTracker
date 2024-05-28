@@ -147,7 +147,8 @@ type EventHelper struct {
 	Email    string
 	Shift    bool
 }
-
+// might have to add name field here soon
+	
 type EventHelperUpdate struct {
 	OldCarplate string
 	OldEmail    string
