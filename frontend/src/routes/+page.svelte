@@ -5,7 +5,7 @@
 	import type { CurrentBus, FollowBusEvent } from '$lib/types/global.js';
 	import type { MapboxOptions, MarkerOptions, Map, Marker } from 'mapbox-gl';
 	import pkg from 'mapbox-gl';
-	const { Map, Marker } = pkg;
+	const { Map, Marker, Popup } = pkg;
 	import tinycolor from 'tinycolor2';
 
 	let map: Map;
@@ -24,7 +24,6 @@
 
 	const coordCollection: GeoJSON.LineString[][] = [];
 	let markers: Array<Marker> = [];
-	let offset = 0.0002;
 
 	onMount(async () => {
 		ws = new WebSocket(`${env == 'PROD' ? 'wss' : 'ws'}://${backend_uri.split('//')[1]}:3000/ws`);
@@ -98,6 +97,41 @@
 
 		getCurrentBuses();
 
+		const formatTime = (timestamp: string | number | Date) => {
+			const utcDate = new Date(timestamp);
+			return utcDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+		}
+
+		const renderBuses = async () => {
+			busList.forEach((currentBus) => {
+				const waypoint = new Marker({ color: (currentBus.EventType == "Arrive" ? currentBus.Color : "#606060") })
+					.setLngLat([currentBus.Lng, currentBus.Lat])
+					.setOffset(currentBus.EventType == "Arrive" ? [0, -25] : [0, -42])
+					.setPopup(new Popup({ offset: 25, className: "flex text-lg font-public justify-center items-center text-center" })
+						.setHTML(
+							`
+							<div class="px-2 pt-2">
+								<h1 class="text-lg font-semibold">
+									${currentBus.Carplate}
+								</h1>
+								<h2 class="text-md pt-2">
+									${currentBus.EventType}
+								</h2>
+								<p class="text-sm">
+									${formatTime(currentBus.Timestamp)}
+								</p>
+							</div>	
+							`
+						)
+					)
+					.addTo(map)
+					.on('dragend', () => {
+						console.log(waypoint.getLngLat());
+					});
+				markers.push(waypoint);
+			});
+		}
+
 		map = new Map({
 			container: mapContainer,
 			accessToken: mapbox_key,
@@ -121,26 +155,12 @@
 					markers.forEach((marker) => {
 						marker.remove();
 					});
-					busList.forEach((currentBus) => {
-						const waypoint = new Marker({ color: currentBus.Color })
-							.setLngLat([currentBus.Lng, currentBus.Lat + offset])
-							.addTo(map)
-							.on('dragend', () => {
-								console.log(waypoint.getLngLat());
-							});
-						markers.push(waypoint);
-					});
+					renderBuses()
 				}
 			};
-			busList.forEach((currentBus) => {
-				const waypoint = new Marker({ color: currentBus.Color })
-					.setLngLat([currentBus.Lng, currentBus.Lat + offset])
-					.addTo(map)
-					.on('dragend', () => {
-						console.log(waypoint.getLngLat());
-					});
-				markers.push(waypoint);
-			});
+
+			renderBuses()
+
 			for (let j = 0; j < routes.length; j++) {
 				const route = routes[j];
 				const coords = coordCollection[j];

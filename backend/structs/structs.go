@@ -185,9 +185,10 @@ type CurrentBus struct {
 	Carplate  string
 	RouteName string
 	Color     string
-	EventId   int
+	EventType string
 	Lng       float64
 	Lat       float64
+	Timestamp time.Time
 }
 
 // could try to use clearer seperation of structs / reduce structs needed
