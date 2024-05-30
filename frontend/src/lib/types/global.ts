@@ -106,9 +106,10 @@ export type CurrentBus = {
   Carplate: string,
   RouteName: string,
   Color: string,
-  EventId: number,
+  EventType: string,
   Lat: number,
-  Lng: number
+  Lng: number,
+  Timestamp: string
 }
 
 export type LoginResponse = {

@@ -159,7 +159,8 @@ func GetEventHelperDropdownData() ([]structs.EventHelperDropdownData, error) {
             NULL AS carplate,
             u.email
         FROM 
-            user_table u;
+            user_table u
+				WHERE u.role_id = 1
     `
 
 	rows, err := config.Dbpool.Query(context.Background(), query)
