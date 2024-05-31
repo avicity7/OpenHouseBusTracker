@@ -191,7 +191,7 @@ func createUserInTransaction(tx pgx.Tx, user structs.NewUser) error {
 		return err
 	}
 
-	verificationToken := utils.GenerateRandomToken(20)
+	verificationToken := ""
 
 	_, err = tx.Exec(context.Background(), query, user.Name, user.Email, hashedPassword, user.Role, verificationToken)
 	if err != nil {
