@@ -30,7 +30,7 @@
 		carplates = Array.from(uniqueCarplates);
 		names = Array.from(uniqueNames);
 	}
-
+ 
 	function toggleNameSelection(name: string) {
 		if (selectedNames.has(name)) {
 			selectedNames.delete(name);
