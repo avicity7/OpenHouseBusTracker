@@ -198,7 +198,6 @@ func createUserInTransaction(tx pgx.Tx, user structs.NewUser) error {
 		return err
 	}
 
-	utils.SendEmail(verificationToken, user.Email, "")
 	return nil
 }
 
