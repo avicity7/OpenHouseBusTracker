@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"server/config"
 	"server/services"
@@ -41,20 +42,56 @@ func GetEventHelpers(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
-func CreateEventHelper(w http.ResponseWriter, r *http.Request) {
-	var eventHelper structs.EventHelper
+// func CreateEventHelper(w http.ResponseWriter, r *http.Request) {
+// 	var eventHelper structs.EventHelper
 
-	err := json.NewDecoder(r.Body).Decode(&eventHelper)
+// 	err := json.NewDecoder(r.Body).Decode(&eventHelper)
 
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		http.Error(w, "Invalid request body", http.StatusBadRequest)
+// 		return
+// 	}
+
+// 	err = services.CreateEventHelper(eventHelper)
+// 	if err != nil {
+// 		http.Error(w, "Failed to create event helper", http.StatusInternalServerError)
+// 		return
+// 	}
+
+// 	config.Cache.Delete("EventHelpers")
+
+// 	w.Header().Set("Content-Type", "application/json")
+// 	w.WriteHeader(http.StatusCreated)
+// 	fmt.Fprintf(w, "Event Helper created successfully")
+// }
+
+
+func CreateEventHelpers(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		EventHelpers []structs.EventHelper
+	}
+
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Error reading request body:", err)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+	fmt.Println("Request body:", string(body))
+
+	err = json.Unmarshal(body, &req)
+	if err != nil {
+		fmt.Println("Error unmarshalling request body:", err)
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	err = services.CreateEventHelper(eventHelper)
+	eventHelpers := req.EventHelpers
+
+	err = services.CreateEventHelpers(eventHelpers)
 	if err != nil {
-		http.Error(w, "Failed to create event helper", http.StatusInternalServerError)
+		http.Error(w, "Failed to create event helpers", http.StatusInternalServerError)
 		return
 	}
 
@@ -62,7 +99,7 @@ func CreateEventHelper(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintf(w, "Event Helper created successfully")
+	fmt.Fprintf(w, "Event Helpers created successfully")
 }
 
 func UpdateEventHelper(w http.ResponseWriter, r *http.Request) {

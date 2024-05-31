@@ -28,19 +28,19 @@ export const actions = {
       const form = await request.formData()
   
       const Carplate = form.get('carplate');
-      const Name = form.get('Name');
       const ShiftString = form.get('shift');
-      
       const Shift = ShiftString === 'true';
+      const selectedNames = form.getAll('name');
+      const EventHelpers = selectedName.map(name => ({
+        Carplate,
+        Name,
+        Shift
+      }));
 
-      const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/event-helpers/create-helper`, {
+      const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/event-helpers/create-helpers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-                Carplate,
-                Name,
-                Shift,
-            })
+        body: JSON.stringify({ EventHelpers })
       });
     
       if (!response.ok) {

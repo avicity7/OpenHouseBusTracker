@@ -29,12 +29,6 @@
         }
     }
 
-    // function formatTimestamp(timestamp: string): string {
-    //     const utcDate = new Date(timestamp);
-    //     const formattedDate = utcDate.toLocaleString();
-    //     return formattedDate;
-    // }
-
     onMount(() => {
         if (helperData){
             eventHelper = helperData    

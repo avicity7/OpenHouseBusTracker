@@ -24,6 +24,7 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
 	for rows.Next() {
 		var eventHelper structs.EventHelper
 		err := rows.Scan(
+			// &eventHelper.Name,
 			&eventHelper.Carplate,
 			&eventHelper.Name,
 			&eventHelper.Shift,
@@ -36,30 +37,41 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
 	return eventHelpers, nil
 }
 
-func CreateEventHelper(eventHelper structs.EventHelper) error {
-	email, err := GetEmail(eventHelper.Name)
+func CreateEventHelpers(eventHelpers []structs.EventHelper) error {
+	tx, err := config.Dbpool.Begin(context.Background())
 	if err != nil {
+		fmt.Println("Failed to begin transaction:", err)
 		return err
 	}
+	defer func() {
+		if err != nil {
+			tx.Rollback(context.Background())
+		} else {
+			tx.Commit(context.Background())
+		}
+	}()
 
-	query := `
-		INSERT INTO event_helper (carplate, email, shift) 
-		VALUES ($1, $2, $3)
-    `
-	_, err = config.Dbpool.Exec(context.Background(), query,
-		eventHelper.Carplate,
-		email,
-		eventHelper.Shift,
-	)
-	if err != nil {
-		fmt.Println("Error inserting event helper:", err)
-		return err
+	for _, eventHelper := range eventHelpers {
+    email, err := GetEmail(eventHelper.Name)
+    
+		query := `
+			INSERT INTO event_helper (carplate, email, shift) 
+			VALUES ($1, $2, $3)
+		`
+		_, err := tx.Exec(context.Background(), query,
+			eventHelper.Carplate,
+			email,
+			eventHelper.Shift,
+		)
+		if err != nil {
+			fmt.Println("Error inserting event helper:", err)
+			return err
+		}
 	}
 
 	return nil
 }
 
-// working, timestamp ingestion issue
 func UpdateEventHelper(eventHelper structs.EventHelperUpdate) error {
 	newEmail, err := GetEmail(eventHelper.NewName)
 	if err != nil {

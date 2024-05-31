@@ -9,7 +9,7 @@
 	let names: string[] = [];
 
 	let selectedCarplate: string | null = null;
-	let selectedName: string | null = null;
+	let selectedNames: Set<string> = new Set();
 	let selectedShift: boolean | null = null;
 
 	function setEventHelperDropdownOptions() {
@@ -17,8 +17,6 @@
 		
 		const uniqueCarplates = new Set<string>();
 		const uniqueNames = new Set<string>();
-
-		console.log(dropdownData)
 
 		dropdownData.forEach(({ Carplate, Name }: EventHelper) => {
 			if (Carplate) {
@@ -32,6 +30,15 @@
 		carplates = Array.from(uniqueCarplates);
 		names = Array.from(uniqueNames);
 	}
+
+	function toggleNameSelection(name: string) {
+		if (selectedNames.has(name)) {
+			selectedNames.delete(name);
+		} else {
+			selectedNames.add(name);
+		}
+	}
+
 
 	onMount(() => {
 		if (dropdownData) {
@@ -50,6 +57,7 @@
 					id="carplate"
 					name="carplate"
 					bind:value={selectedCarplate}
+					required
 					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
 					{#each carplates as carplate}
@@ -57,19 +65,23 @@
 					{/each}
 				</select>
 			</div>
-
 			<div class="mb-4">
-				<label for="name" class="block text-sm font-medium mb-1">Name:</label>
-				<select
-					id="name"
-					name="name"
-					bind:value={selectedName}
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-				>
+				<fieldset>
+					<legend class="block text-sm font-medium mb-1">Names:</legend>
 					{#each names as name}
-						<option value={name}>{names}</option>
+						<div class="flex items-center mb-2">
+							<input
+								type="checkbox"
+								name="name"
+								id={name}
+								value={name}
+								on:change={() => toggleNameSelection(name)}
+								class="mr-2"
+							/>
+							<label for={name} class="text-sm">{name}</label>
+						</div>
 					{/each}
-				</select>
+				</fieldset>
 			</div>
 
 			<div class="mb-4">
@@ -78,6 +90,7 @@
 					id="shift"
 					name="shift"
 					bind:value={selectedShift}
+					required
 					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
 					<option value="true">AM</option>
@@ -86,9 +99,9 @@
 			</div>
 
 			<div class="mt-4 flex justify-center">
-				<button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-800"
-					>Add Event Helper</button
-				>
+				<button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-800">
+					Add Event Helper
+				</button>
 			</div>
 		</form>
 	</div>
