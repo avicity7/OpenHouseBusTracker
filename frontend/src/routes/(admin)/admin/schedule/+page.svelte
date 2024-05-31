@@ -41,7 +41,6 @@
             });
             busSchedule = updatedSchedules;
 
-            console.log("Deleted Bus Schedule with ID:", id);
         } catch (error) {
             console.error('Error deleting schedule:', error);
         }

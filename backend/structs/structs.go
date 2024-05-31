@@ -149,8 +149,6 @@ type EventHelper struct {
 	Shift    bool
 }
 
-// might have to add name field here soon
-
 type EventHelperUpdate struct {
 	OldCarplate string
 	OldName     string
