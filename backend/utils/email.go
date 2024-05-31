@@ -84,7 +84,11 @@ func SendEmail(token string, user_email string, pwd string) {
 
 	m.SetHeader("To", to)
 
-	m.SetHeader("Subject", "Verify your email")
+	if pwd == "" {
+		m.SetHeader("Subject", "Verify your email")
+	} else {
+		m.SetHeader("Subject", "You're signed up!")
+	}
 
 	m.SetBody("text/html", emailBody)
 
