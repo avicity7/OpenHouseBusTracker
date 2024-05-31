@@ -1,16 +1,25 @@
 <script lang="ts">
   export let data
   let { buses, backend_uri, env } = data
-  import type { Bus } from '$lib/types/global.js';
+  import type { EventBus } from '$lib/types/global.js';
 	import { onMount } from 'svelte';
   import ToolTip from '$lib/components/ToolTip.svelte';
 	let ws: WebSocket;
+
+  let showHidden = false
   
   const getBuses = async() => {
     const response = await fetch(`${backend_uri}:3000/bus/get-buses`)
     if (response) {
-      buses = await response.json() as Array<Bus>  
+      buses = await response.json() as Array<EventBus> 
     }
+  }
+
+  const updateBusVisibility = async(carplate: string, visibility: boolean) => {
+    await fetch(`${backend_uri}:3000/bus/update-bus-visibility/${carplate}/${visibility}`, {
+      method: 'PUT'
+    })
+    getBuses()
   }
     
   const deleteBus = async(carplate: string) => {
@@ -38,6 +47,8 @@
     <a href="/admin/buses/create-bus" class="w-fit bg-red-700 hover:bg-red-800 px-8 py-2 my-6 text-white font-semibold rounded-md">
       Add Bus
     </a>
+    <input class="ml-4" type="checkbox" id="hidden" name="hidden" checked={showHidden} on:change={() => {showHidden = !showHidden}}>
+    <label for="hidden">Show hidden buses</label>
   </div>
 
   <div class="mt-8">
@@ -51,6 +62,7 @@
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
                 {#each buses as bus}
+                  {#if !bus.Hidden || showHidden}
                     <tr class="hover:bg-gray-100">
                         <td class="px-6 py-4 whitespace-nowrap">{bus.Carplate}</td>
                         <td class="px-4 py-6">
@@ -58,6 +70,15 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex items-center">
+                                <button class="text-slate-500 hover:text-red-600 text-2xl mr-4" on:click={() => updateBusVisibility(bus.Carplate, !bus.Hidden)}>
+                                    <ToolTip text={bus.Hidden ? "Show Bus" : "Hide Bus"}> 
+                                      {#if bus.Hidden}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m4 4l16 16m-3.5-3.244C15.147 17.485 13.618 18 12 18c-3.53 0-6.634-2.452-8.413-4.221c-.47-.467-.705-.7-.854-1.159c-.107-.327-.107-.913 0-1.24c.15-.459.385-.693.855-1.16c.897-.892 2.13-1.956 3.584-2.793M19.5 14.634c.333-.293.638-.582.912-.854l.003-.003c.468-.466.703-.7.852-1.156c.107-.327.107-.914 0-1.241c-.15-.458-.384-.692-.854-1.159C18.633 8.452 15.531 6 12 6c-.338 0-.671.022-1 .064m2.323 7.436a2 2 0 0 1-2.762-2.889"/></svg>
+                                      {:else}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3.587 13.779c1.78 1.769 4.883 4.22 8.413 4.22c3.53 0 6.634-2.451 8.413-4.22c.47-.467.705-.7.854-1.159c.107-.327.107-.913 0-1.24c-.15-.458-.385-.692-.854-1.159C18.633 8.452 15.531 6 12 6c-3.53 0-6.634 2.452-8.413 4.221c-.47.467-.705.7-.854 1.159c-.107.327-.107.913 0 1.24c.15.458.384.692.854 1.159"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0-4 0"/></g></svg>
+                                      {/if}
+                                    </ToolTip>
+                                </button>
                                 <button class="text-slate-500 hover:text-red-600 text-2xl" on:click={() => deleteBus(bus.Carplate)}>
                                     <ToolTip text="Delete Bus"> 
                                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}>
@@ -73,6 +94,7 @@
                             </div>
                         </td>                 
                     </tr>
+                  {/if}
                 {/each}
         </tbody>
     </table>

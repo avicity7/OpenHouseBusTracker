@@ -37,7 +37,7 @@ func GetBuses() ([]structs.EventBus, error) {
 
 	for rows.Next() {
 		var eventBus structs.EventBus
-		rows.Scan(&eventBus.Carplate, &eventBus.Status)
+		rows.Scan(&eventBus.Carplate, &eventBus.Status, &eventBus.Hidden)
 		output = append(output, eventBus)
 	}
 
@@ -84,6 +84,26 @@ func UpdateBusStatus(status bool, carplate string) error {
 		"Carplate": carplate,
 		"Status":   status,
 	}
+	_, err := config.Dbpool.Exec(context.Background(), query, args)
+	if err != nil {
+		fmt.Println("error adding driver:", err)
+		return err
+	}
+	return nil
+}
+
+func UpdateBusVisibility(hidden string, carplate string) error {
+	query := `
+		UPDATE bus
+		SET hidden = @Hidden 
+		WHERE carplate = @Carplate
+	`
+
+	args := pgx.NamedArgs{
+		"Carplate": carplate,
+		"Hidden":   hidden,
+	}
+
 	_, err := config.Dbpool.Exec(context.Background(), query, args)
 	if err != nil {
 		fmt.Println("error adding driver:", err)
