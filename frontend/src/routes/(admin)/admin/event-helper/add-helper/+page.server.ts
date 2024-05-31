@@ -24,16 +24,16 @@ export const load = async ({ fetch }) => {
 };
 
 export const actions = {
-    createEventHelper: async({ request}): Promise<void> =>{
+    createEventHelper: async({ request }): Promise<void> =>{
       const form = await request.formData()
   
       const Carplate = form.get('carplate');
       const ShiftString = form.get('shift');
       const Shift = ShiftString === 'true';
       const selectedNames = form.getAll('name');
-      const EventHelpers = selectedName.map(name => ({
+      const EventHelpers = selectedNames.map(name => ({
         Carplate,
-        Name,
+        Name: name,
         Shift
       }));
 

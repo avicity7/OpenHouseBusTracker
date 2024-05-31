@@ -105,7 +105,8 @@ func UpdateEventHelper(eventHelper structs.EventHelperUpdate) error {
 		eventHelper.OldShift,
 	)
 
-	fmt.Println("here is carplate", eventHelper.NewCarplate)
+	fmt.Println("new email ", newEmail)
+	fmt.Println("old email ", oldEmail)
 
 	if err != nil {
 		fmt.Println("Error updating event helper:", err)

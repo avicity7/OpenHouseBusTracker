@@ -57,7 +57,8 @@
 				let parsed = await response.json();
 				coords.push(parsed.features[parsed.features.length - 1].geometry);
 
-				if (parsed.features.length > 1) {
+
+				if (inputCoords.length > 2) {
 					response = await fetch(
 						`https://api.openrouteservice.org/v2/directions/driving-car/geojson`,
 						{
@@ -103,10 +104,18 @@
 		}
 
 		const renderBuses = async () => {
+			const pastMarkers: {[key: string]: number} = {}
 			busList.forEach((currentBus) => {
+				let pastValue = currentBus.EventType != "Break" ? pastMarkers[`${currentBus.Lng}, ${currentBus.Lat}`] : pastMarkers[`103.7789194739538, 1.3103185038805805`]
+				if (currentBus.EventType != "Break") {
+					pastMarkers[`${currentBus.Lng}, ${currentBus.Lat}`] = pastValue != undefined ? pastValue + 1 : 0
+				} else {
+					pastMarkers[`103.7789194739538, 1.3103185038805805`] = pastValue != undefined ? pastValue + 1 : 0
+				}
+				pastValue = pastMarkers[`${currentBus.Lng}, ${currentBus.Lat}`]
 				const waypoint = new Marker({ color: (currentBus.EventType == "Arrive" ? currentBus.Color : "#606060") })
-					.setLngLat([currentBus.Lng, currentBus.Lat])
-					.setOffset(currentBus.EventType == "Arrive" ? [0, -25] : [0, -42])
+					.setLngLat(currentBus.EventType != "Break" ? [currentBus.Lng, currentBus.Lat] : [103.7789194739538, 1.3103185038805805])
+					.setOffset(currentBus.EventType == "Arrive" ? [0 + (pastValue * 12), -25] : [0, (currentBus.EventType != "Break" ? -42 : 0)])
 					.setPopup(new Popup({ offset: 25, className: "flex text-lg font-public justify-center items-center text-center" })
 						.setHTML(
 							`

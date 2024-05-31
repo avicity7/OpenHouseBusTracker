@@ -21,7 +21,7 @@ export const actions = {
     })
 
     try {
-      const parsed = await result.json() as { User: { Name: string, Email: string, Role: string }, AccessToken: string, RefreshToken: string }
+      const parsed = await result.json() as { User: { Name: string, Email: string, Role: string, VerificationToken: string }, AccessToken: string, RefreshToken: string }
       const { User, AccessToken, RefreshToken } = parsed
       cookies.set('accessToken', AccessToken, {path: '/'})
       cookies.set('refreshToken', RefreshToken, {path: '/'}) 

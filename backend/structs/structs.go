@@ -104,6 +104,7 @@ type FollowBus struct {
 type EventBus struct {
 	Carplate string
 	Status   bool
+	Hidden   bool
 }
 
 type EventSchedule struct {
@@ -147,8 +148,9 @@ type EventHelper struct {
 	Name     string
 	Shift    bool
 }
+
 // might have to add name field here soon
-	
+
 type EventHelperUpdate struct {
 	OldCarplate string
 	OldName     string

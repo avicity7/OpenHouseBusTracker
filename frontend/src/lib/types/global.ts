@@ -5,10 +5,6 @@ export type AuthedResponse = {
     RefreshToken: string
   }
 }
-export type Bus = {
-  Carplate: string,
-  Status: boolean
-}
 
 export type User = {
   Name: string,
@@ -66,7 +62,8 @@ export type FollowBusEvent = {
 
 export type EventBus = {
   Carplate: string,
-  Status: boolean
+  Status: boolean,
+  Hidden: boolean
 } 
 
 export type Event = {
@@ -90,7 +87,6 @@ export type Route = {
 }
 
 export type EventHelper = {
-  Name: string,
   Carplate: string,
   Name: string,
   Shift: boolean
