@@ -6,29 +6,31 @@
   	const { dropdownData } = data
 
 	let carplates: string[] = [];
-	let emails: string[] = [];
+	let names: string[] = [];
 
 	let selectedCarplate: string | null = null;
-	let selectedEmail: string | null = null;
+	let selectedName: string | null = null;
 	let selectedShift: boolean | null = null;
 
 	function setEventHelperDropdownOptions() {
 		if (!dropdownData) return;
 		
 		const uniqueCarplates = new Set<string>();
-		const uniqueEmails = new Set<string>();
+		const uniqueNames = new Set<string>();
 
-		dropdownData.forEach(({ Carplate, Email }: EventHelper) => {
+		console.log(dropdownData)
+
+		dropdownData.forEach(({ Carplate, Name }: EventHelper) => {
 			if (Carplate) {
 				uniqueCarplates.add(Carplate);
 			}
-			if (Email) {
-				uniqueEmails.add(Email);
+			if (Name) {
+				uniqueNames.add(Name);
 			}
 		});
 
 		carplates = Array.from(uniqueCarplates);
-		emails = Array.from(uniqueEmails);
+		names = Array.from(uniqueNames);
 	}
 
 	onMount(() => {
@@ -57,15 +59,15 @@
 			</div>
 
 			<div class="mb-4">
-				<label for="email" class="block text-sm font-medium mb-1">Email:</label>
+				<label for="name" class="block text-sm font-medium mb-1">Name:</label>
 				<select
-					id="email"
-					name="email"
-					bind:value={selectedEmail}
+					id="name"
+					name="name"
+					bind:value={selectedName}
 					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
-					{#each emails as email}
-						<option value={email}>{email}</option>
+					{#each names as name}
+						<option value={name}>{names}</option>
 					{/each}
 				</select>
 			</div>

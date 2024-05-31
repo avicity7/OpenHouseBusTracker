@@ -95,7 +95,10 @@ func UpdateDriver(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	config.Cache.Delete("drivers")
+	config.Cache.Delete("Schedules")
+
 	fmt.Fprintln(w, "Driver updated successfully")
 }
 

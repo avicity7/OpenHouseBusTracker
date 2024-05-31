@@ -25,21 +25,20 @@ export const load = async ({ fetch }) => {
 
 export const actions = {
     createEventHelper: async({ request}): Promise<void> =>{
-      const form =await request.formData()
+      const form = await request.formData()
   
       const Carplate = form.get('carplate');
-      const Email = form.get('email');
+      const Name = form.get('Name');
       const ShiftString = form.get('shift');
       
       const Shift = ShiftString === 'true';
 
-      console.log("shift is " + Shift )
       const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/event-helpers/create-helper`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
                 Carplate,
-                Email,
+                Name,
                 Shift,
             })
       });

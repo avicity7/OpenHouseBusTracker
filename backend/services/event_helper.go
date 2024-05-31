@@ -12,7 +12,8 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
 	var eventHelpers []structs.EventHelper
 
 	query := `
-        SELECT * FROM event_helper
+        SELECT carplate, ut.name, shift FROM event_helper eh
+				JOIN user_table ut ON ut.email = eh.email
     `
 	rows, err := config.Dbpool.Query(context.Background(), query)
 	if err != nil {
@@ -24,7 +25,7 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
 		var eventHelper structs.EventHelper
 		err := rows.Scan(
 			&eventHelper.Carplate,
-			&eventHelper.Email,
+			&eventHelper.Name,
 			&eventHelper.Shift,
 		)
 		if err != nil {
@@ -36,13 +37,18 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
 }
 
 func CreateEventHelper(eventHelper structs.EventHelper) error {
+	email, err := GetEmail(eventHelper.Name)
+	if err != nil {
+		return err
+	}
+
 	query := `
 		INSERT INTO event_helper (carplate, email, shift) 
 		VALUES ($1, $2, $3)
     `
-	_, err := config.Dbpool.Exec(context.Background(), query,
+	_, err = config.Dbpool.Exec(context.Background(), query,
 		eventHelper.Carplate,
-		eventHelper.Email,
+		email,
 		eventHelper.Shift,
 	)
 	if err != nil {
@@ -55,6 +61,15 @@ func CreateEventHelper(eventHelper structs.EventHelper) error {
 
 // working, timestamp ingestion issue
 func UpdateEventHelper(eventHelper structs.EventHelperUpdate) error {
+	newEmail, err := GetEmail(eventHelper.NewName)
+	if err != nil {
+		return err
+	}
+
+	oldEmail, err := GetEmail(eventHelper.OldName)
+	if err != nil {
+		return err
+	}
 	query := `
         UPDATE event_helper
         SET 
@@ -66,12 +81,12 @@ func UpdateEventHelper(eventHelper structs.EventHelperUpdate) error {
             AND email = $5
             AND shift = $6
     `
-	_, err := config.Dbpool.Exec(context.Background(), query,
+	_, err = config.Dbpool.Exec(context.Background(), query,
 		eventHelper.NewCarplate,
-		eventHelper.NewEmail,
+		newEmail,
 		eventHelper.NewShift,
 		eventHelper.OldCarplate,
-		eventHelper.OldEmail,
+		oldEmail,
 		eventHelper.OldShift,
 	)
 
@@ -87,6 +102,11 @@ func UpdateEventHelper(eventHelper structs.EventHelperUpdate) error {
 
 // need to think bout how to make it take a body of ids with composite keys
 func DeleteEventHelper(eventHelper structs.EventHelper) error {
+	email, err := GetEmail(eventHelper.Name)
+	if err != nil {
+		return err
+	}
+
 	query := `
         DELETE FROM event_helper
         WHERE
@@ -94,9 +114,9 @@ func DeleteEventHelper(eventHelper structs.EventHelper) error {
             AND email = $2
             AND shift = $3
     `
-	_, err := config.Dbpool.Exec(context.Background(), query,
+	_, err = config.Dbpool.Exec(context.Background(), query,
 		eventHelper.Carplate,
-		eventHelper.Email,
+		email,
 		eventHelper.Shift,
 	)
 	if err != nil {
@@ -121,7 +141,7 @@ func GetEventHelperDropdownData() ([]structs.EventHelperDropdownData, error) {
 
         SELECT 
             NULL AS carplate,
-            u.email
+						u.name
         FROM 
             user_table u
 				WHERE u.role_id = 1
@@ -138,7 +158,7 @@ func GetEventHelperDropdownData() ([]structs.EventHelperDropdownData, error) {
 		var data structs.EventHelperDropdownData
 		err := rows.Scan(
 			&data.Carplate,
-			&data.Email,
+			&data.Name,
 		)
 		if err != nil {
 			fmt.Println("Error scanning row:", err)
