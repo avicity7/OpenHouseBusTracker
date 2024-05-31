@@ -144,18 +144,18 @@ type Route struct {
 
 type EventHelper struct {
 	Carplate string
-	Email    string
+	Name     string
 	Shift    bool
 }
 // might have to add name field here soon
 	
 type EventHelperUpdate struct {
 	OldCarplate string
-	OldEmail    string
+	OldName     string
 	OldShift    bool
 
 	NewCarplate string
-	NewEmail    string
+	NewName     string
 	NewShift    bool
 }
 
@@ -173,7 +173,7 @@ type FollowBusEvent struct {
 
 type EventHelperDropdownData struct {
 	Carplate *string
-	Email    *string
+	Name     *string
 }
 
 type Stop struct {

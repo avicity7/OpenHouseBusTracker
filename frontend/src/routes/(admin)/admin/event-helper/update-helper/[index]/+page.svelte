@@ -6,42 +6,38 @@
     export let data;
     const { dropdownData } = data;
 
-    let helper: EventHelper = { Carplate: '', Email: '', Shift: false};
+    let helper: EventHelper = { Carplate: '', Name: '', Shift: false};
     let carplates: string[] = [];
-    let emails: string[] = [];
+    let names: string[] = [];
     let selectedCarplate: string | null = null;
-    let selectedEmail: string | null = null;
+    let selectedName: string | null = null;
     let selectedShift: boolean | null = null;
 
     function setEventHelperDropdownOptions() {
         if (!dropdownData) return;
 
         const uniqueCarplates = new Set<string>();
-        const uniqueEmails = new Set<string>();
+        const uniqueNames = new Set<string>();
 
-        dropdownData.forEach(({ Carplate, Email }: EventHelper) => {
-
+        dropdownData.forEach(({ Carplate, Name }: EventHelper) => {
             if (Carplate) {
                 uniqueCarplates.add(Carplate);
             }
-            if (Email) {
-                uniqueEmails.add(Email);
+            if (Name) {
+                uniqueNames.add(Name);
             }
         });
 
         carplates = Array.from(uniqueCarplates);
-        emails = Array.from(uniqueEmails);
+        names = Array.from(uniqueNames)
     }
     // updated information is not shown when update is successful because of url not changing
     onMount(() => {
         const { index } = $page.params; 
         helper = JSON.parse(decodeURIComponent(index));
-        console.log(helper) 
         selectedCarplate = helper.Carplate;
-        selectedEmail = helper.Email;
+        selectedName = helper.Name;
         selectedShift = helper.Shift;
-
-        console.log("shift ", selectedShift)
 
         if (dropdownData) {
             setEventHelperDropdownOptions()
@@ -56,7 +52,7 @@
         <h1 class="text-2xl font-semibold mb-4">Update Selected Event Helper</h1>
         <form method="POST" action="?/updateEventHelper">
             <input type="hidden" name="old_carplate" value={helper.Carplate}>
-            <input type="hidden" name="old_email" value={helper.Email}>
+            <input type="hidden" name="old_name" value={helper.Name}>
             <input type="hidden" name="old_shift" value={helper.Shift}>
 
             <div class="mb-4">
@@ -69,10 +65,10 @@
             </div>
             
             <div class="mb-4">
-                <label for="email" class="block text-sm font-medium mb-1">Email:</label>
-                <select id="email" name="email" required bind:value={selectedEmail} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                    {#each emails as email}
-                        <option value={email}>{email}</option>
+                <label for="name" class="block text-sm font-medium mb-1">Name:</label>
+                <select id="name" name="name" required bind:value={selectedName} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    {#each names as name}
+                        <option value={name}>{name}</option>
                     {/each}
                 </select>
             </div>

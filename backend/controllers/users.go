@@ -8,6 +8,7 @@ import (
 	"server/services"
 	"server/structs"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/patrickmn/go-cache"
 )
 
@@ -63,6 +64,21 @@ func UpdateUserRole(w http.ResponseWriter, r *http.Request) {
 	}
 	config.Cache.Delete("Users")
 	config.Cache.Delete(user.Email)
+
+	w.WriteHeader(200)
+}
+
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	email := chi.URLParam(r, "email")
+
+	err := services.DeleteUser(email)
+
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+
+	config.Cache.Delete("Users")
 
 	w.WriteHeader(200)
 }

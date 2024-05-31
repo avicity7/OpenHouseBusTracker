@@ -119,10 +119,10 @@ func UpdateEventHelper(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Executing SQL query:")
 	fmt.Println("Values:")
 	fmt.Println("NewCarplate:", eventHelper.NewCarplate)
-	fmt.Println("NewEmail:", eventHelper.NewEmail)
+	fmt.Println("NewEmail:", eventHelper.NewName)
 	fmt.Println("NewShift:", eventHelper.NewShift)
 	fmt.Println("OldCarplate:", eventHelper.OldCarplate)
-	fmt.Println("OldEmail:", eventHelper.OldEmail)
+	fmt.Println("OldEmail:", eventHelper.OldName)
 	fmt.Println("OldShift:", eventHelper.OldShift)
 
 	err = services.UpdateEventHelper(eventHelper)

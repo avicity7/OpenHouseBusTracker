@@ -8,6 +8,25 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+func GetEmail(name string) (string, error) {
+	var email string
+	query := `
+		SELECT email FROM user_table
+		WHERE name = @Name
+	`
+
+	args := pgx.NamedArgs{
+		"Name": name,
+	}
+
+	err := config.Dbpool.QueryRow(context.Background(), query, args).Scan(&email)
+	if err != nil {
+		return "", err
+	}
+
+	return email, nil
+}
+
 func GetUsers() (structs.ReturnedUserArray, error) {
 	output := make(structs.ReturnedUserArray, 0)
 	query := `
@@ -60,6 +79,24 @@ func UpdateUserRole(user structs.EditUserRole) error {
 	args := pgx.NamedArgs{
 		"Role":  user.Role,
 		"Email": user.Email,
+	}
+
+	_, err := config.Dbpool.Exec(context.Background(), query, args)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteUser(email string) error {
+	query := `
+		DELETE FROM user_table ut
+		WHERE email = @Email
+	`
+
+	args := pgx.NamedArgs{
+		"Email": email,
 	}
 
 	_, err := config.Dbpool.Exec(context.Background(), query, args)

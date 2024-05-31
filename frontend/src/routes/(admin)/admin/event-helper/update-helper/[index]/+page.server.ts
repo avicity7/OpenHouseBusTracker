@@ -29,13 +29,13 @@ export const actions = {
       const form =await request.formData()
   
       const Carplate = form.get('carplate');
-      const Email = form.get('email');
+      const Name = form.get('name');
       const ShiftString = form.get('shift');
 
       const Shift = ShiftString === 'true';
 
       const OldCarplate = form.get('old_carplate');
-      const OldEmail = form.get('old_email');
+      const OldName = form.get('old_name');
       const OldShiftString =  form.get('old_shift');
 
       const OldShift = OldShiftString === 'true';
@@ -45,10 +45,10 @@ export const actions = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             NewCarplate: Carplate,
-            NewEmail: Email,
+            NewName: Name,
             NewShift: Shift,
             OldCarplate,
-            OldEmail,
+            OldName,
             OldShift,
             })
       });

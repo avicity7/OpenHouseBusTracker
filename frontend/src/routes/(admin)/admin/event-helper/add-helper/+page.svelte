@@ -6,37 +6,36 @@
   	const { dropdownData } = data
 
 	let carplates: string[] = [];
-	let emails: string[] = [];
+	let names: string[] = [];
 
 	let selectedCarplate: string | null = null;
-	// let selectedEmail: string | null = null;
-	let selectedEmails: Set<string> = new Set();
+	let selectedNames: Set<string> = new Set();
 	let selectedShift: boolean | null = null;
 
 	function setEventHelperDropdownOptions() {
 		if (!dropdownData) return;
 		
 		const uniqueCarplates = new Set<string>();
-		const uniqueEmails = new Set<string>();
+		const uniqueNames = new Set<string>();
 
-		dropdownData.forEach(({ Carplate, Email }: EventHelper) => {
+		dropdownData.forEach(({ Carplate, Name }: EventHelper) => {
 			if (Carplate) {
 				uniqueCarplates.add(Carplate);
 			}
-			if (Email) {
-				uniqueEmails.add(Email);
+			if (Name) {
+				uniqueNames.add(Name);
 			}
 		});
 
 		carplates = Array.from(uniqueCarplates);
-		emails = Array.from(uniqueEmails);
+		names = Array.from(uniqueNames);
 	}
 
-	function toggleEmailSelection(email: string) {
-		if (selectedEmails.has(email)) {
-			selectedEmails.delete(email);
+	function toggleNameSelection(name: string) {
+		if (selectedNames.has(name)) {
+			selectedNames.delete(name);
 		} else {
-			selectedEmails.add(email);
+			selectedNames.add(name);
 		}
 	}
 
@@ -66,35 +65,20 @@
 					{/each}
 				</select>
 			</div>
-
-			<!-- <div class="mb-4">
-				<label for="email" class="block text-sm font-medium mb-1">Email:</label>
-				<select
-					id="email"
-					name="email"
-					bind:value={selectedEmail}
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-				>
-					{#each emails as email}
-						<option value={email}>{email}</option>
-					{/each}
-				</select>
-			</div> -->
-
 			<div class="mb-4">
 				<fieldset>
-					<legend class="block text-sm font-medium mb-1">Emails:</legend>
-					{#each emails as email}
+					<legend class="block text-sm font-medium mb-1">Names:</legend>
+					{#each names as name}
 						<div class="flex items-center mb-2">
 							<input
 								type="checkbox"
-								name="email"
-								id={email}
-								value={email}
-								on:change={() => toggleEmailSelection(email)}
+								name="name"
+								id={name}
+								value={name}
+								on:change={() => toggleNameSelection(name)}
 								class="mr-2"
 							/>
-							<label for={email} class="text-sm">{email}</label>
+							<label for={name} class="text-sm">{name}</label>
 						</div>
 					{/each}
 				</fieldset>

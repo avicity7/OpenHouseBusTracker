@@ -25,25 +25,23 @@ export const load = async ({ fetch }) => {
 
 export const actions = {
     createEventHelper: async({ request}): Promise<void> =>{
-      const form =await request.formData()
+      const form = await request.formData()
   
       const Carplate = form.get('carplate');
-    //   const Email = form.get('email');
-      const ShiftString = form.get('shift');  
+      const ShiftString = form.get('shift');
       const Shift = ShiftString === 'true';
-      const selectedEmails = form.getAll('email');
+      const selectedNames = form.getAll('name');
+      const EventHelpers = selectedName.map(name => ({
+        Carplate,
+        Name,
+        Shift
+      }));
 
-       const EventHelpers = selectedEmails.map(email => ({
-            Carplate,
-            Email: email,
-            Shift
-        }));
-
-        const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/event-helpers/create-helpers`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ EventHelpers })
-        });
+      const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/event-helpers/create-helpers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ EventHelpers })
+      });
     
       if (!response.ok) {
         throw new Error("Failed to create event helper");
