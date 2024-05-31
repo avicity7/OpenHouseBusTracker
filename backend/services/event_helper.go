@@ -19,12 +19,11 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer rows.Close() 
 
 	for rows.Next() {
 		var eventHelper structs.EventHelper
 		err := rows.Scan(
-			// &eventHelper.Name,
 			&eventHelper.Carplate,
 			&eventHelper.Name,
 			&eventHelper.Shift,
