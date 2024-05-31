@@ -52,13 +52,16 @@ func CreateEventHelpers(eventHelpers []structs.EventHelper) error {
 	}()
 
 	for _, eventHelper := range eventHelpers {
-    email, err := GetEmail(eventHelper.Name)
-    
+		email, err := GetEmail(eventHelper.Name)
+		if err != nil {
+			return err
+		}
+
 		query := `
 			INSERT INTO event_helper (carplate, email, shift) 
 			VALUES ($1, $2, $3)
 		`
-		_, err := tx.Exec(context.Background(), query,
+		_, err = tx.Exec(context.Background(), query,
 			eventHelper.Carplate,
 			email,
 			eventHelper.Shift,
