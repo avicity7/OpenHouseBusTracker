@@ -161,7 +161,7 @@ func BulkCreateUsers(csvFilePath string) error {
 			Name:     record[0],
 			Email:    record[1],
 			Password: pwd,
-			Role:     0,
+			Role:     1,
 		}
 
 		err = createUserInTransaction(tx, user)
