@@ -35,7 +35,7 @@ func GetFollowBus(email string) (structs.EventSchedule, error) {
 	JOIN bus_schedule bs ON eh.carplate = bs.carplate 
 	JOIN driver d ON bs.driver_id = d.driver_id 
 	WHERE email = @Email
-	AND shift = NOT (CURRENT_TIME AT TIME ZONE 'Etc/GMT-8' >= '12:00:00')
+	AND shift = (NOT (CURRENT_TIME AT TIME ZONE 'Etc/GMT-8' >= '12:00:00')) OR (CURRENT_TIME AT TIME ZONE 'Etc/GMT-8' <= '14:00:00')
 	AND NOW() AT TIME ZONE 'Etc/GMT-8' BETWEEN bs.start_time AND bs.end_time
 	`
 
@@ -186,6 +186,7 @@ func GetCurrentBuses() ([]structs.CurrentBus, error) {
 		AND carplate IN (
 			SELECT carplate FROM bus_schedule bs 
 			WHERE end_time >= NOW() AT TIME ZONE 'Etc/GMT-8'
+			AND start_time <= NOW() AT TIME ZONE 'Etc/GMT-8'
 		)
 	`
 
