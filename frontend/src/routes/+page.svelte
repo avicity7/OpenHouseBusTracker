@@ -112,10 +112,11 @@
 				} else {
 					pastMarkers[`103.7789194739538, 1.3103185038805805`] = pastValue != undefined ? pastValue + 1 : 0
 				}
-				pastValue = pastMarkers[`${currentBus.Lng}, ${currentBus.Lat}`]
+				pastValue = currentBus.EventType != "Break" ? pastMarkers[`${currentBus.Lng}, ${currentBus.Lat}`] : pastMarkers[`103.7789194739538, 1.3103185038805805`]
+				console.log(`${currentBus.Carplate}: ${pastValue}`)
 				const waypoint = new Marker({ color: (currentBus.EventType == "Arrive" ? currentBus.Color : "#606060") })
 					.setLngLat(currentBus.EventType != "Break" ? [currentBus.Lng, currentBus.Lat] : [103.7789194739538, 1.3103185038805805])
-					.setOffset(currentBus.EventType == "Arrive" ? [0 + (pastValue * 12), -25] : [0, (currentBus.EventType != "Break" ? -42 : 0)])
+					.setOffset(currentBus.EventType == "Arrive" ? [0 + (pastValue * 12), -25] : [0 + (pastValue * 12), (currentBus.EventType != "Break" ? -42 : 0)])
 					.setPopup(new Popup({ offset: 25, className: "flex text-lg font-public justify-center items-center text-center" })
 						.setHTML(
 							`
