@@ -205,7 +205,7 @@ func GetScheduleByUser(email string) ([]structs.Schedule, error) {
 		SELECT bus_schedule_id, eh.carplate, driver_name, route_name, bs.start_time, bs.end_time FROM event_helper eh
 		JOIN bus_schedule bs ON eh.carplate = bs.carplate 
 		JOIN driver d ON bs.driver_id = d.driver_id 
-		WHERE email = @Email
+		WHERE email = $1
 		AND (shift = (NOT (CURRENT_TIME AT TIME ZONE 'Etc/GMT-8' >= '12:00:00')) OR (CURRENT_TIME AT TIME ZONE 'Etc/GMT-8' <= '14:00:00'))
 		AND NOW() AT TIME ZONE 'Etc/GMT-8' BETWEEN bs.start_time AND bs.end_time
 		ORDER BY shift DESC
