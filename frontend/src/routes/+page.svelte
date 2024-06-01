@@ -117,7 +117,7 @@
 				const waypoint = new Marker({ color: (currentBus.EventType == "Arrive" ? currentBus.Color : "#606060") })
 					.setLngLat(currentBus.EventType != "Break" ? [currentBus.Lng, currentBus.Lat] : [103.7789194739538, 1.3103185038805805])
 					.setOffset(currentBus.EventType == "Arrive" ? [0 + (pastValue * 12), -25] : [0 + (pastValue * 12), (currentBus.EventType != "Break" ? -42 : 0)])
-					.setPopup(new Popup({ offset: 25, className: "flex text-lg font-public justify-center items-center text-center" })
+					.setPopup(new Popup({ offset: [pastValue * 12, -30], className: "flex text-lg font-public justify-center items-center text-center" })
 						.setHTML(
 							`
 							<div class="px-2 pt-2">
