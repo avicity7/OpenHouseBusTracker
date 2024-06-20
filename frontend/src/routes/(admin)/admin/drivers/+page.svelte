@@ -2,24 +2,17 @@
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
   import { jsPDF } from 'jspdf';
+  // import type { CellConfig } from 'jspdf'
   import ToolTip from '$lib/components/ToolTip.svelte';
   import type { Driver } from '$lib/types/global';
   import { PUBLIC_BACKEND_URL } from '$env/static/public';
+	import autoTable from 'jspdf-autotable';
 
   let drivers = writable<Driver[]>([]);
   let alert = '';
   let search = '';
   let driverToDelete: Driver | null = null;
-  let timers = writable<{ [key: number]: number }>({}); // Store timers for each driver
-
-  type CellConfig = {
-  id: string;
-  name: string;
-  prompt: string;
-  width: number;
-  align: string;
-  padding: number;
-};
+  let timers = writable<Record<number, { startTime: number | null, elapsedTime: number }>>({});
 
   const getDrivers = async () => {
     const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/driver/get-driver`);
@@ -27,105 +20,118 @@
       let data = await response.json() as Driver[];
       data.sort((a, b) => a.DriverId - b.DriverId);
       drivers.set(data);
+      initializeTimers(data);
     }
   };
 
-  function startTimer(driverId: number) {
-    let timerInterval = setInterval(() => {
-      timers.update(t => {
-        if (!t[driverId]) t[driverId] = 0;
-        t[driverId] += 1;
-        return t;
-      });
-    }, 1000); // not working properly yet
-  }
-
-  function stopTimer(driverId: number) {
-    timers.update(t => {
-      clearInterval(t[driverId]);
-      return t;
+  const initializeTimers = (data: Driver[]) => {
+    const initialTimers: Record<number, { startTime: number | null, elapsedTime: number }> = {};
+    data.forEach(driver => {
+      initialTimers[driver.DriverId] = { startTime: null, elapsedTime: 0 };
     });
-  }
-
-  function generateData(amount: number) {
-  var result = [];
-  var data = {
-    driver: "driver name",
-    hours_worked: "hours worked innit",
-    pay: "10 * hours",
+    timers.set(initialTimers);
   };
 
-  for (var i = 0; i < amount; i += 1) {
-    var item = Object.assign({}, data);
-    item.id = (i + 1).toString();
-    result.push(item);
-  }
-  return result;
-}
+  const startTimer = (driverId: number) => {
+    timers.update(currentTimers => {
+      if (currentTimers[driverId]?.startTime === null) {
+        currentTimers[driverId].startTime = Date.now();
+      }
+      return currentTimers;
+    });
+  };
 
-function createHeaders(keys: string[]) {  
-  var result = [];
-  for (var i = 0; i < keys.length; i += 1) {
-    result.push({
-      id: keys[i],
-      name: keys[i],
-      prompt: keys[i],
-      width: 65,
-      align: "center",
-      padding: 0
+  const stopTimer = (driverId: number) => {
+    timers.update(currentTimers => {
+      if (currentTimers[driverId] && currentTimers[driverId].startTime !== null) {
+        currentTimers[driverId].elapsedTime += Date.now() - currentTimers[driverId].startTime!;
+        currentTimers[driverId].startTime = null;
+      }
+      return currentTimers;
+    });
+  };
+
+  const getElapsedTime = (elapsedTime: number, startTime: number | null) => {
+    const totalElapsedTime = elapsedTime + (startTime ? Date.now() - startTime : 0);
+    const hours = Math.floor(totalElapsedTime / 3600000);
+    const minutes = Math.floor((totalElapsedTime % 3600000) / 60000);
+    const seconds = Math.floor((totalElapsedTime % 60000) / 1000);
+    return `${hours}h ${minutes}m ${seconds}s`;
+  };
+
+  const convertToHours = (milliseconds: number): number => {
+    return milliseconds / (1000 * 60 * 60);
+  };
+
+  function generateData() {
+    const driversData = $drivers;
+    const timersData = $timers;
+    return driversData.map(driver => {
+      const hoursWorked = convertToHours(timersData[driver.DriverId]?.elapsedTime || 0);
+      return [
+        driver.DriverName,
+        hoursWorked.toFixed(2),
+        (100 * hoursWorked).toFixed(2) // assuming driver's pay per hour is $100, to be confirmed
+      ];
     });
   }
-  return result;
-}
 
-var headers = createHeaders([
-  "id",
-  "driver",
-  "hours_worked",
-  "pay",
-]);
+  async function exportToPDF() {
+    const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: 'landscape' });
 
-async function exportToPDF() {
-  const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape" });
+    doc.text('Driver Paysheet', 15, 10);
 
-  doc.text("Driver Data", 10, 10);
-  doc.text("HELLO WORLD AM I HERE", 10, 15)
-  try {
-    doc.table(1, 20, generateData(100), headers, { autoSize: true });
-  } catch (error) {
-    console.error("Error generating table:", error);
-  }
-
-  doc.save("drivers_data.pdf");
-}
-
-
-// to do: input time value into pdf, determine if its pdf per driver or pdf for all drivers, fixed pay/hr?, fix type errors
-
-  async function deleteDriver(id: number, name: string) {
-    driverToDelete = { DriverId: id, DriverName: name };
-  }
-
-  function confirmDelete() {
-    if (driverToDelete) {
-      const { DriverId, DriverName } = driverToDelete;
-      fetch(`${PUBLIC_BACKEND_URL}:3000/driver/delete-driver/${DriverId}`, { method: 'DELETE' })
-        .then(response => {
-          if (response.ok) {
-            getDrivers(); 
-            alert = `${DriverName} has been deleted!`;
-            setTimeout(() => { alert = ''; }, 3000);
+    try {
+      autoTable(doc, {
+        startY: 20,
+        theme: 'striped',
+        head: [['Driver', 'Hours Worked', 'Pay']],
+        body: generateData(),
+        didDrawCell: (data) => {
+          if (data.column.index === 0) {
+            data.cell.styles.cellWidth = 80;
           }
-        });
+        }
+      });
+    } catch (error) {
+      console.error('Error generating table:', error);
+    }
+
+    doc.save('drivers_data-autotable.pdf');
+  }
+
+  // to do: fixed pay/hr?
+
+    async function deleteDriver(id: number, name: string) {
+      driverToDelete = { DriverId: id, DriverName: name };
+    }
+
+    function confirmDelete() {
+      if (driverToDelete) {
+        const { DriverId, DriverName } = driverToDelete;
+        fetch(`${PUBLIC_BACKEND_URL}:3000/driver/delete-driver/${DriverId}`, { method: 'DELETE' })
+          .then(response => {
+            if (response.ok) {
+              getDrivers(); 
+              alert = `${DriverName} has been deleted!`;
+              setTimeout(() => { alert = ''; }, 3000);
+            }
+          });
+        driverToDelete = null;
+      }
+    }
+
+    function cancelDelete() {
       driverToDelete = null;
     }
-  }
 
-  function cancelDelete() {
-    driverToDelete = null;
-  }
+    onMount(() => {
+      getDrivers();
+      const interval = setInterval(() => {
+        timers.update(currentTimers => ({ ...currentTimers }));
+      }, 1000);
+    });
 
-  onMount(getDrivers);
 </script>
 
 <div class="p-6 md:p-12">
@@ -154,10 +160,14 @@ async function exportToPDF() {
                       <tr class="hover:bg-gray-100">
                           <td class="px-6 py-4 whitespace-nowrap text-center">{driver.DriverName}</td>
                           <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <div>{Math.floor($timers[driver.DriverId] / 60)}:{($timers[driver.DriverId] % 60).toString().padStart(2, '0')}</div>
-                            <button on:click={() => startTimer(driver.DriverId)}>Start</button>
-                            <button on:click={() => stopTimer(driver.DriverId)}>Stop</button>
-                        </td>
+                            <div>
+                              <span>{getElapsedTime($timers[driver.DriverId].elapsedTime, $timers[driver.DriverId].startTime)}</span>
+                            </div>
+                            <div class="mt-2">
+                              <button on:click={() => startTimer(driver.DriverId)} class="mr-2 text-green-500">Start</button>
+                              <button on:click={() => stopTimer(driver.DriverId)} class="text-red-500">Stop</button>
+                            </div>
+                          </td>
                           <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                               <div class="flex items-center justify-center">
                                   <a href={`drivers/update-driver/${encodeURIComponent(JSON.stringify(driver))}`} class="text-slate-500 hover:text-green-500 mr-8">
