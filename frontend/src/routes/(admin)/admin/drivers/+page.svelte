@@ -1,14 +1,22 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
+  import { jsPDF } from 'jspdf';
+  // import type { CellConfig } from 'jspdf'
   import ToolTip from '$lib/components/ToolTip.svelte';
   import type { Driver } from '$lib/types/global';
   import { PUBLIC_BACKEND_URL } from '$env/static/public';
+	import autoTable from 'jspdf-autotable';
+
+  export let data;
+  const { backend_uri, ScheduleTimeDiff } = data
 
   let drivers = writable<Driver[]>([]);
+  let driverHours = data.ScheduleTimeDiff;
   let alert = '';
   let search = '';
   let driverToDelete: Driver | null = null;
+  let timers = writable<Record<number, { startTime: number | null, elapsedTime: number }>>({});
 
   const getDrivers = async () => {
     const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/driver/get-driver`);
@@ -16,33 +24,84 @@
       let data = await response.json() as Driver[];
       data.sort((a, b) => a.DriverId - b.DriverId);
       drivers.set(data);
+      initializeTimers(data);
     }
   };
 
-  async function deleteDriver(id: number, name: string) {
-    driverToDelete = { DriverId: id, DriverName: name };
+  const convertToHours = (nanoseconds: number): number => {
+    return nanoseconds / (1000 * 1000 * 1000 * 60 * 60);
+  };
+
+  function generateData() {
+    const driversData = $drivers;
+    return driversData.map(driver => {
+      const driverHour = ScheduleTimeDiff.find(d => d.DriverId === driver.DriverId);
+      const hoursWorked = driverHour ? convertToHours(driverHour.TimeDifference) : 0;
+
+      return [
+        driver.DriverName,
+        hoursWorked.toFixed(2),
+        (100 * hoursWorked).toFixed(2) // assuming driver's pay per hour is $100, to be confirmed
+      ];
+    });
   }
 
-  function confirmDelete() {
-    if (driverToDelete) {
-      const { DriverId, DriverName } = driverToDelete;
-      fetch(`${PUBLIC_BACKEND_URL}:3000/driver/delete-driver/${DriverId}`, { method: 'DELETE' })
-        .then(response => {
-          if (response.ok) {
-            getDrivers(); 
-            alert = `${DriverName} has been deleted!`;
-            setTimeout(() => { alert = ''; }, 3000);
+  async function exportToPDF() {
+    const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: 'landscape' });
+
+    doc.text('Driver Paysheet', 15, 10);
+
+    try {
+      autoTable(doc, {
+        startY: 20,
+        theme: 'striped',
+        head: [['Driver', 'Hours Worked', 'Pay']],
+        body: generateData(),
+        didDrawCell: (data) => {
+          if (data.column.index === 0) {
+            data.cell.styles.cellWidth = 80;
           }
-        });
+        }
+      });
+    } catch (error) {
+      console.error('Error generating table:', error);
+    }
+
+    doc.save('drivers_data-autotable.pdf');
+  }
+
+  // to do: fixed pay/hr?
+
+    async function deleteDriver(id: number, name: string) {
+      driverToDelete = { DriverId: id, DriverName: name };
+    }
+
+    function confirmDelete() {
+      if (driverToDelete) {
+        const { DriverId, DriverName } = driverToDelete;
+        fetch(`${PUBLIC_BACKEND_URL}:3000/driver/delete-driver/${DriverId}`, { method: 'DELETE' })
+          .then(response => {
+            if (response.ok) {
+              getDrivers(); 
+              alert = `${DriverName} has been deleted!`;
+              setTimeout(() => { alert = ''; }, 3000);
+            }
+          });
+        driverToDelete = null;
+      }
+    }
+
+    function cancelDelete() {
       driverToDelete = null;
     }
-  }
 
-  function cancelDelete() {
-    driverToDelete = null;
-  }
+    onMount(() => {
+      getDrivers();
+      const interval = setInterval(() => {
+        timers.update(currentTimers => ({ ...currentTimers }));
+      }, 1000);
+    });
 
-  onMount(getDrivers);
 </script>
 
 <div class="p-6 md:p-12">
@@ -73,7 +132,7 @@
                               <div class="flex items-center justify-center">
                                   <a href={`drivers/update-driver/${encodeURIComponent(JSON.stringify(driver))}`} class="text-slate-500 hover:text-green-500 mr-8">
                                       <ToolTip text="Update Driver"> 
-                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                      <svg xmlns="http://www.w3.org/2 000/svg" class="h-5 w-5 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                           <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3"/>
                                       </svg>
                                       </ToolTip>
@@ -96,6 +155,12 @@
                   {/each}
           </tbody>
       </table>
+  </div>
+
+  <div class="mt-8">
+      <button on:click={exportToPDF} class="border-black text-white font-semibold text-md px-6 py-2 rounded-xl bg-red-700 hover:bg-red-800">
+          Export Data to PDF
+      </button>
   </div>
 
     {#if driverToDelete}

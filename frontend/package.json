@@ -40,6 +40,8 @@
 		"autoprefixer": "^10.4.19",
 		"flowbite-svelte": "^0.46.0",
 		"jsonwebtoken": "^9.0.2",
+		"jspdf": "^2.5.1",
+		"jspdf-autotable": "^3.8.2",
 		"mapbox-gl": "^3.3.0",
 		"node-fetch": "^3.3.2",
 		"postcss": "^8.4.38",

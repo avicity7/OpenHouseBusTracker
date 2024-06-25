@@ -139,3 +139,18 @@ func DeleteDriver(w http.ResponseWriter, r *http.Request) {
 	config.Cache.Delete("drivers")
 	fmt.Fprintln(w, "Driver deleted successfully")
 }
+
+
+func GetScheduleTimeDiff(w http.ResponseWriter, r *http.Request) {
+	timeDiffs, err := services.GetScheduleTimeDiff()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(timeDiffs); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}

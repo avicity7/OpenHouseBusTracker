@@ -61,3 +61,59 @@ func DeleteDriver(driverID int) error {
 	}
 	return nil
 }
+
+// func GetScheduleTimeDiff() ([]structs.TimeDiff, error) {
+// 	var drivers []structs.Driver
+// 	rows, err := config.Dbpool.Query(context.Background(), "SELECT * FROM driver")
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer rows.Close()
+// 	for rows.Next() {
+// 		var driver structs.Driver
+// 		if err := rows.Scan(&driver.DriverId, &driver.DriverName); err != nil {
+// 			return nil, err
+// 		}
+// 		drivers = append(drivers, driver)
+// 	}
+// 	if err := rows.Err(); err != nil {
+// 		return nil, err
+// 	}
+// 	return drivers, nil
+// }
+
+
+func GetScheduleTimeDiff() ([]structs.TimeDiff, error) {
+	var driversTime []structs.TimeDiff
+
+	query := `
+        SELECT driver_id, start_time, end_time, (end_time - start_time) AS time_diff FROM bus_schedule
+    `
+
+	rows, err := config.Dbpool.Query(context.Background(), query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var td structs.TimeDiff
+		err := rows.Scan(
+			&td.DriverId,
+			&td.StartTime,
+			&td.EndTime,
+			&td.TimeDifference,
+		)
+		if err != nil {
+			return nil, err
+		}
+		
+		driversTime = append(driversTime, td)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return driversTime, nil
+}
