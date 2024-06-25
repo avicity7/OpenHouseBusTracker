@@ -42,31 +42,6 @@ func GetEventHelpers(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
-// func CreateEventHelper(w http.ResponseWriter, r *http.Request) {
-// 	var eventHelper structs.EventHelper
-
-// 	err := json.NewDecoder(r.Body).Decode(&eventHelper)
-
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		http.Error(w, "Invalid request body", http.StatusBadRequest)
-// 		return
-// 	}
-
-// 	err = services.CreateEventHelper(eventHelper)
-// 	if err != nil {
-// 		http.Error(w, "Failed to create event helper", http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	config.Cache.Delete("EventHelpers")
-
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.WriteHeader(http.StatusCreated)
-// 	fmt.Fprintf(w, "Event Helper created successfully")
-// }
-
-
 func CreateEventHelpers(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		EventHelpers []structs.EventHelper
@@ -89,8 +64,30 @@ func CreateEventHelpers(w http.ResponseWriter, r *http.Request) {
 
 	eventHelpers := req.EventHelpers
 
+	for _, eventHelper := range eventHelpers {
+		email, err := services.GetEmail(eventHelper.Name)
+		if err != nil {
+			fmt.Println("Error retrieving email:", err)
+			http.Error(w, "Failed to retrieve email", http.StatusInternalServerError)
+			return
+		}
+
+		exists, err := services.EventHelperExists(email)
+		if err != nil {
+			http.Error(w, "Failed to check existing event helper", http.StatusInternalServerError)
+			return
+		}
+
+		if exists {
+			http.Error(w, "Student is already assigned to a carplate", http.StatusConflict)
+			return
+		}
+	}
+
+	fmt.Println("WHAT IS INSIDE THIS", eventHelpers)
 	err = services.CreateEventHelpers(eventHelpers)
 	if err != nil {
+		fmt.Println("Error creating event helpers:", err)
 		http.Error(w, "Failed to create event helpers", http.StatusInternalServerError)
 		return
 	}

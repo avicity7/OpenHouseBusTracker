@@ -37,41 +37,66 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
 }
 
 func CreateEventHelpers(eventHelpers []structs.EventHelper) error {
-	tx, err := config.Dbpool.Begin(context.Background())
-	if err != nil {
-		fmt.Println("Failed to begin transaction:", err)
-		return err
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback(context.Background())
-		} else {
-			tx.Commit(context.Background())
-		}
-	}()
+    tx, err := config.Dbpool.Begin(context.Background())
+    if err != nil {
+        fmt.Println("Failed to begin transaction:", err)
+        return err
+    }
+    defer func() {
+        if err != nil {
+            tx.Rollback(context.Background())
+        } else {
+            tx.Commit(context.Background())
+        }
+    }()
 
-	for _, eventHelper := range eventHelpers {
-		email, err := GetEmail(eventHelper.Name)
-		if err != nil {
-			return err
-		}
+    for _, eventHelper := range eventHelpers {
+        email, err := GetEmail(eventHelper.Name)
+        if err != nil {
+            fmt.Println("Error retrieving email:", err)
+            return err
+        }
 
-		query := `
-			INSERT INTO event_helper (carplate, email, shift) 
-			VALUES ($1, $2, $3)
-		`
-		_, err = tx.Exec(context.Background(), query,
-			eventHelper.Carplate,
-			email,
-			eventHelper.Shift,
-		)
-		if err != nil {
-			fmt.Println("Error inserting event helper:", err)
-			return err
-		}
-	}
+        query := `
+            INSERT INTO event_helper (carplate, email, shift) 
+            VALUES ($1, $2, $3)
+        `
+        _, err = tx.Exec(context.Background(), query,
+            eventHelper.Carplate,
+            email,
+            eventHelper.Shift,
+        )
+        if err != nil {
+            fmt.Println("Error inserting event helper:", err)
+            return err
+        }
+        fmt.Printf("Event helper inserted successfully for email: %s\n", email)
+    }
 
-	return nil
+    return nil
+}
+
+func EventHelperExists(email string) (bool, error) {
+    var exists bool
+    query := `
+        SELECT EXISTS (
+            SELECT 1 FROM event_helper
+            WHERE email = $1
+        )
+    `
+    err := config.Dbpool.QueryRow(context.Background(), query, email).Scan(&exists)
+    if err != nil {
+        fmt.Println("Error checking existing event helper:", err)
+        return false, err
+    }
+
+    if exists {
+        fmt.Printf("Event helper already exists for email: %s\n", email)
+    } else {
+        fmt.Printf("No existing event helper found for email: %s\n", email)
+    }
+
+    return exists, nil
 }
 
 func UpdateEventHelper(eventHelper structs.EventHelperUpdate) error {

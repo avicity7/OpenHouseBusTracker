@@ -1,6 +1,6 @@
 import type { EventHelper } from '$lib/types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
-import { redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 
 export const load = async ({ fetch }) => {
     try {
@@ -24,7 +24,7 @@ export const load = async ({ fetch }) => {
 };
 
 export const actions = {
-    createEventHelper: async({ request }): Promise<void> =>{
+    createEventHelper: async({ request }) =>{
       const form = await request.formData()
   
       const Carplate = form.get('carplate');
@@ -44,9 +44,12 @@ export const actions = {
       });
     
       if (!response.ok) {
-        throw new Error("Failed to create event helper");
+        const errorText = await response.text();
+        console.error('Server Error in eventhelper:', errorText);
+        console.error('Server Code:', response.status);
+        return fail(response.status, { error: errorText });
       }
 
-      redirect(301, '/admin/event-helper')
+      throw redirect(301, '/admin/event-helper')
     }    
   }
