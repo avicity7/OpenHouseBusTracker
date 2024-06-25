@@ -24,7 +24,6 @@
       let data = await response.json() as Driver[];
       data.sort((a, b) => a.DriverId - b.DriverId);
       drivers.set(data);
-      initializeTimers(data);
     }
   };
 
@@ -35,7 +34,7 @@
   function generateData() {
     const driversData = $drivers;
     return driversData.map(driver => {
-      const driverHour = ScheduleTimeDiff.find(d => d.DriverId === driver.DriverId);
+      const driverHour = ScheduleTimeDiff.find((d: { DriverId: number }) => d.DriverId === driver.DriverId);
       const hoursWorked = driverHour ? convertToHours(driverHour.TimeDifference) : 0;
 
       return [
@@ -70,7 +69,7 @@
     doc.save('drivers_data-autotable.pdf');
   }
 
-  // to do: fixed pay/hr?
+  // to do: fixed pay/hr?, time diff should always be positive to not show negative pay
 
     async function deleteDriver(id: number, name: string) {
       driverToDelete = { DriverId: id, DriverName: name };

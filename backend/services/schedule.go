@@ -55,23 +55,43 @@ func GetSchedule() ([]structs.Schedule, error) {
 }
 
 func CreateBusSchedule(schedule structs.NewSchedule) error {
-	query := `
-		INSERT INTO bus_schedule (carplate, route_name, driver_id, start_time, end_time) 
-		VALUES ($1, $2, $3, $4, $5)
+    var existingCount int
+    checkQuery := `
+        SELECT COUNT(*) FROM bus_schedule 
+        WHERE (carplate = $1 OR driver_id = $2)
     `
-	_, err := config.Dbpool.Exec(context.Background(), query,
-		schedule.Carplate,
-		schedule.RouteName,
-		schedule.DriverId,
-		schedule.StartTime,
-		schedule.EndTime,
-	)
-	if err != nil {
-		fmt.Println("Error inserting schedule:", err)
-		return err
-	}
+    err := config.Dbpool.QueryRow(context.Background(), checkQuery, 
+        schedule.Carplate,
+        schedule.DriverId).Scan(&existingCount)
 
-	return nil
+    if err != nil {
+        fmt.Println("Error checking existing schedule:", err)
+        return err
+    }
+
+	fmt.Printf("Existing schedule count for carplate %s or driver_id %d: %d\n", schedule.Carplate, schedule.DriverId, existingCount)
+
+    if existingCount > 0 {
+        return fmt.Errorf("a schedule with the same carplate or driver already exists")
+    }
+
+    insertQuery := `
+        INSERT INTO bus_schedule (carplate, route_name, driver_id, start_time, end_time) 
+        VALUES ($1, $2, $3, $4, $5)
+    `
+    _, err = config.Dbpool.Exec(context.Background(), insertQuery,
+        schedule.Carplate,
+        schedule.RouteName,
+        schedule.DriverId,
+        schedule.StartTime,
+        schedule.EndTime,
+    )
+    if err != nil {
+        fmt.Println("Error inserting schedule:", err)
+        return err
+    }
+
+    return nil
 }
 
 func UpdateBusSchedule(schedule structs.UpdateSchedule) error {

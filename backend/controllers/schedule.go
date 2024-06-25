@@ -54,7 +54,12 @@ func CreateBusSchedule(w http.ResponseWriter, r *http.Request) {
 
     err = services.CreateBusSchedule(schedule)
     if err != nil {
-        http.Error(w, "Failed to create schedule", http.StatusInternalServerError)
+        fmt.Println(err.Error())
+        if err.Error() == "a schedule with the same carplate or driver already exists" {
+            http.Error(w, err.Error(), http.StatusConflict)
+        } else {
+            http.Error(w, "Failed to create schedule", http.StatusInternalServerError)
+        }
         return
     }
 
