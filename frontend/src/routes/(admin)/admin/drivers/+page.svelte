@@ -8,7 +8,11 @@
   import { PUBLIC_BACKEND_URL } from '$env/static/public';
 	import autoTable from 'jspdf-autotable';
 
+  export let data;
+  const { backend_uri, ScheduleTimeDiff } = data
+
   let drivers = writable<Driver[]>([]);
+  let driverHours = data.ScheduleTimeDiff;
   let alert = '';
   let search = '';
   let driverToDelete: Driver | null = null;
@@ -24,50 +28,16 @@
     }
   };
 
-  const initializeTimers = (data: Driver[]) => {
-    const initialTimers: Record<number, { startTime: number | null, elapsedTime: number }> = {};
-    data.forEach(driver => {
-      initialTimers[driver.DriverId] = { startTime: null, elapsedTime: 0 };
-    });
-    timers.set(initialTimers);
-  };
-
-  const startTimer = (driverId: number) => {
-    timers.update(currentTimers => {
-      if (currentTimers[driverId]?.startTime === null) {
-        currentTimers[driverId].startTime = Date.now();
-      }
-      return currentTimers;
-    });
-  };
-
-  const stopTimer = (driverId: number) => {
-    timers.update(currentTimers => {
-      if (currentTimers[driverId] && currentTimers[driverId].startTime !== null) {
-        currentTimers[driverId].elapsedTime += Date.now() - currentTimers[driverId].startTime!;
-        currentTimers[driverId].startTime = null;
-      }
-      return currentTimers;
-    });
-  };
-
-  const getElapsedTime = (elapsedTime: number, startTime: number | null) => {
-    const totalElapsedTime = elapsedTime + (startTime ? Date.now() - startTime : 0);
-    const hours = Math.floor(totalElapsedTime / 3600000);
-    const minutes = Math.floor((totalElapsedTime % 3600000) / 60000);
-    const seconds = Math.floor((totalElapsedTime % 60000) / 1000);
-    return `${hours}h ${minutes}m ${seconds}s`;
-  };
-
-  const convertToHours = (milliseconds: number): number => {
-    return milliseconds / (1000 * 60 * 60);
+  const convertToHours = (nanoseconds: number): number => {
+    return nanoseconds / (1000 * 1000 * 1000 * 60 * 60);
   };
 
   function generateData() {
     const driversData = $drivers;
-    const timersData = $timers;
     return driversData.map(driver => {
-      const hoursWorked = convertToHours(timersData[driver.DriverId]?.elapsedTime || 0);
+      const driverHour = ScheduleTimeDiff.find(d => d.DriverId === driver.DriverId);
+      const hoursWorked = driverHour ? convertToHours(driverHour.TimeDifference) : 0;
+
       return [
         driver.DriverName,
         hoursWorked.toFixed(2),
@@ -151,7 +121,6 @@
           <thead class="bg-gray-50">
               <tr>
                   <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Driver Name</th>
-                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Timer</th>
                   <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
           </thead>
@@ -159,15 +128,6 @@
                   {#each $drivers.filter(driver => driver.DriverName.toLowerCase().includes(search.toLowerCase())) as driver}
                       <tr class="hover:bg-gray-100">
                           <td class="px-6 py-4 whitespace-nowrap text-center">{driver.DriverName}</td>
-                          <td class="px-6 py-4 whitespace-nowrap text-center">
-                            <div>
-                              <span>{getElapsedTime($timers[driver.DriverId].elapsedTime, $timers[driver.DriverId].startTime)}</span>
-                            </div>
-                            <div class="mt-2">
-                              <button on:click={() => startTimer(driver.DriverId)} class="mr-2 text-green-500">Start</button>
-                              <button on:click={() => stopTimer(driver.DriverId)} class="text-red-500">Stop</button>
-                            </div>
-                          </td>
                           <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                               <div class="flex items-center justify-center">
                                   <a href={`drivers/update-driver/${encodeURIComponent(JSON.stringify(driver))}`} class="text-slate-500 hover:text-green-500 mr-8">

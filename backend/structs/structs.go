@@ -192,6 +192,13 @@ type CurrentBus struct {
 	Timestamp time.Time
 }
 
+type TimeDiff struct {
+	DriverId		int
+	StartTime       time.Time
+	EndTime 		time.Time
+	TimeDifference  time.Duration
+}
+
 // could try to use clearer seperation of structs / reduce structs needed
 
 // type Schedule struct {
