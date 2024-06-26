@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import type { EventHelper } from '$lib/types/global';
 	import { page } from '$app/stores';
+	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
 
 	export let data
   	const { dropdownData } = data
@@ -42,7 +43,7 @@
 	}
 
 	if ($page.status === 409) {
-      errorMessage = $page.error?.message || 'This event helper has already been assigned to a bus.';
+      errorMessage = $page.error?.message || 'This event helper(s) has already been assigned to a bus.';
     }
 
 	onMount(() => {
@@ -55,11 +56,7 @@
 <div class="flex justify-center items-center h-full">
 	<div class="bg-white shadow-md rounded-lg p-8 w-full md:w-3/4 lg:w-2/3 xl:w-1/3 mt-20">
 		<h1 class="text-2xl font-semibold mb-4">Add New Event Helper</h1>
-		{#if errorMessage}
-			<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-				<span class="block sm:inline">{errorMessage}</span>
-			</div>
-		{/if}
+		<ErrorMessage message={errorMessage} />
 		<form method="POST" action="?/createEventHelper">
 			<div class="mb-4">
 				<label for="carplate" class="block text-sm font-medium mb-1">Carplate:</label>
