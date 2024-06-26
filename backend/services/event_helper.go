@@ -13,7 +13,8 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
 
 	query := `
         SELECT carplate, ut.name, shift FROM event_helper eh
-				JOIN user_table ut ON ut.email = eh.email
+		JOIN user_table ut ON ut.email = eh.email
+		ORDER BY carplate ASC, ut.name ASC
     `
 	rows, err := config.Dbpool.Query(context.Background(), query)
 	if err != nil {
@@ -185,6 +186,8 @@ func GetEventHelperDropdownData() ([]structs.EventHelperDropdownData, error) {
         FROM 
             user_table u
 				WHERE u.role_id = 1
+		ORDER BY 
+			carplate ASC, email ASC
     `
 
 	rows, err := config.Dbpool.Query(context.Background(), query)

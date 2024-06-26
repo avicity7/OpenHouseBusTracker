@@ -27,6 +27,8 @@ func GetSchedule() ([]structs.Schedule, error) {
 			route r ON bs.route_name = r.route_name
 		JOIN 
 			driver d ON bs.driver_id = d.driver_id
+		ORDER BY
+			b.carplate ASC
     `
 
 	rows, err := config.Dbpool.Query(context.Background(), query)
@@ -149,6 +151,8 @@ func GetDropdownData() ([]structs.ScheduleDropdownData, error) {
 			bus b,
 			route r,
 			driver d
+		ORDER BY
+			b.carplate ASC, d.driver_id ASC 
     `
 
 	rows, err := config.Dbpool.Query(context.Background(), query)
