@@ -16,33 +16,35 @@
 	let errorMessage: string | null = null;
 
 	const setDropdownOptions = () => {
-		if (!dropdownData) return;
+        if (!dropdownData) return;
 
-		const uniqueCarplates = new Set<string>();
-		const uniqueRouteNames = new Set<string>();
-		const uniqueDrivers = new Map<number, string>();
+        const uniqueCarplates = new Set<string>();
+        const uniqueRouteNames = new Set<string>();
+        const validDrivers: Map<number, string> = new Map();
 
-		dropdownData.forEach(({ Carplate, RouteName, Driver }: Schedule) => {
-			if (Carplate) {
-				uniqueCarplates.add(Carplate);
-			}
-			if (RouteName) {
-				uniqueRouteNames.add(RouteName);
-			}
-			if (Driver && Array.isArray(Driver)) {
-				Driver.forEach(({ DriverId, DriverName }) => {
-					uniqueDrivers.set(DriverId, DriverName);
-				});
-			}
-		});
+        dropdownData.forEach(({ Carplate, RouteName, Driver }: Schedule) => {
+            if (Carplate) {
+                uniqueCarplates.add(Carplate);
+            }
+            if (RouteName) {
+                uniqueRouteNames.add(RouteName);
+            }
+            if (Driver && Array.isArray(Driver)) {
+                Driver.forEach(({ DriverId, DriverName }) => {
+                    if (DriverId !== null && DriverName !== null) {
+                        validDrivers.set(DriverId, DriverName);
+                    }
+                });
+            }
+        });
 
-		carplates = Array.from(uniqueCarplates);
-		routeNames = Array.from(uniqueRouteNames);
-		drivers = Array.from(uniqueDrivers.entries()).map(([DriverId, DriverName]) => ({
-			DriverId,
-			DriverName
-		}));
-	}
+        carplates = Array.from(uniqueCarplates);
+        routeNames = Array.from(uniqueRouteNames);
+        drivers = Array.from(validDrivers.entries()).map(([DriverId, DriverName]) => ({
+            DriverId,
+            DriverName,
+        }));
+    };
 
 	if ($page.status === 409) {
       errorMessage = $page.error?.message || 'A schedule with the same carplate or driver already exists.';
@@ -68,9 +70,13 @@
 					bind:value={selectedCarplate}
 					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
+				{#if carplates.length === 0}
+					<option value="" disabled>No options available</option>
+				{:else}
 					{#each carplates as carplate}
 						<option value={carplate}>{carplate}</option>
 					{/each}
+				{/if}
 				</select>
 			</div>
 
@@ -96,9 +102,13 @@
 					bind:value={selectedDriverId}
 					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
 				>
+				{#if drivers === null || drivers.length === 0}
+					<option value="" disabled>No options available</option>
+				{:else}
 					{#each drivers as driver}
 						<option value={driver.DriverId}>{driver.DriverName}</option>
 					{/each}
+				{/if}
 				</select>
 			</div>
 

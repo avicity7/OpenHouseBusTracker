@@ -73,23 +73,27 @@
 				</select>
 			</div>
 			<div class="mb-4">
-				<fieldset>
-					<legend class="block text-sm font-medium mb-1">Names:</legend>
-					{#each names as name}
-						<div class="flex items-center mb-2">
-							<input
-								type="checkbox"
-								name="name"
-								id={name}
-								value={name}
-								on:change={() => toggleNameSelection(name)}
-								class="mr-2"
-							/>
-							<label for={name} class="text-sm">{name}</label>
-						</div>
-					{/each}
-				</fieldset>
-			</div>
+                <fieldset>
+                    <legend class="block text-sm font-medium mb-1">Names:</legend>
+                    {#if names.length === 0 || names === null}
+                        <p class="text-sm text-gray-500">No options available</p>
+                    {:else}
+                        {#each names as name}
+                            <div class="flex items-center mb-2">
+                                <input
+                                    type="checkbox"
+                                    name="name"
+                                    id={name}
+                                    value={name}
+                                    on:change={() => toggleNameSelection(name)}
+                                    class="mr-2"
+                                />
+                                <label for={name} class="text-sm">{name}</label>
+                            </div>
+                        {/each}
+                    {/if}
+                </fieldset>
+            </div>
 
 			<div class="mb-4">
 				<label for="shift" class="block text-sm font-medium mb-1">Shift:</label>

@@ -86,14 +86,14 @@ type UpdateSchedule struct {
 }
 
 type ScheduleDropdownData struct {
-	Carplate  string
+	Carplate  *string
 	RouteName string
 	Driver    []Driver
 }
 
 type Driver struct {
-	DriverId   int
-	DriverName string
+	DriverId   *int
+	DriverName *string
 }
 
 type FollowBus struct {

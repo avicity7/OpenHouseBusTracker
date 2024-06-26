@@ -62,6 +62,8 @@ func CreateBusSchedule(schedule structs.NewSchedule) error {
         SELECT COUNT(*) FROM bus_schedule 
         WHERE (carplate = $1 OR driver_id = $2)
     `
+	// TO BE CONFIRMED: can admin only create one bus/driver, with his full schedule length? or should it be the admin can 
+	// create the same one diff route with diff timing
     err := config.Dbpool.QueryRow(context.Background(), checkQuery, 
         schedule.Carplate,
         schedule.DriverId).Scan(&existingCount)
@@ -142,17 +144,35 @@ func GetDropdownData() ([]structs.ScheduleDropdownData, error) {
 	var dropdownData []structs.ScheduleDropdownData
 
 	query := `
+		WITH available_buses AS (
+			SELECT carplate
+			FROM bus
+			WHERE carplate NOT IN (SELECT carplate FROM bus_schedule)
+		),
+		available_drivers AS (
+			SELECT driver_id, driver_name
+			FROM driver
+			WHERE driver_id NOT IN (SELECT driver_id FROM bus_schedule)
+		)
 		SELECT 
-			b.carplate,
+			COALESCE(b.carplate, NULL) AS carplate,
 			r.route_name,
-			d.driver_name,
-			d.driver_id
+			COALESCE(d.driver_name, NULL) AS driver_name,
+			COALESCE(d.driver_id, NULL) AS driver_id
 		FROM 
-			bus b,
-			route r,
-			driver d
+			(
+				SELECT 1 AS dummy
+			) dummy_table
+		LEFT JOIN 
+			available_buses ab ON true
+		LEFT JOIN 
+			bus b ON ab.carplate = b.carplate
+		LEFT JOIN 
+			route r ON 1=1
+		LEFT JOIN 
+			available_drivers d ON true
 		ORDER BY
-			b.carplate ASC, d.driver_id ASC 
+			ab.carplate ASC, d.driver_id ASC;
     `
 
 	rows, err := config.Dbpool.Query(context.Background(), query)

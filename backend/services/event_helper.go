@@ -174,7 +174,7 @@ func GetEventHelperDropdownData() ([]structs.EventHelperDropdownData, error) {
 	query := `
         SELECT 
             b.carplate,
-            NULL AS email
+            NULL AS name
         FROM 
             bus b
 
@@ -182,12 +182,21 @@ func GetEventHelperDropdownData() ([]structs.EventHelperDropdownData, error) {
 
         SELECT 
             NULL AS carplate,
-						u.name
+            u.name
         FROM 
             user_table u
-				WHERE u.role_id = 1
+        WHERE 
+            u.role_id = 1
+            AND u.name NOT IN (
+                SELECT 
+                    ut.name 
+                FROM 
+                    event_helper eh
+                JOIN 
+                    user_table ut ON ut.email = eh.email
+            )
 		ORDER BY 
-			carplate ASC, email ASC
+			carplate ASC, name ASC
     `
 
 	rows, err := config.Dbpool.Query(context.Background(), query)
