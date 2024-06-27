@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { EventHelper } from '$lib/types/global';
+	import { page } from '$app/stores';
+	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
 
 	export let data
   	const { dropdownData } = data
@@ -11,6 +13,7 @@
 	let selectedCarplate: string | null = null;
 	let selectedNames: Set<string> = new Set();
 	let selectedShift: boolean | null = null;
+	let errorMessage: string | null = null;
 
 	function setEventHelperDropdownOptions() {
 		if (!dropdownData) return;
@@ -39,6 +42,9 @@
 		}
 	}
 
+	if ($page.status === 409) {
+      errorMessage = $page.error?.message || 'This event helper(s) has already been assigned to a bus.';
+    }
 
 	onMount(() => {
 		if (dropdownData) {
@@ -50,6 +56,7 @@
 <div class="flex justify-center items-center h-full">
 	<div class="bg-white shadow-md rounded-lg p-8 w-full md:w-3/4 lg:w-2/3 xl:w-1/3 mt-20">
 		<h1 class="text-2xl font-semibold mb-4">Add New Event Helper</h1>
+		<ErrorMessage message={errorMessage} />
 		<form method="POST" action="?/createEventHelper">
 			<div class="mb-4">
 				<label for="carplate" class="block text-sm font-medium mb-1">Carplate:</label>
@@ -66,23 +73,27 @@
 				</select>
 			</div>
 			<div class="mb-4">
-				<fieldset>
-					<legend class="block text-sm font-medium mb-1">Names:</legend>
-					{#each names as name}
-						<div class="flex items-center mb-2">
-							<input
-								type="checkbox"
-								name="name"
-								id={name}
-								value={name}
-								on:change={() => toggleNameSelection(name)}
-								class="mr-2"
-							/>
-							<label for={name} class="text-sm">{name}</label>
-						</div>
-					{/each}
-				</fieldset>
-			</div>
+                <fieldset>
+                    <legend class="block text-sm font-medium mb-1">Names:</legend>
+                    {#if names.length === 0 || names === null}
+                        <p class="text-sm text-gray-500">No options available</p>
+                    {:else}
+                        {#each names as name}
+                            <div class="flex items-center mb-2">
+                                <input
+                                    type="checkbox"
+                                    name="name"
+                                    id={name}
+                                    value={name}
+                                    on:change={() => toggleNameSelection(name)}
+                                    class="mr-2"
+                                />
+                                <label for={name} class="text-sm">{name}</label>
+                            </div>
+                        {/each}
+                    {/if}
+                </fieldset>
+            </div>
 
 			<div class="mb-4">
 				<label for="shift" class="block text-sm font-medium mb-1">Shift:</label>

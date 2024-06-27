@@ -27,6 +27,8 @@ func GetSchedule() ([]structs.Schedule, error) {
 			route r ON bs.route_name = r.route_name
 		JOIN 
 			driver d ON bs.driver_id = d.driver_id
+		ORDER BY
+			b.carplate ASC
     `
 
 	rows, err := config.Dbpool.Query(context.Background(), query)
@@ -55,23 +57,45 @@ func GetSchedule() ([]structs.Schedule, error) {
 }
 
 func CreateBusSchedule(schedule structs.NewSchedule) error {
-	query := `
-		INSERT INTO bus_schedule (carplate, route_name, driver_id, start_time, end_time) 
-		VALUES ($1, $2, $3, $4, $5)
+    var existingCount int
+    checkQuery := `
+        SELECT COUNT(*) FROM bus_schedule 
+        WHERE (carplate = $1 OR driver_id = $2)
     `
-	_, err := config.Dbpool.Exec(context.Background(), query,
-		schedule.Carplate,
-		schedule.RouteName,
-		schedule.DriverId,
-		schedule.StartTime,
-		schedule.EndTime,
-	)
-	if err != nil {
-		fmt.Println("Error inserting schedule:", err)
-		return err
-	}
+	// TO BE CONFIRMED: can admin only create one bus/driver, with his full schedule length? or should it be the admin can 
+	// create the same one diff route with diff timing
+    err := config.Dbpool.QueryRow(context.Background(), checkQuery, 
+        schedule.Carplate,
+        schedule.DriverId).Scan(&existingCount)
 
-	return nil
+    if err != nil {
+        fmt.Println("Error checking existing schedule:", err)
+        return err
+    }
+
+	fmt.Printf("Existing schedule count for carplate %s or driver_id %d: %d\n", schedule.Carplate, schedule.DriverId, existingCount)
+
+    if existingCount > 0 {
+        return fmt.Errorf("a schedule with the same carplate or driver already exists")
+    }
+
+    insertQuery := `
+        INSERT INTO bus_schedule (carplate, route_name, driver_id, start_time, end_time) 
+        VALUES ($1, $2, $3, $4, $5)
+    `
+    _, err = config.Dbpool.Exec(context.Background(), insertQuery,
+        schedule.Carplate,
+        schedule.RouteName,
+        schedule.DriverId,
+        schedule.StartTime,
+        schedule.EndTime,
+    )
+    if err != nil {
+        fmt.Println("Error inserting schedule:", err)
+        return err
+    }
+
+    return nil
 }
 
 func UpdateBusSchedule(schedule structs.UpdateSchedule) error {
@@ -120,15 +144,35 @@ func GetDropdownData() ([]structs.ScheduleDropdownData, error) {
 	var dropdownData []structs.ScheduleDropdownData
 
 	query := `
+		WITH available_buses AS (
+			SELECT carplate
+			FROM bus
+			WHERE carplate NOT IN (SELECT carplate FROM bus_schedule)
+		),
+		available_drivers AS (
+			SELECT driver_id, driver_name
+			FROM driver
+			WHERE driver_id NOT IN (SELECT driver_id FROM bus_schedule)
+		)
 		SELECT 
-			b.carplate,
+			COALESCE(b.carplate, NULL) AS carplate,
 			r.route_name,
-			d.driver_name,
-			d.driver_id
+			COALESCE(d.driver_name, NULL) AS driver_name,
+			COALESCE(d.driver_id, NULL) AS driver_id
 		FROM 
-			bus b,
-			route r,
-			driver d
+			(
+				SELECT 1 AS dummy
+			) dummy_table
+		LEFT JOIN 
+			available_buses ab ON true
+		LEFT JOIN 
+			bus b ON ab.carplate = b.carplate
+		LEFT JOIN 
+			route r ON 1=1
+		LEFT JOIN 
+			available_drivers d ON true
+		ORDER BY
+			ab.carplate ASC, d.driver_id ASC;
     `
 
 	rows, err := config.Dbpool.Query(context.Background(), query)
