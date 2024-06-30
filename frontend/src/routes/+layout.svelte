@@ -30,12 +30,14 @@
   })
 </script>
 
-<nav class={`z-10 text-sm justify-between flex flex-row items-center w-screen ${$page.url.pathname == '/' ? 'fixed p-6 px-8' : 'sticky p-2 px-4 bg-white/40 backdrop-blur'} top-0 transition-all ease-linear`}>
+<nav class={`z-10 text-sm justify-between flex flex-row items-center w-screen ${$page.url.pathname == '/' ? 'fixed p-6 px-8' : 'sticky p-2 px-4 bg-white/40 backdrop-blur'} top-0 transition-all ease-out`}>
   <div class={`flex flex-row items-center ${(session?.Role == "admin" && $page.url.pathname == '/')? "p-2 rounded bg-white" : "px-6"}`}>
-    <a href="/" class={`text-red-600 font-bold text-2xl mr-4`}>
-      SP
+    <a href="/" class="flex flex-row items-center">
+      <div class={`text-red-600 font-bold text-2xl mr-4`}>
+        SP
+      </div>
+      <span class="font-semibold font-stone-800 text-md">Bus Tracker</span>
     </a>
-    <span class="font-semibold font-stone-800 text-md">Bus Tracker</span>
   </div>
   <button class="block md:hidden" on:click={() => {menu = !menu}}>
     <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24" {...$$props}><path fill="currentColor" d="M4 18h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1m0-5h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1M3 7c0 .55.45 1 1 1h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1"/></svg>

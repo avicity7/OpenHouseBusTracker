@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+  import HeroBanner from "./HeroBanner.svelte";
 
   export let data;
   const { session } = data;
@@ -23,25 +24,14 @@
       {/if}
     </div>
     <div class="flex flex-col items-center mt-72">
-      <h1 class="text-4xl font-light text-stone-800 mb-20">Supporting Open House Operations</h1>
+      <h1 class="text-4xl font-light text-stone-800 mb-2">Supporting Open House Operations</h1>
 
-      <div>
-        <h2 class="mb-8 font-semibold text-2xl text-stone-700">Replacing Manual Tracking</h2>
-      </div>
-      <img 
-        src="table.jpeg" 
-        alt="table"
-        class="max-w-md rounded-xl aspect-video object-cover"
-      />
+      <HeroBanner bold="Replacing" text="manual tracking" source="table.jpeg" />
+      <HeroBanner bold="Helping" text="student helpers" source="student1.jpeg" />
+      <HeroBanner bold="Driving" text="success" source="event.jpeg" />
 
-      <div>
-        <h2 class="mt-12 mb-8 font-semibold text-2xl text-stone-700">Helping Student Helpers</h2>
-      </div>
-      <img 
-        src="student1.jpeg" 
-        alt="student1"
-        class="max-w-md rounded-xl aspect-video object-cover"
-      />
+      <h1 class="text-4xl font-light text-stone-800 mb-2 mt-20 whitespace-pre">Our <span class="font-semibold text-stone-700">impact</span>
+      </h1>
     </div>
   </div>
 </div>
