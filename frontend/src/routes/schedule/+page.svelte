@@ -10,7 +10,7 @@
 <div class="p-6 md:p-12">
   <h1 class="text-3xl font-semibold pt-8 mb-6">My Shifts</h1>
 
-  <h1 class="text-xl font-semibold text-slate-400 pt-8">Current Shifts</h1>
+  <h1 class="text-xl font-semibold text-stone-400 pt-8">Current Shifts</h1>
   {#if currentSchedules && currentSchedules.length > 0}
     <div class="md:grid grid-cols-3">
       {#each currentSchedules as bus}
@@ -23,7 +23,7 @@
 
   <hr class="my-8 border-gray-200">
 
-  <h1 class="text-xl font-semibold text-slate-400 pt-8">Upcoming Shifts</h1>
+  <h1 class="text-xl font-semibold text-stone-400 pt-8">Upcoming Shifts</h1>
   {#if futureSchedules && futureSchedules.length > 0}
     <div class="md:grid grid-cols-3">
       {#each futureSchedules as bus}

@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Avatar, Spinner } from 'flowbite-svelte';
+  import { Avatar } from 'flowbite-svelte';
   export let data
   let { backend_uri, session, account } = data;
 	import { onMount } from 'svelte';
@@ -11,7 +11,7 @@
   })
 </script>
 
-<div class="bg-zinc-100 flex flex-col justify-center dark:bg-zinc-800 pt-16">
+<div class="flex flex-col justify-center pt-16">
   <div class="font-albert max-w-xl text-zinc-800 dark:text-zinc-100">
     {#if session && account.Email != ''}
       <div class="ml-6 mr-6 md:mr-0 md:ml-24 flex flex-col">
@@ -36,33 +36,37 @@
           </form>
       </div>
     {:else}
-      <h1 class="w-full p-12 md:pl-24 font-bold text-3xl">Sign in</h1>
-      <form class="flex flex-col p-12 md:pl-24 pt-0" method="POST" action="?/login">
-        <div class="font-medium mb-4">Email</div>
-        <input
-          data-testid="sign-in-email-input"
-          type="text"
-          autocomplete="off"
-          name="email"
-          class="px-3 border-2 border-zinc-200 rounded-full focus:border-red-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
-        />
-        <div class="font-medium mb-4 mt-8">Password</div>
-        <input
-          data-testid="sign-in-password-input"
-          type="password"
-          autocomplete="off"
-          name="password"
-          class="px-3 border-2 border-zinc-200 rounded-full focus:border-red-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
-        />
-        <button
-          class="py-1 bg-red-800 hover:bg-red-900 font-medium text-white rounded-full mt-6"
-          type="submit">Sign in</button
-        >
-        <div class="text-zinc-400 font-medium text-sm mx-6 md:mx-24 mt-8 text-center">
-          Don't have an account yet?
-          <a href="/profile/sign-up" class="text-blue-400 hover:text-blue-500"> Sign up </a>
+      <div class="w-screen flex flex-col items-center mt-12">
+        <div class="max-w-xl">
+          <h1 class="font-bold text-3xl mb-12 w-full">Sign in</h1>
+          <form class="flex flex-col" method="POST" action="?/login">
+            <div class="font-medium mb-4">Email</div>
+            <input
+              data-testid="sign-in-email-input"
+              type="text"
+              autocomplete="off"
+              name="email"
+              class="px-3 border-2 border-zinc-200 rounded-full focus:border-red-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
+            />
+            <div class="font-medium mb-4 mt-8">Password</div>
+            <input
+              data-testid="sign-in-password-input"
+              type="password"
+              autocomplete="off"
+              name="password"
+              class="px-3 border-2 border-zinc-200 rounded-full focus:border-red-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
+            />
+            <button
+              class="py-1 bg-red-800 hover:bg-red-900 font-medium text-white rounded-full mt-6"
+              type="submit">Sign in</button
+            >
+            <div class="text-zinc-400 font-medium text-sm mx-6 md:mx-24 mt-8 text-center">
+              Don't have an account yet?
+              <a href="/profile/sign-up" class="text-blue-400 hover:text-blue-500"> Sign up </a>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     {/if}
   </div>
 </div>

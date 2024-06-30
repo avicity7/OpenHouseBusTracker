@@ -21,7 +21,7 @@
     <slot />
   
     {#if isVisible}
-    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-4 py-2 bg-gray-800 text-white text-sm rounded-lg">
+    <div class="absolute bottom-full left-1/2 -transtone-x-1/2 mb-2 px-4 py-2 bg-gray-800 text-white text-sm rounded-lg">
         {text}
       </div>
     {/if}

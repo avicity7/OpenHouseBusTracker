@@ -41,7 +41,7 @@
           <tr>
             <td class="px-4 py-6">{route.RouteName}</td>
             <td class="px-6 py-6">
-              <button class="text-slate-500 hover:text-red-600 text-2xl" on:click={()=>{deleteRoute(route.RouteName)}}>
+              <button class="text-stone-500 hover:text-red-600 text-2xl" on:click={()=>{deleteRoute(route.RouteName)}}>
                 <ToolTip text="Delete Route">
                   <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}>
@@ -83,7 +83,7 @@
             <tr>
               <td class="px-4 py-6">{routeStep.StopName}</td>
               <td class="px-6 py-6">
-                <button class="text-slate-500 hover:text-red-600 text-2xl" on:click={()=>{deleteRouteStep(route.RouteName, routeStep.StopName)}}>
+                <button class="text-stone-500 hover:text-red-600 text-2xl" on:click={()=>{deleteRouteStep(route.RouteName, routeStep.StopName)}}>
                   <ToolTip text="Delete Route Step">
                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}>
