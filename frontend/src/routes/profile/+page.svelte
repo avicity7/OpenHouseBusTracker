@@ -1,5 +1,5 @@
 <script lang='ts'>
-  import { Avatar } from 'flowbite-svelte';
+  import UserSettingsOutline from '$lib/components/UserSettingsOutline.svelte';
   export let data
   let { backend_uri, session, account } = data;
 	import { onMount } from 'svelte';
@@ -11,7 +11,7 @@
   })
 </script>
 
-<div class="flex flex-col justify-center items-center mt-16">
+<div class="flex flex-col justify-center items-center mt-28">
   <div class="font-albert min-w-2xl text-zinc-800 dark:text-zinc-100">
     {#if session && account.Email != ''}
       <div class="flex flex-col">
@@ -24,9 +24,7 @@
               {/if}
           </div>
           <a href="/profile/settings" class="absolute bottom-0 right-0">
-            <!-- <UserSettingsOutline
-              class="text-zinc-400 hover:text-purple-600 hover:dark:text-purple-400"
-            /> -->
+            <UserSettingsOutline />
           </a>
         </div>
         <h2 class="text-2xl font-semibold mt-6">{account.Name}</h2>
@@ -42,7 +40,7 @@
         </form>
       </div>
     {:else}
-      <div class="flex flex-col mt-12">
+      <div class="flex flex-col">
         <h1 class="font-bold text-3xl mb-12 w-full">Sign in</h1>
         <form class="flex flex-col" method="POST" action="?/login">
           <div class="font-medium mb-4">Email</div>

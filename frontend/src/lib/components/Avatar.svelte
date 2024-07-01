@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { onMount } from "svelte";
+  import { page } from "$app/stores";
+
   export let data
 
   const { session, account } = data
@@ -6,13 +9,15 @@
   let menuOpen = false
   let avatar:HTMLElement
 
-</script>
+  onMount(() => {
+    document.addEventListener('click', (e: MouseEvent) => {
+      if (!avatar.contains(e.target as Node)) {
+        menuOpen = false
+      }
+    })
+  })
 
-<svelte:window on:click={(e) => {
-  if (!avatar.contains(e.target)) {
-    menuOpen = false
-  }
-}}/>
+</script>
 
 <div>
   <button on:click={() => menuOpen = !menuOpen} bind:this={avatar}>
@@ -26,7 +31,7 @@
   </button>
   
   {#if menuOpen}
-    <div class="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 right-0 mr-8 mt-2">
+    <div class={`absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 right-0 mr-8 ${(session?.Role == "admin" && $page.url.pathname == '/') ? "mt-4" : "mt-2"}`}>
         <div class="px-4 py-3 text-sm text-gray-900">
           <div>{account.Name}</div>
           <div class="font-medium truncate">{account.Email}</div>
