@@ -3,11 +3,13 @@
   import '../../node_modules/mapbox-gl/dist/mapbox-gl.css';
   import { page } from '$app/stores';  
   import { onMount } from 'svelte';
-  import type { User } from '$lib/types/global';
   import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
+  import Avatar from '$lib/components/Avatar.svelte';
   export let data
   let { session, backend_uri, account } = data
-  let menu = false
+  let menu = false,
+  white = false,
+  offset = 500
 
   injectSpeedInsights();
 
@@ -27,32 +29,46 @@
 
   onMount(() => {
     detectColorScheme()
+    document.addEventListener("scroll", () => {
+      if (window.scrollY > offset) {
+        white = true
+      } else if (window.scrollY < offset) {
+        white = false
+      }
+    })
   })
 </script>
 
-<nav class="z-10 text-md p-3 px-6 justify-between flex flex-row items-center sticky top-0 bg-white border-0 border-b-2 border-stone-200">
-  <a href="/" class="text-red-600 font-bold text-2xl">
-    SP
-  </a>
+<nav class={`z-10 text-sm justify-between flex flex-row items-center w-screen ${white ? "bg-white/40 backdrop-blur" : ""} ${$page.url.pathname == '/' ? 'fixed p-6 px-8' : 'sticky p-2 px-4 bg-white/40 backdrop-blur'} top-0 transition-all ease-out`}>
+  <div class={`flex flex-row items-center ${(session?.Role == "admin" && $page.url.pathname == '/') ? "p-2 px-4 rounded bg-white" : "px-6"}`}>
+    <a href="/" class="flex flex-row items-center">
+      <div class={`text-red-600 font-bold text-2xl mr-4`}>
+        SP
+      </div>
+      <span class="font-semibold font-stone-800 text-md">Bus Tracker</span>
+    </a>
+  </div>
   <button class="block md:hidden" on:click={() => {menu = !menu}}>
     <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24" {...$$props}><path fill="currentColor" d="M4 18h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1m0-5h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1M3 7c0 .55.45 1 1 1h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1"/></svg>
   </button>
-  <div class="hidden md:block flex flex-row items-center">
+  <div class={`hidden md:block flex flex-row items-center px-6 ${session?.Role == "admin" && $page.url.pathname == '/' ? "bg-white p-2 rounded" : ""}`}>
+
     {#if session?.Role == "admin"}
-      <a href="/bus-routes" class={"font-medium "+($page.url.pathname == '/bus-routes' ? "text-red-700" : "hover:text-red-700")}>Routes</a>
+      <div class="flex flex-row items-center">
+        <a href="/admin/users" class={"mr-8 font-medium "+($page.url.pathname.includes('admin') ? "text-red-700" : "hover:text-red-700")}>Manage</a>
+        <Avatar {data} />
+      </div>
     {/if}
-    {#if session?.Role == "admin"}
-      <a href="/admin/users" class={"ml-6 font-medium "+($page.url.pathname.includes('admin') ? "text-red-700" : "hover:text-red-700")}>Manage</a>
-      <!-- <a href="/admin/users" class={"ml-6 font-medium "+($page.url.pathname == '/admin/users' ? "text-red-700" : "hover:text-red-700")}>Users</a>
-      <a href="/admin/schedule" class={"ml-6 font-medium "+($page.url.pathname == '/admin/schedule' ? "text-red-700" : "hover:text-red-700")}>Schedule</a>
-      <a href="/admin/drivers" class={"ml-6 font-medium "+($page.url.pathname == '/admin/drivers' ? "text-red-700" : "hover:text-red-700")}>Drivers</a>
-      <a href="/admin/buses" class={"ml-6 font-medium "+($page.url.pathname == '/admin/buses' ? "text-red-700" : "hover:text-red-700")}>Buses</a> -->
-    {/if}
-    <!-- should it be viewable by everyone even if they're not signed up? -->
-  <a href="/profile" class={"ml-6 font-medium "+($page.url.pathname == '/profile' ? "text-red-700" : "hover:text-red-700")}>Profile</a>
+
     {#if session?.Role == "user"}
-    <a href="/schedule" class={"ml-6 font-medium "+($page.url.pathname == '/schedule' ? "text-red-700" : "hover:text-red-700")}>Bus Schedule</a>
-    <a href="/event" class="ml-6 bg-red-700 hover:bg-red-800 rounded-full px-3 py-1 text-white ">Follow Bus</a>
+      <div class="flex flex-row items-center">
+        <a href="/schedule" class={"mr-8 font-medium "+($page.url.pathname.includes('admin') ? "text-red-700" : "hover:text-red-700")}>My Shifts</a>
+        <Avatar {data} />
+      </div>
+    {/if}
+
+    {#if !session}
+      <a href="/profile" class={"ml-6 font-medium "+($page.url.pathname == '/profile' ? "text-red-700" : "hover:text-red-700")}>Login</a>
     {/if}
   </div>
 </nav>
@@ -82,7 +98,7 @@
       </button>
     </div>
   {/if}
-  <div class={menu ? "hidden" : "block"}>
+  <div class={`${menu ? "hidden" : "block"}`}>
     <slot />
   </div>
 {/if}

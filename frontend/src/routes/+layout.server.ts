@@ -14,6 +14,7 @@ export const load = async ({ url, locals, fetch, cookies }) => {
   const mapbox_key = PUBLIC_MAPBOX_KEY;
   const osr_key = PUBLIC_OSR_KEY;
   const env = PUBLIC_ENV;
+  const pathname = url.pathname;
 
 
   const response = await fetch(`${backend_uri}:3000/auth/get-user/${locals.session?.Email}`, {
@@ -53,6 +54,7 @@ export const load = async ({ url, locals, fetch, cookies }) => {
     osr_key,
     mapbox_key,
     env,
-    account
+    account,
+    pathname
   };
 };
