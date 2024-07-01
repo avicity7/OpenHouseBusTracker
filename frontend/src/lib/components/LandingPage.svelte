@@ -4,6 +4,8 @@
   import Footer from "./Footer.svelte";
 	import Rocket from "./Rocket.svelte";
 
+  import Track from "./Track.svelte";
+
   export let data;
   const { session } = data;
 
@@ -20,7 +22,10 @@
       <h1 class="font-bold text-stone-700 text-5xl md:text-7xl mb-4">Open House</h1>
       <h2 class="font-bold text-stone-500 text-4xl md:text-6xl">Bus Tracker</h2>
       {#if session?.Role == "user"}
-        <a href="/event" class="ml-6 rounded-full px-6 py-2 text-stone-800 transition-colors duration-200 ease-in-out hover:text-red-500 font-semibold mt-12 bg-white drop-shadow text-sm">Follow Bus</a>
+        <a href="/event" class="flex flex-row items-center ml-6 rounded-full px-6 py-2 text-stone-800 transition-colors duration-200 ease-in-out hover:text-red-500 font-semibold mt-12 bg-white drop-shadow text-sm">
+          <Track />
+          <span class="ml-2">Follow Bus</span>
+        </a>
       {:else}
         <a href="/profile/sign-up" class="flex flex-row items-center ml-6 rounded-full px-6 py-2 text-stone-800 transition-colors duration-200 ease-in-out hover:text-red-500 font-semibold mt-12 bg-white drop-shadow-sm text-sm">
           <Rocket />
