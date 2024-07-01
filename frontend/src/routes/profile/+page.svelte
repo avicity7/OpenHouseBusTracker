@@ -6,7 +6,7 @@
 
   onMount(() => {
     if (session && account.Email == '') {
-      location.reload()
+      location.replace("/")
     }
   })
 </script>
