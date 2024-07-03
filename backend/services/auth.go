@@ -96,7 +96,7 @@ func VerifyAccess(access []byte) error {
 func CreateUser(user structs.NewUser) error {
 	query := `
 		INSERT INTO user_table (name, email, password, role_id, verification_token) 
-		VALUES (@Name, @Email, @Password, @Role, @VerificationToken)
+		VALUES (@Name, LOWER(@Email), @Password, @Role, @VerificationToken)
 	`
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
@@ -225,7 +225,7 @@ func Login(login structs.Login) (structs.ReturnedUser, error) {
 	query := `
 		SELECT name, email, password, role_name, verification_token FROM user_table 
 		JOIN user_role ON user_table.role_id = user_role.role_id 
-		WHERE email = @Email
+		WHERE email = LOWER(@Email)
 	`
 	args := pgx.NamedArgs{
 		"Email": login.Email,

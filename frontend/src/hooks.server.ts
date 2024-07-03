@@ -9,8 +9,8 @@ const emailPassword: Handle = async ({ event, resolve }) => {
   if (cookie) {
     const tokens = cookie.split('; ')
     const accessToken = tokens[0].split("=")[1]
-    const decode = await jwt.decode(accessToken as string) as JwtPayload
-    if(decode){
+    const decode = jwt.decode(accessToken as string) as JwtPayload
+    if (decode) {
       event.locals.session = { Name: "", Email: decode["Email"], Role: decode["Role"], VerificationToken: "" }
     }
   }
