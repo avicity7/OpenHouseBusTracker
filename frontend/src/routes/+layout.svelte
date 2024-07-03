@@ -55,14 +55,16 @@
 
     {#if session?.Role == "admin"}
       <div class="flex flex-row items-center">
-        <a href="/admin/users" class={"mr-8 font-medium "+($page.url.pathname.includes('admin') ? "text-red-700" : "hover:text-red-700")}>Manage</a>
+        <a href="/admin/users" class={"font-medium "+($page.url.pathname.includes('admin') ? "text-red-700" : "hover:text-red-700")}>Manage</a>
+        <a href="/chat" class={"mx-8 font-medium "+($page.url.pathname == '/chat' ? "text-red-700" : "hover:text-red-700")}>Chat</a>
         <Avatar {data} />
       </div>
     {/if}
 
     {#if session?.Role == "user"}
       <div class="flex flex-row items-center">
-        <a href="/schedule" class={"mr-8 font-medium "+($page.url.pathname.includes('admin') ? "text-red-700" : "hover:text-red-700")}>My Shifts</a>
+        <a href="/schedule" class={"font-medium "+($page.url.pathname.includes('schedule') ? "text-red-700" : "hover:text-red-700")}>My Shifts</a>
+        <a href="/chat" class={"mx-8 font-medium "+($page.url.pathname == '/chat' ? "text-red-700" : "hover:text-red-700")}>Chat</a>
         <Avatar {data} />
       </div>
     {/if}

@@ -114,6 +114,19 @@ export type LoginResponse = {
   RefreshToken: string
 }
 
+export type Message = {
+  Timestamp: string, 
+  From: string, 
+  RoomId: string, 
+  Body: string
+}
+
+export type ChatRoom = {
+  RoomId: string,
+  User1: string,
+  User2: string
+}
+
 // export type Schedule = {
 //   BusId: number;
 //   RouteId: number;
