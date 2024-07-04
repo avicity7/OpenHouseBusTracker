@@ -90,7 +90,7 @@ func GetMessages(room_id string) ([]structs.Message, error) {
 	query := ` 
 		SELECT * FROM chat_message
 		WHERE room_id = @RoomId
-		ORDER BY "timestamp" ASC
+		ORDER BY "timestamp" DESC
 	`
 
 	args := pgx.NamedArgs{

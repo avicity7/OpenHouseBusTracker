@@ -1,5 +1,6 @@
 <script lang="ts">
   import { afterNavigate, beforeNavigate } from '$app/navigation';
+	import Chat from '$lib/components/Chat.svelte';
   import ChatBody from '$lib/components/ChatBody.svelte';
   import type { Message } from '$lib/types/global.js';
   export let data
@@ -9,8 +10,6 @@
   let body: string
   let ws: WebSocket;
   let form: HTMLFormElement;
-  let chat: HTMLDivElement;
-  let display = false;
 
   const getMessages = async () => {
     const response = await fetch(`${backend_uri}:3000/chat/get-messages/${data.room_id}`)
@@ -29,8 +28,6 @@
   }
 
   afterNavigate(() => {
-    chat.scrollTop = chat.scrollHeight
-    display = true
 
     ws = new WebSocket(`${env == 'PROD' ? 'wss' : 'ws'}://${backend_uri.split('//')[1]}:3000/ws`);
 
@@ -44,10 +41,8 @@
 </script>
 
 <div class="w-full h-[90vh] grid grid-rows-10">
-  <div class={`overflow-auto snap-end row-span-9 ${display ? "opacity-100" : "opacity-0"}`} bind:this={chat}>
-    {#each data.messages as message}
-      <ChatBody {data} {message} />
-    {/each}
+  <div class={`flex flex-col-reverse overflow-auto snap-end row-span-9`}>
+    <Chat {data} />
   </div>
 
   <form class="row-span-1 w-[80vw] pl-4 grid grid-cols-10 gap-4 items-center" on:submit={createMessage} bind:this={form}>
