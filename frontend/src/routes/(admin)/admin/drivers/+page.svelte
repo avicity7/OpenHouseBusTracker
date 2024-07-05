@@ -40,7 +40,7 @@
       return [
         driver.DriverName,
         hoursWorked.toFixed(2),
-        (100 * hoursWorked).toFixed(2) // assuming driver's pay per hour is $100, to be confirmed
+        (100 * hoursWorked).toFixed(2) // to make an input for admin to set pay/hr
       ];
     });
   }
@@ -55,6 +55,7 @@
         startY: 20,
         theme: 'striped',
         head: [['Driver', 'Hours Worked', 'Pay']],
+        headStyles: {fillColor: [185, 28, 28]},
         body: generateData(),
         didDrawCell: (data) => {
           if (data.column.index === 0) {
