@@ -64,6 +64,13 @@ func CreateBusSchedule(schedule structs.NewSchedule) error {
     `
 	// TO BE CONFIRMED: can admin only create one bus/driver, with his full schedule length? or should it be the admin can 
 	// create the same one diff route with diff timing
+
+	// having schedule by same driver/carplate and diff timing makes the dynamic options useless, allows all carplates and driver to be available
+	
+	// cant do same-time duplication handling if conditional options is needed
+
+	// to try: in the conditional dropdown options, in the check and a WHERE start/end time is not existent alr
+	// then in the CreateBusSchedule, do the check for the time inside bus schedule with a AND after the WHERE condition
     err := config.Dbpool.QueryRow(context.Background(), checkQuery, 
         schedule.Carplate,
         schedule.DriverId).Scan(&existingCount)
