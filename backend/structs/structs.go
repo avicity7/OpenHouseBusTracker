@@ -31,6 +31,12 @@ type EditUserRole struct {
 	Role  int
 }
 
+type SettingsDetails struct {
+	Email  	string
+	Contact *string
+	Name 	string
+}
+
 type ReturnedUserArray []ReturnedUser
 
 type UserRole struct {

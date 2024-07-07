@@ -220,6 +220,24 @@ func GetUser(email string) (structs.ReturnedUser, error) {
 	return user, nil
 }
 
+func GetUserSettings(email string) (structs.SettingsDetails, error) {
+	var user structs.SettingsDetails
+	query := `
+		SELECT name, contact, email FROM user_table 
+		WHERE email = @Email
+	`
+	args := pgx.NamedArgs{
+		"Email": email,
+	}
+
+	err := config.Dbpool.QueryRow(context.Background(), query, args).Scan(&user.Name, &user.Contact, &user.Email)
+	if err != nil {
+		return structs.SettingsDetails{}, err
+	}
+
+	return user, nil
+}
+
 func Login(login structs.Login) (structs.ReturnedUser, error) {
 	var user structs.User
 	query := `

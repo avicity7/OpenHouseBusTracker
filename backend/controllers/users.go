@@ -68,6 +68,26 @@ func UpdateUserRole(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 }
 
+func UpdateSettings(w http.ResponseWriter, r *http.Request) {
+	var user structs.SettingsDetails
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(500)
+		return
+	}
+	err = services.UpdateSettings(user)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(500)
+		return
+	}
+	config.Cache.Delete("Users")
+	config.Cache.Delete(user.Email)
+
+	w.WriteHeader(200)
+}
+
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	email := chi.URLParam(r, "email")
 

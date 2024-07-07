@@ -208,7 +208,6 @@ func GetScheduleByUser(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
-// might have caching issues right now
 func GetFutureScheduleByUser(w http.ResponseWriter, r *http.Request) {
 	email := chi.URLParam(r, "email")
 	if email == "" {
