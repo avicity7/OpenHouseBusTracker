@@ -65,7 +65,7 @@
 					name="carplate"
 					bind:value={selectedCarplate}
 					required
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500"
 				>
 					{#each carplates as carplate}
 						<option value={carplate}>{carplate}</option>
@@ -102,7 +102,7 @@
 					name="shift"
 					bind:value={selectedShift}
 					required
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500"
 				>
 					<option value="true">AM</option>
 					<option value="false">PM</option>
