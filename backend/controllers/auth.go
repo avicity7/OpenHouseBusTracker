@@ -118,6 +118,28 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Write(formatted)
 }
 
+func GetUserSettings(w http.ResponseWriter, r *http.Request) {
+	email := chi.URLParam(r, "email")
+
+	user, err := services.GetUserSettings(email)
+	if err != nil {
+		fmt.Printf("Error fetching user settings for email %s: %v\n", email, err)
+		http.Error(w, "Failed to fetch user settings", http.StatusInternalServerError)
+		return
+	}
+
+	response, err := json.Marshal(user)
+	if err != nil {
+		http.Error(w, "Failed to marshal user settings", http.StatusInternalServerError)
+		return
+	}
+
+	// config.Cache.Set(email, response, cache.DefaultExpiration) //causing issues
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+}
+
 func VerifyEmail(w http.ResponseWriter, r *http.Request) {
 	verification_token := chi.URLParam(r, "token")
 	email, err := services.VerifyEmail(verification_token)
