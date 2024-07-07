@@ -69,7 +69,7 @@
         <form method="POST" action="?/updateBusSchedule">
             <div class="mb-4">
                 <label for="carplate" class="block text-sm font-medium mb-1">Carplate:</label>
-                <select id="carplate" name="carplate" bind:value={selectedCarplate} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <select id="carplate" name="carplate" bind:value={selectedCarplate} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
                     {#each carplates as carplate}
                         <option value={carplate}>{carplate}</option>
                     {/each}
@@ -78,7 +78,7 @@
 
             <div class="mb-4">
                 <label for="route_name" class="block text-sm font-medium mb-1">Route Name:</label>
-                <select id="route_name" name="route_name" bind:value={selectedRouteName} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <select id="route_name" name="route_name" bind:value={selectedRouteName} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
                     {#each routeNames as routeName}
                         <option value={routeName}>{routeName}</option>
                     {/each}
@@ -87,7 +87,7 @@
 
             <div class="mb-4">
                 <label for="driver_id" class="block text-sm font-medium mb-1">Driver:</label>
-                <select id="driver_id" name="driver_id" bind:value={selectedDriverId} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <select id="driver_id" name="driver_id" bind:value={selectedDriverId} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
                     {#each drivers as { DriverId, DriverName }}
                         <option value={DriverId}>{DriverName}</option>
                     {/each}
@@ -96,12 +96,12 @@
 
             <div class="mb-4">
                 <label for="startTime" class="block text-sm font-medium mb-1">Start Time:</label>
-                <input type="datetime-local" id="start_time" name="start_time" required bind:value={selectedStartTime} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                <input type="datetime-local" id="start_time" name="start_time" required bind:value={selectedStartTime} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500" />
             </div>
 
             <div class="mb-4">
                 <label for="endTime" class="block text-sm font-medium mb-1">End Time:</label>
-                <input type="datetime-local" id="end_time" name="end_time" required bind:value={selectedEndTime} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                <input type="datetime-local" id="end_time" name="end_time" required bind:value={selectedEndTime} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500" />
             </div>
 
             <div class="mt-4 flex justify-center">

@@ -68,7 +68,7 @@
 					id="carplate"
 					name="carplate"
 					bind:value={selectedCarplate}
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500"
 				>
 				{#if carplates.length === 0}
 					<option value="" disabled>No options available</option>
@@ -86,7 +86,7 @@
 					id="route_name"
 					name="route_name"
 					bind:value={selectedRouteName}
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500"
 				>
 					{#each routeNames as routeName}
 						<option value={routeName}>{routeName}</option>
@@ -100,7 +100,7 @@
 					id="driver_id"
 					name="driver_id"
 					bind:value={selectedDriverId}
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500"
 				>
 				{#if drivers === null || drivers.length === 0}
 					<option value="" disabled>No options available</option>
@@ -119,7 +119,7 @@
 					id="start_time"
 					name="start_time"
 					required
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500"
 				/>
 			</div>
 
@@ -130,7 +130,7 @@
 					id="end_time"
 					name="end_time"
 					required
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500"
 				/>
 			</div>
 

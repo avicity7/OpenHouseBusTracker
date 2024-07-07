@@ -31,7 +31,7 @@
         carplates = Array.from(uniqueCarplates);
         names = Array.from(uniqueNames)
     }
-    // updated information is not shown when update is successful because of url not changing
+
     onMount(() => {
         const { index } = $page.params; 
         helper = JSON.parse(decodeURIComponent(index));
@@ -57,7 +57,7 @@
 
             <div class="mb-4">
                 <label for="carplate" class="block text-sm font-medium mb-1">Carplate:</label>
-                <select id="carplate" name="carplate" required bind:value={selectedCarplate} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <select id="carplate" name="carplate" required bind:value={selectedCarplate} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
                     {#each carplates as carplate}
                         <option value={carplate}>{carplate}</option>
                     {/each}
@@ -66,7 +66,7 @@
             
             <div class="mb-4">
                 <label for="name" class="block text-sm font-medium mb-1">Name:</label>
-                <select id="name" name="name" required bind:value={selectedName} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <select id="name" name="name" required bind:value={selectedName} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
                     {#each names as name}
                         <option value={name}>{name}</option>
                     {/each}
@@ -75,7 +75,7 @@
 
             <div class="mb-4">
                 <label for="shift" class="block text-sm font-medium mb-1">Shift:</label>
-                <select id="shift" name="shift" required bind:value={selectedShift} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500" >
+                <select id="shift" name="shift" required bind:value={selectedShift} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500" >
                     <option value={true}>AM</option>
                     <option value={false}>PM</option>
                 </select>
