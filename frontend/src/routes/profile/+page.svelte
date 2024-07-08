@@ -29,6 +29,7 @@
         </div>
         <h2 class="text-2xl font-semibold mt-6">{account.Name}</h2>
         <h2 class="text-2xl font-semibold mt-6">{account.Email}</h2>
+        <h2 class="text-xl font-semibold mt-6">+65 {account.Contact}</h2>
         <h3 class="text-xl mt-2 text-stone-700">{account.Role}</h3>
 
         <form method="POST" action="?/signOut">

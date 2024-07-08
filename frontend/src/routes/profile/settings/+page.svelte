@@ -1,4 +1,5 @@
 <script lang="ts">
+  import ErrorMessage from '$lib/components/ErrorMessage.svelte';
   import { onMount } from 'svelte';
 
   export let data;
@@ -7,6 +8,30 @@
   let name = '';
   let contact = '';
   let email = '';
+  let errorMessage: string | null = null;
+
+  const validateForm = () => {
+    const sanitizedContact = contact.replace(/\s/g, '');
+
+    if (sanitizedContact.length !== 8) {
+      errorMessage = 'Contact number must be exactly 8 digits long.';
+      return false;
+    }
+
+    if (!/^\d+$/.test(sanitizedContact)) {
+      errorMessage = 'Contact number must contain only digits.';
+      return false;
+    }
+
+    errorMessage = null;
+    return true;
+  };
+
+  const handleSubmit = (event: Event) => {
+    if (!validateForm()) {
+      event.preventDefault();
+    }
+  };
   
   onMount(() => {
     if(UserSettings){
@@ -22,8 +47,9 @@
 <div class="flex flex-col justify-center items-center mt-28">
   <div class="font-albert w-full max-w-sm text-zinc-800 dark:text-zinc-100 px-6">
     <h1 class="text-3xl font-bold mb-5 text-center">Settings Page</h1>
-
-    <form method="POST" action="?/updateUserSettings" class="w-full">
+  
+    <form method="POST" action="?/updateUserSettings" class="w-full" on:submit={handleSubmit}>
+      <ErrorMessage message={errorMessage} />
       <div class="flex flex-col space-y-4">
         <div>
           <label for="name" class="block text-sm font-medium mb-1">Name</label>

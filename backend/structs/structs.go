@@ -22,6 +22,7 @@ type User struct {
 type ReturnedUser struct {
 	Name              string
 	Email             string
+	Contact 		  string
 	Role              string
 	VerificationToken string
 }

@@ -2,6 +2,7 @@
     import { onMount } from "svelte";
     import type { EventHelper } from "$lib/types/global";
 	import { page } from "$app/stores";
+	import CustomDropdown from "$lib/components/CustomDropdown.svelte";
 
     export let data;
     const { dropdownData } = data;
@@ -55,7 +56,7 @@
             <input type="hidden" name="old_name" value={helper.Name}>
             <input type="hidden" name="old_shift" value={helper.Shift}>
 
-            <div class="mb-4">
+            <!-- <div class="mb-4">
                 <label for="carplate" class="block text-sm font-medium mb-1">Carplate:</label>
                 <select id="carplate" name="carplate" required bind:value={selectedCarplate} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
                     {#each carplates as carplate}
@@ -71,6 +72,24 @@
                         <option value={name}>{name}</option>
                     {/each}
                 </select>
+            </div> -->
+
+            <div class="mb-4">
+                <CustomDropdown
+                    label="Carplate"
+                    options={carplates}
+                    required
+                    bind:selected={selectedCarplate}
+                />
+            </div>
+            
+            <div class="mb-4">
+                <CustomDropdown
+                    label="Name"
+                    options={names}
+                    required
+                    bind:selected={selectedName}
+                />
             </div>
 
             <div class="mb-4">

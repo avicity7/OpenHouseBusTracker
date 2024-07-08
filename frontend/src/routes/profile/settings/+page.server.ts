@@ -25,28 +25,35 @@ export const load = async ({ fetch, locals }) => {
 };
 
 export const actions = {
-  updateUserSettings: async ({ request }): Promise<void> => {
-    const form = await request.formData()
+    updateUserSettings: async({ request}): Promise<void> =>{
+      const form =await request.formData()
 
-    const Name = form.get('name');
-    const Contact = form.get('contact');
-    const Email = form.get('email')
+        const Name = form.get('name');
+        let Contact = form.get('contact');
+        const Email = form.get('email')
 
-    const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/users/update-settings`, {
-      method: "PUT",
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        Name,
-        Contact,
-        Email
-      })
-    });
+        if (typeof Contact === 'string') {
+          Contact = Contact.replace(/\s/g, ''); // to remove whitespace in contact input
+        }
+        
+        console.log("what is submitted", Name, Contact, Email)
+        const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/users/update-settings`, {
+          method: "PUT",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+                  Name, 
+                  Contact,
+                  Email
+              })
+        });
+        
+        console.log(`update user settings successful`)
+        if (!response.ok) {
+            console.log(error)
+          throw new Error("Failed to update user settings");
+        }
 
-    if (!response.ok) {
-      console.log(error)
-      throw new Error("Failed to update user settings");
-    }
-
-    redirect(301, '/profile')
+        redirect(301, '/profile')
+      }
   }
 }
