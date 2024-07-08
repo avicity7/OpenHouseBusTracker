@@ -151,3 +151,40 @@ func VerifyEmail(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
 	}
 }
+
+func ResetPassword(w http.ResponseWriter, r *http.Request) {
+	var ResetPasswordStruct struct {
+		Password string
+		Token    string
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&ResetPasswordStruct)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	err = services.ResetPassword(ResetPasswordStruct.Token, ResetPasswordStruct.Password)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	w.WriteHeader(200)
+}
+
+func StartResetPassword(w http.ResponseWriter, r *http.Request) {
+	var StartResetStruct struct {
+		Email string
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&StartResetStruct)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	services.StartResetPassword(StartResetStruct.Email)
+
+	w.WriteHeader(200)
+}

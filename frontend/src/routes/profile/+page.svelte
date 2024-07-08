@@ -67,6 +67,9 @@
             Don't have an account yet?
             <a href="/profile/sign-up" class="text-blue-400 hover:text-blue-500"> Sign up </a>
           </div>
+          <div class="text-zinc-400 font-medium text-sm mx-6 md:mx-24 mt-4 text-center">
+            <a href="/profile/reset-password" class="font-light text-sm text-gray-400 hover:text-blue-500">Forgot your password?</a>
+          </div>
         </form>
       </div>
     {/if}

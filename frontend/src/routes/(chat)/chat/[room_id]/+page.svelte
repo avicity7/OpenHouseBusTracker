@@ -24,23 +24,24 @@
       },
       body: JSON.stringify({ From:  account?.Email, RoomId: data.room_id, Body: body })
     });
+    body = ""
     getMessages()
   }
 
   afterNavigate(() => {
-
+    body = ""
     ws = new WebSocket(`${env == 'PROD' ? 'wss' : 'ws'}://${backend_uri.split('//')[1]}:3000/ws`);
 
     ws.onmessage = async (msg) => {
       let parts = msg.data.split(' ');
       if (parts[0] == data.room_id) {
-        window.location.reload()
+        getMessages()
       }
     };
   })
 </script>
 
-<div class="w-full h-[90vh] grid grid-rows-10">
+<div class="w-fit h-[90vh] grid grid-rows-10">
   <div class={`flex flex-col-reverse overflow-auto snap-end row-span-9`}>
     <Chat {data} />
   </div>

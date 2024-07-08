@@ -11,7 +11,6 @@ import (
 	"server/structs"
 	"server/utils"
 
-	// "strconv"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -118,7 +117,7 @@ func CreateUser(user structs.NewUser) error {
 	if err != nil {
 		return err
 	} else {
-		utils.SendEmail(verification_token, user.Email, "")
+		utils.SendEmail(verification_token, user.Email, "", user.Name)
 	}
 
 	return nil
@@ -169,7 +168,7 @@ func BulkCreateUsers(csvFilePath string) error {
 			return err
 		}
 
-		utils.SendEmail("", record[1], pwd)
+		utils.SendEmail("", record[1], pwd, record[0])
 	}
 
 	err = tx.Commit(context.Background())
@@ -287,10 +286,81 @@ func VerifyEmail(verification_token string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Println(username)
 	_, err = config.Dbpool.Exec(context.Background(), query_update, args)
 	if err != nil {
 		return "", err
 	}
 	return username, nil
+}
+
+func ResetPassword(token string, password string) error {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	if err != nil {
+		return err
+	}
+
+	query_select := `
+		SELECT email FROM user_table
+		WHERE verification_token = @VerificationToken
+	`
+	query_update := `
+		UPDATE user_table
+		SET verification_token = ''
+		WHERE verification_token = @VerificationToken
+	`
+	query_password := `
+		UPDATE user_table
+		SET password = @Password
+		WHERE verification_token = @VerificationToken
+	`
+	args := pgx.NamedArgs{
+		"VerificationToken": token,
+		"Password":          hashedPassword,
+	}
+
+	var username string
+
+	err = config.Dbpool.QueryRow(context.Background(), query_select, args).Scan(&username)
+	if err != nil {
+		return err
+	}
+
+	_, err = config.Dbpool.Exec(context.Background(), query_password, args)
+	if err != nil {
+		return err
+	}
+
+	_, err = config.Dbpool.Exec(context.Background(), query_update, args)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func StartResetPassword(email string) error {
+	user, err := GetUser(email)
+	if err != nil {
+		return err
+	}
+
+	token := utils.GenerateRandomToken(20)
+	query_update := `
+		UPDATE user_table
+		SET verification_token = @VerificationToken
+		WHERE email = @Email
+	`
+	args := pgx.NamedArgs{
+		"VerificationToken": token,
+		"Email":             email,
+	}
+
+	_, err = config.Dbpool.Exec(context.Background(), query_update, args)
+	if err != nil {
+		return err
+	}
+
+	utils.SendEmail(token, email, "reset", user.Name)
+
+	return nil
 }
