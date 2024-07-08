@@ -56,4 +56,4 @@ export const actions = {
         redirect(301, '/profile')
       }
   }
-}
+
