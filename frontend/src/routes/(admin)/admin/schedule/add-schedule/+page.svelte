@@ -3,6 +3,7 @@
 	import type { Schedule, Driver } from '$lib/types/global.js';
 	import { page } from '$app/stores';
 	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
+	import CustomDropdown from '$lib/components/CustomDropdown.svelte';
 
 	export let data
 	const { dropdownData } = data
@@ -62,7 +63,8 @@
 		<h1 class="text-2xl font-semibold mb-4">Add New Bus Schedule</h1>
 		<ErrorMessage message={errorMessage} />
 		<form method="POST" action="?/createBusSchedule">
-			<div class="mb-4">
+			
+			<!-- <div class="mb-4">
 				<label for="carplate" class="block text-sm font-medium mb-1">Carplate:</label>
 				<div class="relative">
 				  <select
@@ -85,24 +87,33 @@
 					</svg>
 				  </div>
 				</div>
-			  </div>
-
-			 <!-- added custom arrows, cant change the listbox unless you create a custom dropdown -->
+			</div> -->
 
 			<div class="mb-4">
-				<label for="route_name" class="block text-sm font-medium mb-1">Route Name:</label>
-				<select
-					id="route_name"
-					name="route_name"
-					bind:value={selectedRouteName}
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500"
-				>
-					{#each routeNames as routeName}
-						<option value={routeName}>{routeName}</option>
-					{/each}
-				</select>
-			</div>
+				<CustomDropdown
+				  label="Carplate"
+				  options={carplates}
+				  required
+				  bind:selected={selectedCarplate}
+				/>
+			  </div>
+			  
+			  <div class="mb-4">
+				<CustomDropdown
+				  label="Route Name"
+				  options={routeNames}
+				  bind:selected={selectedRouteName}
+				/>
+			  </div>
 
+			  <!-- <div class="mb-4">
+				<CustomDropdown
+				  label="Driver"
+				  options={drivers.map(driver => driver.DriverName)}
+				  bind:selected={selectedDriverId}
+				/>
+			  </div> -->
+			  <!-- work in progress for driver, issue with int cant be casted to string -->
 			<div class="mb-4">
 				<label for="driver_id" class="block text-sm font-medium mb-1">Driver:</label>
 				<select

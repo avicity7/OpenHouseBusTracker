@@ -3,6 +3,7 @@
 	import type { EventHelper } from '$lib/types/global';
 	import { page } from '$app/stores';
 	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
+	import CustomDropdown from '$lib/components/CustomDropdown.svelte';
 
 	export let data
   	const { dropdownData } = data
@@ -58,7 +59,7 @@
 		<h1 class="text-2xl font-semibold mb-4">Add New Event Helper</h1>
 		<ErrorMessage message={errorMessage} />
 		<form method="POST" action="?/createEventHelper">
-			<div class="mb-4">
+			<!-- <div class="mb-4">
 				<label for="carplate" class="block text-sm font-medium mb-1">Carplate:</label>
 				<select
 					id="carplate"
@@ -71,7 +72,18 @@
 						<option value={carplate}>{carplate}</option>
 					{/each}
 				</select>
+			</div> -->
+
+			<!-- might have an issue with how long the list is, might need dropdown to be scrollable -->
+			<div class="mb-4">
+				<CustomDropdown
+				  label="Carplate"
+				  options={carplates}
+				  required
+				  bind:selected={selectedCarplate}
+				/>
 			</div>
+			  
 			<div class="mb-4">
                 <fieldset>
                     <legend class="block text-sm font-medium mb-1">Names:</legend>
@@ -108,6 +120,15 @@
 					<option value="false">PM</option>
 				</select>
 			</div>
+
+			<!-- <div class="mb-4">
+				<CustomDropdown
+				  label="Shift"
+				  options={['AM', 'PM']}
+				  required
+				  bind:selected={selectedShift}
+				/>
+			</div> -->
 
 			<div class="mt-4 flex justify-center">
 				<button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-800">
