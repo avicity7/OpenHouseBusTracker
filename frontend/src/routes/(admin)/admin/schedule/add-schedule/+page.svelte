@@ -64,21 +64,30 @@
 		<form method="POST" action="?/createBusSchedule">
 			<div class="mb-4">
 				<label for="carplate" class="block text-sm font-medium mb-1">Carplate:</label>
-				<select
+				<div class="relative">
+				  <select
 					id="carplate"
 					name="carplate"
 					bind:value={selectedCarplate}
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500"
-				>
-				{#if carplates.length === 0}
-					<option value="" disabled>No options available</option>
-				{:else}
-					{#each carplates as carplate}
-						<option value={carplate}>{carplate}</option>
-					{/each}
-				{/if}
-				</select>
-			</div>
+					class="w-full appearance-none rounded-md border border-gray-300 bg-white text-gray-700 px-3 py-2 shadow-sm focus:outline-none focus:ring-1 focus:ring-red-500"
+				  >
+					{#if carplates.length === 0}
+					  <option value="" disabled>No options available</option>
+					{:else}
+					  {#each carplates as carplate}
+						<option value={carplate} class="bg-light-blue-50 hover:bg-red-100">{carplate}</option>
+					  {/each}
+					{/if}
+				  </select>
+				  <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+					<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+					</svg>
+				  </div>
+				</div>
+			  </div>
+
+			 <!-- added custom arrows, cant change the listbox unless you create a custom dropdown -->
 
 			<div class="mb-4">
 				<label for="route_name" class="block text-sm font-medium mb-1">Route Name:</label>

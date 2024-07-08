@@ -41,6 +41,7 @@ export const load = async ({ locals, fetch }) => {
 	let account: User = {
 		Name: '',
 		Email: '',
+		Contact: '',
 		Role: '',
 		VerificationToken: ''
 	};

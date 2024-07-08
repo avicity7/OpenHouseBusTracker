@@ -204,7 +204,7 @@ func createUserInTransaction(tx pgx.Tx, user structs.NewUser) error {
 func GetUser(email string) (structs.ReturnedUser, error) {
 	var user structs.ReturnedUser
 	query := `
-		SELECT name, email, role_name, verification_token FROM user_table 
+		SELECT name, email, contact, role_name, verification_token FROM user_table 
 		JOIN user_role ON user_table.role_id = user_role.role_id 
 		WHERE email = @Email
 	`
@@ -212,7 +212,7 @@ func GetUser(email string) (structs.ReturnedUser, error) {
 		"Email": email,
 	}
 
-	err := config.Dbpool.QueryRow(context.Background(), query, args).Scan(&user.Name, &user.Email, &user.Role, &user.VerificationToken)
+	err := config.Dbpool.QueryRow(context.Background(), query, args).Scan(&user.Name, &user.Email, &user.Contact, &user.Role, &user.VerificationToken)
 	if err != nil {
 		return structs.ReturnedUser{}, err
 	}

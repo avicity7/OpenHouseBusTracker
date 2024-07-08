@@ -32,8 +32,12 @@ export const actions = {
       const form =await request.formData()
 
         const Name = form.get('name');
-        const Contact = form.get('contact');
+        let Contact = form.get('contact');
         const Email = form.get('email')
+
+        if (typeof Contact === 'string') {
+          Contact = Contact.replace(/\s/g, ''); // to remove whitespace in contact input
+        }
         
         console.log("what is submitted", Name, Contact, Email)
         const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/users/update-settings`, {
