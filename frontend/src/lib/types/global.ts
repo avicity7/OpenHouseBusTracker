@@ -126,6 +126,7 @@ export type ChatRoom = {
   RoomId: string,
   User1: string,
   User2: string
+  LatestMessage: Message
 }
 
 // export type Schedule = {

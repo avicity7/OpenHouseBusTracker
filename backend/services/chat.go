@@ -33,10 +33,14 @@ func GetChatRooms(email string) ([]structs.ChatRoom, error) {
 	var chat_rooms []structs.ChatRoom
 
 	query := ` 
-	SELECT room_id, ut1.name, ut2.name FROM chat_room
-	JOIN user_table ut1 ON chat_room.user1 = ut1.email
-	JOIN user_table ut2 ON chat_room.user2 = ut2.email
-	WHERE user1 = @Email  OR user2 = @Email
+		SELECT cr.room_id, ut1.name, ut2.name, timestamp, "from", cr.room_id, body FROM chat_room cr 
+		JOIN user_table ut1 ON cr.user1 = ut1.email
+		JOIN user_table ut2 ON cr.user2 = ut2.email
+		JOIN (
+			SELECT *, RANK() OVER ( PARTITION BY room_id ORDER BY timestamp DESC ) 
+			FROM chat_message cm
+		) ms ON cr.room_id = ms.room_id AND "rank" = 1
+		WHERE user1 = @Email OR user2 = @Email
 	`
 
 	args := pgx.NamedArgs{
@@ -52,7 +56,7 @@ func GetChatRooms(email string) ([]structs.ChatRoom, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var chat_room structs.ChatRoom
-		if err := rows.Scan(&chat_room.RoomId, &chat_room.User1, &chat_room.User2); err != nil {
+		if err := rows.Scan(&chat_room.RoomId, &chat_room.User1, &chat_room.User2, &chat_room.LatestMessage.Timestamp, &chat_room.LatestMessage.From, &chat_room.LatestMessage.RoomId, &chat_room.LatestMessage.Body); err != nil {
 			return nil, err
 		}
 		chat_rooms = append(chat_rooms, chat_room)

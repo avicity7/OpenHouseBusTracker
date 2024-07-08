@@ -1,30 +1,27 @@
 import { PUBLIC_BACKEND_URL } from "$env/static/public";
 import { error, redirect } from "@sveltejs/kit";
 
-export const load = async ({fetch, locals}) => {
-	try {
-        const email = locals?.session?.Email;
+export const load = async ({ fetch, locals }) => {
+  try {
+    const email = locals?.session?.Email;
 
-        console.log("server email is ", email)
+    const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/auth/get-user-settings/${email}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch: ${response.statusText}`);
+    }
 
-		const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/auth/get-user-settings/${email}`);
-		if (!response.ok) {
-			throw new Error(`Failed to fetch: ${response.statusText}`);
-		}
-		const UserSettings = await response.json();
+    const UserSettings = await response.json();
 
-        console.log("wjhat is here", UserSettings)
-
-		return {
-			UserSettings
-		};
-	} catch (error) {
-		console.error("Error fetching user settings:", error);
-        return {
-            status: 500,
-            body: { error: 'Internal Server Error' }
-        };
-	}
+    return {
+      UserSettings
+    };
+  } catch (error) {
+    console.error("Error fetching user settings:", error);
+    return {
+      status: 500,
+      body: { error: 'Internal Server Error' }
+    };
+  }
 };
 
 export const actions = {
@@ -59,3 +56,4 @@ export const actions = {
         redirect(301, '/profile')
       }
   }
+}

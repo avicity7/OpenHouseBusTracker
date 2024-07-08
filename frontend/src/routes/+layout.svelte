@@ -74,7 +74,7 @@
     {/if}
   </div>
 </nav>
-{#if session && account?.VerificationToken != "" && !$page.url.pathname.includes("verify")}
+{#if session && account?.VerificationToken != "" && !$page.url.pathname.includes("verify") && !account?.VerificationToken.startsWith("reset")}
   <div class="flex flex-col text-center items-center my-auto mx-8">
     <h1 class="mt-16 text-3xl font-semibold">You're signed up!</h1>
     <p class="mt-8 text-xl">But before you use the Tracker, you need to verify your email.</p>

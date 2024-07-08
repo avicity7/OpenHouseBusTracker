@@ -10,7 +10,7 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-func SendEmail(token string, user_email string, pwd string) {
+func SendEmail(token string, user_email string, pwd string, name string) error {
 	godotenv.Load()
 	env := os.Getenv("ENV")
 	var link string
@@ -32,8 +32,8 @@ func SendEmail(token string, user_email string, pwd string) {
 	if pwd == "" {
 		email = hermes.Email{
 			Body: hermes.Body{
-				Greeting: "Hey there",
-				Name:     user_email,
+				Greeting: "Hey",
+				Name:     name,
 				Intros: []string{
 					"Welcome to OH Bus Tracker!",
 				},
@@ -52,11 +52,34 @@ func SendEmail(token string, user_email string, pwd string) {
 				},
 			},
 		}
+	} else if pwd == "reset" {
+		email = hermes.Email{
+			Body: hermes.Body{
+				Greeting: "Hey",
+				Name:     name,
+				Intros: []string{
+					"We've received a request to reset your password.",
+				},
+				Actions: []hermes.Action{
+					{
+						Instructions: "To reset your password, click here:",
+						Button: hermes.Button{
+							Color: "#b91c1c",
+							Text:  "Reset password",
+							Link:  link + "/profile/reset-password/" + token,
+						},
+					},
+				},
+				Outros: []string{
+					"Need help, or have questions? Just reply to this email, we'd love to help.",
+				},
+			},
+		}
 	} else {
 		email = hermes.Email{
 			Body: hermes.Body{
-				Greeting: "Hey there",
-				Name:     user_email,
+				Greeting: "Hey",
+				Name:     name,
 				Intros: []string{
 					"Welcome to OH Bus Tracker!",
 				},
@@ -86,6 +109,8 @@ func SendEmail(token string, user_email string, pwd string) {
 
 	if pwd == "" {
 		m.SetHeader("Subject", "Verify your email")
+	} else if pwd == "reset" {
+		m.SetHeader("Subject", "Reset your password")
 	} else {
 		m.SetHeader("Subject", "You're signed up!")
 	}
@@ -101,4 +126,6 @@ func SendEmail(token string, user_email string, pwd string) {
 		fmt.Println(err)
 		panic(err)
 	}
+
+	return nil
 }

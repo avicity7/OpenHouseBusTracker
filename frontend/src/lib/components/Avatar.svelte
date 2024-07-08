@@ -19,8 +19,8 @@
 
 </script>
 
-<div>
-  <button on:click={() => menuOpen = !menuOpen} bind:this={avatar}>
+<div bind:this={avatar}>
+  <button on:click={() => menuOpen = !menuOpen}>
     <div class={`relative inline-flex items-center justify-center w-8 h-8 overflow-hidden ${session?.Role == "admin" ? "bg-red-700" : "bg-orange-800"} rounded-full`}>
         {#if session?.Role == "admin"}
           <span class="font-medium text-white">A</span>
@@ -39,10 +39,10 @@
         </div>
         <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
           <li>
-            <a href="/profile" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
+            <a href="/profile/settings" class="block px-4 py-2 hover:bg-gray-100" on:click={() => menuOpen = false}>Profile Settings</a>
           </li>
         </ul>
-        <form method="POST" action="/profile?/signOut">
+        <form method="POST" action="/?/signOut">
           <button class="w-full py-1">
             <div class="text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</div>
           </button>
