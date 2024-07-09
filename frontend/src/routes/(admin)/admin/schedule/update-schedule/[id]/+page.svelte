@@ -55,7 +55,7 @@
             selectedCarplate = Carplate;
             selectedRouteName = RouteName;
             selectedDriverId = DriverId;
-            
+            console.log(selectedDriverId)
             selectedStartTime =StartTime.split('+')[0];
         
             selectedEndTime = EndTime.split('+')[0];
@@ -99,16 +99,25 @@
                   bind:selected={selectedRouteName}
                 />
             </div>
+            
 
-            <!-- same issue need to account for int -->
+            <!-- issue with retrieving from backend in int, but not translating back to string in displayOption -->
             <div class="mb-4">
+                <CustomDropdown
+                  label="Driver"
+                  options={drivers}
+                  bind:selected={selectedDriverId}
+                  displayOption={(driver) => driver.DriverName}
+              />
+            </div>
+            <!-- <div class="mb-4">
                 <label for="driver_id" class="block text-sm font-medium mb-1">Driver:</label>
                 <select id="driver_id" name="driver_id" bind:value={selectedDriverId} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">
                     {#each drivers as { DriverId, DriverName }}
                         <option value={DriverId}>{DriverName}</option>
                     {/each}
                 </select>
-            </div>
+            </div> -->
 
             <div class="mb-4">
                 <label for="startTime" class="block text-sm font-medium mb-1">Start Time:</label>

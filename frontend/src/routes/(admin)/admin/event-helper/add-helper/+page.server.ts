@@ -37,6 +37,8 @@ export const actions = {
         Shift
       }));
 
+      console.log("event heplers", EventHelpers)
+
       const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/event-helpers/create-helpers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

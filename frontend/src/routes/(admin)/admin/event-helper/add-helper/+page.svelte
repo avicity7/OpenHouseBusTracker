@@ -52,6 +52,11 @@
 			setEventHelperDropdownOptions()
 		}
 	});
+
+	const shiftOptions = [
+      { value: true, label: 'AM' },
+      { value: false, label: 'PM' }
+   ];
 </script>
 
 <div class="flex justify-center items-center h-full">
@@ -78,6 +83,7 @@
 			<div class="mb-4">
 				<CustomDropdown
 				  label="Carplate"
+				  name="carplate"
 				  options={carplates}
 				  required
 				  bind:selected={selectedCarplate}
@@ -107,7 +113,7 @@
                 </fieldset>
             </div>
 
-			<div class="mb-4">
+			<!-- <div class="mb-4">
 				<label for="shift" class="block text-sm font-medium mb-1">Shift:</label>
 				<select
 					id="shift"
@@ -119,16 +125,15 @@
 					<option value="true">AM</option>
 					<option value="false">PM</option>
 				</select>
-			</div>
-
-			<!-- <div class="mb-4">
-				<CustomDropdown
-				  label="Shift"
-				  options={['AM', 'PM']}
-				  required
-				  bind:selected={selectedShift}
-				/>
 			</div> -->
+
+			<CustomDropdown
+				label="Shift"
+				name="shift"
+				options={shiftOptions}
+				bind:selected={selectedShift}
+				displayOption={(option) => option.label}
+			/>
 
 			<div class="mt-4 flex justify-center">
 				<button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-800">
