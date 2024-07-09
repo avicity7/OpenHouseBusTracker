@@ -6,9 +6,10 @@
     export let data: {
         dropdownData: { data: Schedule[] } | undefined;
         scheduleData: { schedule: Schedule } | undefined;
+        allDriversData: {drivers: Driver[]}
     };
     
-    let { dropdownData, scheduleData } = data;
+    let { dropdownData, scheduleData, allDriversData } = data;
     
     let carplates: string[] = [];
     let routeNames: string[] = [];
@@ -18,6 +19,7 @@
     let selectedDriverId: number | null = null;
     let selectedStartTime = "";
     let selectedEndTime = "";
+    let selectedDriver: Driver 
 
     function setDropdownOptions(data: Schedule[]) {
         if (!data) return;
@@ -25,6 +27,7 @@
         const uniqueCarplates = new Set<string>();
         const uniqueRouteNames = new Set<string>();
         const uniqueDrivers = new Map<number, string>();
+
 
         data.forEach(({ Carplate, RouteName, Driver }) => {
             if (Carplate) {
@@ -55,13 +58,11 @@
             selectedCarplate = Carplate;
             selectedRouteName = RouteName;
             selectedDriverId = DriverId;
-            console.log(selectedDriverId)
             selectedStartTime =StartTime.split('+')[0];
-        
             selectedEndTime = EndTime.split('+')[0];
+            selectedDriver = allDriversData.drivers.find((driver) => selectedDriverId == driver.DriverId)!
         }
     });
-
 </script>
 
 <div class="flex justify-center items-center h-full">
@@ -79,6 +80,7 @@
             <div class="mb-4">
                 <CustomDropdown
                   label="Carplate"
+                  name="carplate"
                   options={carplates}
                   bind:selected={selectedCarplate}
                 />
@@ -95,6 +97,7 @@
             <div class="mb-4">
                 <CustomDropdown
                   label="Route Name"
+                  name="route_name"
                   options={routeNames}
                   bind:selected={selectedRouteName}
                 />
@@ -102,14 +105,16 @@
             
 
             <!-- issue with retrieving from backend in int, but not translating back to string in displayOption -->
-            <div class="mb-4">
-                <CustomDropdown
-                  label="Driver"
-                  options={drivers}
-                  bind:selected={selectedDriverId}
-                  displayOption={(driver) => driver.DriverName}
-              />
-            </div>
+            {#if selectedDriver}
+                <div class="mb-4">
+                    <CustomDropdown
+                    label="Driver"
+                    name="driver_id"
+                    options={drivers}
+                    bind:selected={selectedDriver.DriverName}
+                />
+                </div>
+            {/if}
             <!-- <div class="mb-4">
                 <label for="driver_id" class="block text-sm font-medium mb-1">Driver:</label>
                 <select id="driver_id" name="driver_id" bind:value={selectedDriverId} class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500">

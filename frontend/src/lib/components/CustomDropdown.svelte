@@ -1,17 +1,15 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-
     export let options: any[] = [];
     export let selected: any = null;
     export let label: string = "";
     export let required: boolean = false;
     export let name: string = "";
-    export let displayOption: (option: any) => string = (option) => option.toString();
 
     let isOpen = false;
     let error = "";
 
-    let dropdownId = `dropdown-${Math.random().toString(36).substring(2,9)}`;
+    let dropdownId = `dropdown-${Math.random().toString(36).substring(2,9)}`; // either this or increment by 1
 
     function toggleDropdown() {
         isOpen = !isOpen;
@@ -45,8 +43,6 @@
             document.removeEventListener('click', handleClickOutside);
         };
     });
-
-    $: selectedDriverId = selected ? selected.DriverId : null;
 </script>
 
 <div class="mb-4">
@@ -68,14 +64,14 @@
             aria-haspopup="listbox"
             aria-expanded={isOpen}
         >
-            {selected ? displayOption(selected) : 'Select an option'}
+            {typeof(selected) == "boolean" ? selected ? "AM" : "PM" : selected ? typeof(selected) == "object" ? selected.DriverName : selected : "Select an option"}
             <svg class="w-5 h-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
         </button>
         {#if isOpen}
             <ul id={`${dropdownId}-list`} role="listbox" class="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1">
-                {#if options.length > 0}
+                {#if options.length > 0}    
                     {#each options as option (option)}
                         <li>
                             <button
@@ -86,7 +82,7 @@
                                 class="block w-full px-4 py-2 text-gray-700 hover:bg-red-100 focus:bg-red-100 focus:outline-none cursor-pointer"
                                 on:click={() => selectOption(option)}
                             >
-                                {displayOption(option)}
+                                {typeof(option) == "boolean" ? option ? "AM" : "PM" : option && typeof(option) == "object" ? option.DriverName : option}
                             </button>
                         </li>
                     {/each}

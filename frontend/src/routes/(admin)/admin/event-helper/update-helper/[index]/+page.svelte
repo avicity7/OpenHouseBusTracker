@@ -12,7 +12,7 @@
     let names: string[] = [];
     let selectedCarplate: string | null = null;
     let selectedName: string | null = null;
-    let selectedShift: boolean | null = null;
+    let selectedShift: string
 
     function setEventHelperDropdownOptions() {
         if (!dropdownData) return;
@@ -38,8 +38,7 @@
         helper = JSON.parse(decodeURIComponent(index));
         selectedCarplate = helper.Carplate;
         selectedName = helper.Name;
-        selectedShift = helper.Shift;
-        console.log(selectedShift)
+        selectedShift = helper.Shift ? "AM" : "PM"
 
         if (dropdownData) {
             setEventHelperDropdownOptions()
@@ -47,11 +46,7 @@
         
     });
 
-    const shiftOptions = [
-      { value: true, label: 'AM' },
-      { value: false, label: 'PM' }
-   ];
-    
+    const shiftOptions = [true, false]
 </script>
 
 <div class="flex justify-center items-center h-full">
@@ -107,7 +102,6 @@
 				name="shift"
 				options={shiftOptions}
 				bind:selected={selectedShift}
-				displayOption={(option) => option.label}
 			/>
 
             <!-- <div class="mb-4">

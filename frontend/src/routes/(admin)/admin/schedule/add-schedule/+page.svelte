@@ -128,7 +128,6 @@
 					name="driver_id"
 					options={drivers}
 					bind:selected={selectedDriverId}
-					displayOption={(driver) => driver.DriverName}
 				/>
 			  </div>
 

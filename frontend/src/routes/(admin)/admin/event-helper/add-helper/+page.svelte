@@ -11,10 +11,10 @@
 	let carplates: string[] = [];
 	let names: string[] = [];
 
-	let selectedCarplate: string | null = null;
+	let selectedCarplate: string;
 	let selectedNames: Set<string> = new Set();
-	let selectedShift: boolean | null = null;
-	let errorMessage: string | null = null;
+	let selectedShift: boolean
+	let errorMessage: string;
 
 	function setEventHelperDropdownOptions() {
 		if (!dropdownData) return;
@@ -53,10 +53,7 @@
 		}
 	});
 
-	const shiftOptions = [
-      { value: true, label: 'AM' },
-      { value: false, label: 'PM' }
-   ];
+	const shiftOptions = [true, false];
 </script>
 
 <div class="flex justify-center items-center h-full">
@@ -132,7 +129,6 @@
 				name="shift"
 				options={shiftOptions}
 				bind:selected={selectedShift}
-				displayOption={(option) => option.label}
 			/>
 
 			<div class="mt-4 flex justify-center">
