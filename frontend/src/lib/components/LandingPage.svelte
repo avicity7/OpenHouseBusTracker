@@ -33,8 +33,8 @@
         </a>
       {/if}
     </div>
-    <div class="flex flex-col items-center mt-72">
-      <h1 class="text-4xl font-light text-stone-800 mb-2">Supporting Open House Operations</h1>
+    <div class="flex flex-col items-center mt-72 px-8 md:px-0">
+      <h1 class="text-4xl font-light text-stone-800 mb-2 text-center">Supporting Open House Operations</h1>
 
       <HeroBanner bold="Replacing" text="manual tracking" source="table.jpeg" />
       <HeroBanner bold="Helping" text="student helpers" source="student1.jpeg" />

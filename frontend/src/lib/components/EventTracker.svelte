@@ -101,6 +101,9 @@
         getEvents()
       }
     }
+		navigator.geolocation.watchPosition((position) => {
+			console.log(position)
+		})
   })
 </script>
 
