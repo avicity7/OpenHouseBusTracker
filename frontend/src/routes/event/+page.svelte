@@ -1,30 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
   import EventTracker from '$lib/components/EventTracker.svelte'
-  import type { EventBus } from '$lib/types/global.js'
-	import type { WebSocketServer } from 'vite';
   export let data
-  const { session, followBus, buses, stops, backend_uri, env } = data
-
-  let selectedBus: EventBus = {
-    Carplate: '',
-    Status: false
-  }
+  const { followBus, stops, backend_uri, env } = data
 
   let ws: WebSocket
-
-  const createFollowBus = async() => {
-    await fetch(`${backend_uri}:3000/event/create-follow-bus`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        Carplate: selectedBus,
-        Email: session!.Email
-      }),
-      headers: {
-        'content-type': 'application/json'
-      },
-    })
-  }
 
   onMount(() => {
     ws = new WebSocket(`${env == "PROD" ? "wss" : "ws"}://${backend_uri.split("//")[1]}:3000/ws`)
