@@ -167,7 +167,7 @@
         </div>
         
         <div class="ml-auto">
-            <input type="text" placeholder="Search Drivers..." class="border border-gray-300 rounded-md px-3 py-2 w-60" bind:value={searchTerm} on:input={filterSchedules}>
+            <input type="text" placeholder="Search Drivers..." class="border border-gray-300 rounded-md px-3 py-2 w-60" bind:value={searchTerm} on:input={filterSchedules} data-testid="search-input">
         </div>
     </div>
 
@@ -189,7 +189,7 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 {#if filteredSchedules.length > 0}
                     {#each filteredSchedules as schedule (schedule.BusScheduleId)}
-                        <tr class="hover:bg-gray-100">
+                        <tr class="hover:bg-gray-100 schedule-item" data-testid= "search-results">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <input type="checkbox" checked={selectedSchedules.has(schedule.BusScheduleId)} on:change={() => {
                                     toggleSelection(schedule.BusScheduleId);
