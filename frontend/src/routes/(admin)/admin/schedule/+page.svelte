@@ -150,20 +150,20 @@
         </a>    
 
         <div class="ml-auto">
-            <select class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={selectedRoute} on:change ={filterSchedules}>
+            <select class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={selectedRoute} on:change ={filterSchedules} data-testid="search-route">
                 <option value="">All Routes</option>
                 {#each getUniqueRoutes() as route}
                     <option value={route}>{route}</option>
                 {/each}
             </select>
-            <select class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={selectedCarplate} on:change={filterSchedules}>
+            <select class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={selectedCarplate} on:change={filterSchedules} data-testid="search-carplate">
                 <option value="">All Carplates</option>
                 {#each getUniqueCarplates() as carplate}
                     <option value={carplate}>{carplate}</option>
                 {/each}
             </select>
-            <input type="datetime" placeholder="Start Time" class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={startTime} on:input={filterSchedules}>
-            <input type="datetime" placeholder="End Time" class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={endTime} on:input={filterSchedules}>
+            <input type="datetime" placeholder="Start Time" class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={startTime} on:input={filterSchedules} data-testid="search-start-time">
+            <input type="datetime" placeholder="End Time" class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={endTime} on:input={filterSchedules} data-testid="search-end-time">
         </div>
         
         <div class="ml-auto">
