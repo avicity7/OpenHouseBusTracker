@@ -4,9 +4,9 @@
 
   export let data;
 </script>
-<aside class="fixed h-full bg-white flex flex-col block">
+<aside class="fixed h-full bg-white flex flex-col block" data-testid="sidebar">
   <SideBarHeader uri="/admin/users" text="Users" />
-  <SideBarHeader uri="/admin/schedule" text="Schedules" />
+  <SideBarHeader uri="/admin/schedule" text="Schedules"/>
   <SideBarHeader uri="/admin/drivers" text="Drivers" />
   <SideBarHeader uri="/admin/buses" text="Buses" />
   <SideBarHeader uri="/admin/bus-routes" text="Routes" />
