@@ -9,6 +9,7 @@ export type AuthedResponse = {
 export type User = {
   Name: string,
   Email: string,
+  Contact: string,
   Role: string,
   VerificationToken: string
 }
@@ -112,6 +113,20 @@ export type LoginResponse = {
   User: User,
   AccessToken: string, 
   RefreshToken: string
+}
+
+export type Message = {
+  Timestamp: string, 
+  From: string, 
+  RoomId: string, 
+  Body: string
+}
+
+export type ChatRoom = {
+  RoomId: string,
+  User1: string,
+  User2: string
+  LatestMessage: Message
 }
 
 // export type Schedule = {

@@ -1,6 +1,8 @@
 package structs
 
-import "time"
+import (
+	"time"
+)
 
 type NewUser struct {
 	Name     string
@@ -20,6 +22,7 @@ type User struct {
 type ReturnedUser struct {
 	Name              string
 	Email             string
+	Contact 		  string
 	Role              string
 	VerificationToken string
 }
@@ -27,6 +30,12 @@ type ReturnedUser struct {
 type EditUserRole struct {
 	Email string
 	Role  int
+}
+
+type SettingsDetails struct {
+	Email  	string
+	Contact *string
+	Name 	string
 }
 
 type ReturnedUserArray []ReturnedUser
@@ -193,10 +202,35 @@ type CurrentBus struct {
 }
 
 type TimeDiff struct {
-	DriverId		int
-	StartTime       time.Time
-	EndTime 		time.Time
-	TimeDifference  time.Duration
+	DriverId       int
+	StartTime      time.Time
+	EndTime        time.Time
+	TimeDifference time.Duration
+}
+
+type CreateMessage struct {
+	From   string
+	RoomId string
+	Body   string
+}
+
+type Message struct {
+	Timestamp time.Time
+	From      string
+	RoomId    string
+	Body      string
+}
+
+type CreateChatRoom struct {
+	User1 string
+	User2 string
+}
+
+type ChatRoom struct {
+	RoomId        string
+	User1         string
+	User2         string
+	LatestMessage Message
 }
 
 // could try to use clearer seperation of structs / reduce structs needed

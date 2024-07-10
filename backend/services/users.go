@@ -89,6 +89,27 @@ func UpdateUserRole(user structs.EditUserRole) error {
 	return nil
 }
 
+func UpdateSettings(user structs.SettingsDetails) error {
+	query := `
+		UPDATE user_table
+		SET name = @Name, contact = @Contact
+		WHERE email = @Email
+	`
+
+	args := pgx.NamedArgs{
+		"Name":          user.Name,
+		"Contact": 		 user.Contact,
+		"Email":         user.Email,
+	}
+
+	_, err := config.Dbpool.Exec(context.Background(), query, args)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func DeleteUser(email string) error {
 	query := `
 		DELETE FROM user_table ut

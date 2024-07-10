@@ -55,14 +55,16 @@
 
     {#if session?.Role == "admin"}
       <div class="flex flex-row items-center">
-        <a href="/admin/users" class={"mr-8 font-medium "+($page.url.pathname.includes('admin') ? "text-red-700" : "hover:text-red-700")} data-testid="manage">Manage</a>
+        <a href="/admin/users" class={"font-medium "+($page.url.pathname.includes('admin') ? "text-red-700" : "hover:text-red-700")}>Manage</a>
+        <a href="/chat" class={"mx-8 font-medium "+($page.url.pathname == '/chat' ? "text-red-700" : "hover:text-red-700")}>Chat</a>
         <Avatar {data} />
       </div>
     {/if}
 
     {#if session?.Role == "user"}
       <div class="flex flex-row items-center">
-        <a href="/schedule" class={"mr-8 font-medium "+($page.url.pathname.includes('admin') ? "text-red-700" : "hover:text-red-700")}>My Shifts</a>
+        <a href="/schedule" class={"font-medium "+($page.url.pathname.includes('schedule') ? "text-red-700" : "hover:text-red-700")}>My Shifts</a>
+        <a href="/chat" class={"mx-8 font-medium "+($page.url.pathname == '/chat' ? "text-red-700" : "hover:text-red-700")}>Chat</a>
         <Avatar {data} />
       </div>
     {/if}
@@ -72,7 +74,7 @@
     {/if}
   </div>
 </nav>
-{#if session && account?.VerificationToken != "" && !$page.url.pathname.includes("verify")}
+{#if session && account?.VerificationToken != "" && !$page.url.pathname.includes("verify") && !account?.VerificationToken.startsWith("reset")}
   <div class="flex flex-col text-center items-center my-auto mx-8">
     <h1 class="mt-16 text-3xl font-semibold">You're signed up!</h1>
     <p class="mt-8 text-xl">But before you use the Tracker, you need to verify your email.</p>

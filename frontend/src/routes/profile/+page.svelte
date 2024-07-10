@@ -29,6 +29,7 @@
         </div>
         <h2 class="text-2xl font-semibold mt-6">{account.Name}</h2>
         <h2 class="text-2xl font-semibold mt-6">{account.Email}</h2>
+        <h2 class="text-xl font-semibold mt-6">+65 {account.Contact}</h2>
         <h3 class="text-xl mt-2 text-stone-700">{account.Role}</h3>
 
         <form method="POST" action="?/signOut">
@@ -66,6 +67,9 @@
           <div class="text-zinc-400 font-medium text-sm mx-6 md:mx-24 mt-8 text-center">
             Don't have an account yet?
             <a href="/profile/sign-up" class="text-blue-400 hover:text-blue-500"> Sign up </a>
+          </div>
+          <div class="text-zinc-400 font-medium text-sm mx-6 md:mx-24 mt-4 text-center">
+            <a href="/profile/reset-password" class="font-light text-sm text-gray-400 hover:text-blue-500">Forgot your password?</a>
           </div>
         </form>
       </div>
