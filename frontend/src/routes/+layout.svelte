@@ -6,7 +6,7 @@
   import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
   import Avatar from '$lib/components/Avatar.svelte';
   export let data
-  let { session, backend_uri, account } = data
+  let { session, account } = data
   let menu = false,
   white = false,
   offset = 500
@@ -15,31 +15,20 @@
 
   const detectColorScheme = () => {
     let theme = "light"
-
-    if (localStorage.getItem("theme") == "dark"){
-      theme = "dark"
-    }
-
-    if (theme == "dark") {
-      document.documentElement.setAttribute("class", "dark");
-    } else {
-      document.documentElement.setAttribute("class", "light");
-    }
+    if (localStorage.getItem("theme") == "dark") theme = "dark"
+    if (theme == "dark") document.documentElement.setAttribute("class", "dark");
+    else document.documentElement.setAttribute("class", "light");
   }
 
   onMount(() => {
     detectColorScheme()
-    document.addEventListener("scroll", () => {
-      if (window.scrollY > offset) {
-        white = true
-      } else if (window.scrollY < offset) {
-        white = false
-      }
-    })
+    if (screen.width < 500) offset = 200
+    document.addEventListener("scroll", () => { window.scrollY > offset ? white = true : white = false })
   })
 </script>
 
-<nav class={`z-10 text-sm justify-between flex flex-row items-center w-screen ${white ? "bg-white/40 backdrop-blur" : ""} ${$page.url.pathname == '/' ? 'fixed p-6 px-8' : 'sticky p-2 px-4 bg-white/40 backdrop-blur'} top-0 transition-all ease-out`}>
+
+<nav class={`z-10 text-sm justify-between flex flex-row items-center ${white ? "bg-white/40 backdrop-blur" : ""} ${$page.url.pathname == '/' ? 'w-screen fixed p-6' : 'sticky p-2 px-4 bg-white/40 backdrop-blur'} top-0 transition-all ease-out`}>
   <div class={`flex flex-row items-center ${(session?.Role == "admin" && $page.url.pathname == '/') ? "p-2 px-4 rounded bg-white" : "px-6"}`}>
     <a href="/" class="flex flex-row items-center">
       <div class={`text-red-600 font-bold text-2xl mr-4`}>
@@ -70,6 +59,7 @@
     {/if}
 
     {#if !session}
+      <a href="/help" class={"ml-6 font-medium "+($page.url.pathname == '/help' ? "text-red-700" : "hover:text-red-700")}>Help</a>
       <a href="/profile" class={"ml-6 font-medium "+($page.url.pathname == '/profile' ? "text-red-700" : "hover:text-red-700")}>Login</a>
     {/if}
   </div>

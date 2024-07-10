@@ -2,6 +2,7 @@
 
 	import BusTrackerMap from "$lib/components/BusTrackerMap.svelte";
 	import LandingPage from "$lib/components/LandingPage.svelte";
+	import { onMount } from "svelte";
 	
 	export let data;
 	const { session } = data;
