@@ -55,7 +55,7 @@
 
     {#if session?.Role == "admin"}
       <div class="flex flex-row items-center">
-        <a href="/admin/users" class={"mr-8 font-medium "+($page.url.pathname.includes('admin') ? "text-red-700" : "hover:text-red-700")}>Manage</a>
+        <a href="/admin/users" class={"mr-8 font-medium "+($page.url.pathname.includes('admin') ? "text-red-700" : "hover:text-red-700")} data-testid="manage">Manage</a>
         <Avatar {data} />
       </div>
     {/if}
@@ -87,7 +87,7 @@
         <a href="/bus-routes" class={"mb-5 font-medium "+($page.url.pathname == '/bus-routes' ? "text-red-700" : "hover:text-red-700")}>Routes</a>
         <!-- might not need routes  -->
         {#if session?.Role == "admin"}
-          <a href="/admin/users" class={"mb-5 font-medium "+($page.url.pathname == '/admin/users' ? "text-red-700" : "hover:text-red-700")}>Manage</a>
+          <a href="/admin/users" class={"mb-5 font-medium "+($page.url.pathname == '/admin/users' ? "text-red-700" : "hover:text-red-700")} data-testid="manage">Manage</a>
           <!-- <a href="/admin/schedule" class={"mb-5 font-medium "+($page.url.pathname == '/admin/schedule' ? "text-red-700" : "hover:text-red-700")}>Schedule</a> -->
         {/if}
         <a href="/profile" class={"mb-5 font-medium "+($page.url.pathname == '/profile' ? "text-red-700" : "hover:text-red-700")}>Profile</a>
