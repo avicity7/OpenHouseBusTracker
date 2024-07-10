@@ -31,14 +31,24 @@ test.describe('Schedule Search Functionality', () => {
 
         const searchInputLocator = await page.locator("[data-testid='search-input']");
         console.log('Search input locator:', searchInputLocator);
+        
         // Type the driver name to search for
         await searchInputLocator.fill('Lily Fields');
+        console.log('Filled search input with "Lily Fields"');
 
         // Wait for search results to appear (adjust timeout as needed)
         await page.waitForTimeout(2000); // Wait for 2 seconds
 
         // Check if schedule items are found
         const scheduleItems = await page.$$('.schedule-item');
+        console.log(`Number of schedule items found: ${scheduleItems.length}`);
+
+        // Add some debug information if no items are found
+        if (scheduleItems.length === 0) {
+            const pageContent = await page.content();
+            console.log('Page content after search:', pageContent);
+        }
+
         expect(scheduleItems.length).toBeGreaterThan(0);
     });
-    });
+});
