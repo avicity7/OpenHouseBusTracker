@@ -53,14 +53,40 @@ export const load: Load = async (ctx) => {
             fetchData();
         });
 
-        const [dropdownData, scheduleData] = await Promise.all([
+        const allScheduleDrivers = new Promise((resolve, reject) => {
+            const driversData = async () => {
+                try {
+                    const scheduleUrl = `${PUBLIC_BACKEND_URL}:3000/driver/get-driver`;
+                    const response = await ctx.fetch(scheduleUrl);
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch schedule data from id: ${response.statusText}`);
+                    }
+
+                    const drivers = await response.json();
+                    resolve({ drivers });
+                } catch (error) {
+                    console.error("Error fetching all drivers data:", error);
+                    reject({
+                        status: 500,
+                        error: 'Failed to fetch all drivers data'
+                    });
+                }
+            };
+
+            driversData();
+        });
+
+
+        const [dropdownData, scheduleData, allDriversData] = await Promise.all([
             dropdownDataPromise,
-            scheduleDataPromise
+            scheduleDataPromise,
+            allScheduleDrivers
         ]);
 
         return {     
             dropdownData,
-            scheduleData
+            scheduleData,
+            allDriversData
         };
     } catch (error) {
         console.error("Error loading data:", error);
@@ -85,6 +111,8 @@ export const actions = {
         const DriverId = DriverIdString ? +DriverIdString : null;
         const StartTime = form.get('start_time') + ":00+08:00";
         const EndTime = form.get('end_time') + ":00+08:00";
+
+        console.log("Body", Carplate, RouteName,DriverId, StartTime,EndTime, BusScheduleId)
         
         const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/update-schedule`, {
           method: "PUT",

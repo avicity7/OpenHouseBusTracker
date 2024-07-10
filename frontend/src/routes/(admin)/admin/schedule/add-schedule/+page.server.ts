@@ -36,6 +36,8 @@ export const actions = {
       
     const StartTime = form.get('start_time') + ":00+08:00";
     const EndTime = form.get('end_time') + ":00+08:00";
+
+    console.log("passed into add schedule form:",Carplate,RouteName,DriverIdString, DriverId )
   
     const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/add-schedule`, {
       method: 'POST',
