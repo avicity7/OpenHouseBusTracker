@@ -145,7 +145,7 @@
                 Bulk Delete
             </button>
         {/if}
-        <a href="/admin/schedule/add-schedule" class="border-black text-white font-semibold text-md px-6 py-2 rounded-xl bg-red-700 hover:bg-red-800 mr-2">
+        <a href="/admin/schedule/add-schedule" class="border-black text-white font-semibold text-md px-6 py-2 rounded-xl bg-red-700 hover:bg-red-800 mr-2" data-testid="add-schedule-button">
             Add Schedule
         </a>    
 
@@ -210,7 +210,7 @@
                                         </svg>
                                         </ToolTip>
                                     </a>
-                                    <button class="text-stone-500 hover:text-red-600 text-2xl" on:click={() => deleteSchedule(schedule.BusScheduleId)}>
+                                    <button class="text-stone-500 hover:text-red-600 text-2xl" on:click={() => deleteSchedule(schedule.BusScheduleId)} data-testid="delete-schedule-button">
                                         <ToolTip text="Delete Schedule"> 
                                         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}>

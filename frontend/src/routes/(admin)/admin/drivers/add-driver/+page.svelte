@@ -36,11 +36,12 @@
 					bind:value={newDriverName}
 					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500"
                     required
+					data-testid="driver-name-input"
                 />
 			</div>
 
 			<div class="mt-4 flex justify-center">
-				<button type="submit" class="px-4 py-2 bg-red-700 text-white rounded-md hover:bg-red-800">
+				<button type="submit" class="px-4 py-2 bg-red-700 text-white rounded-md hover:bg-red-800" data-testid="submit-add-driver">
                     Add Driver
                 </button>
 			</div>
