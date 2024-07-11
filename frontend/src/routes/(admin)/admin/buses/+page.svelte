@@ -1,12 +1,15 @@
 <script lang="ts">
   export let data
-  let { buses, backend_uri, env } = data
+  let { buses, routes, backend_uri, env } = data
   import type { EventBus } from '$lib/types/global.js';
 	import { onMount } from 'svelte';
   import ToolTip from '$lib/components/ToolTip.svelte';
+	import ToggleSwitch from '$lib/components/ToggleSwitch.svelte';
+	import StateMenuBar from '$lib/components/StateMenuBar.svelte';
 	let ws: WebSocket;
 
   let showHidden = false
+  let autoScheduling = false
   
   const getBuses = async() => {
     const response = await fetch(`${backend_uri}:3000/bus/get-buses`)
@@ -29,6 +32,21 @@
     getBuses()
   }
 
+
+  const updateBusState = async (carplate: string, newState: string) => {
+    // await fetch(`${backend_uri}:3000/bus/update-bus-state/${carplate}/${newState}`, {
+    //   method: 'PUT'
+    // });
+    // getBuses();
+  };
+
+  const toggleAutoScheduling = async (newChecked: boolean) => {
+    autoScheduling = newChecked;
+    // Perform the action based on the autoSchedulingEnabled status
+    // Here you can handle the logic to perform work when the toggle switch is enabled/disabled
+    // For example, you might want to send a request to the backend to start/stop auto-scheduling
+  };
+
   onMount(() => {
 		ws = new WebSocket(`${env == 'PROD' ? 'wss' : 'ws'}://${backend_uri.split('//')[1]}:3000/ws`);
 
@@ -43,13 +61,39 @@
 </script>
 
 <div class="p-6 md:p-12">
-  <div class="max-w-md md:max-w-4xl"> 
-    <a href="/admin/buses/create-bus" class="w-fit bg-red-700 hover:bg-red-800 px-8 py-2 my-6 text-white font-semibold rounded-md">
-      Add Bus
-    </a>
-    <input class="ml-4" type="checkbox" id="hidden" name="hidden" checked={showHidden} on:change={() => {showHidden = !showHidden}}>
-    <label for="hidden">Show hidden buses</label>
+  <div class="flex justify-between">
+    <div class="flex items-end">
+      <div>
+        <a href="/admin/buses/create-bus" class="w-fit bg-red-700 hover:bg-red-800 px-8 py-2 my-6 text-white font-semibold rounded-md">
+          Add Bus
+        </a>
+      </div>
+      <div>
+        <input class="ml-4" type="checkbox" id="hidden" name="hidden" checked={showHidden} on:change={() => { showHidden = !showHidden }}>
+        <label for="hidden">Show hidden buses</label>
+      </div>
+    </div>
+  
+    <div class="bg-red-100 p-4 rounded-lg shadow-md w-full max-w-md ml-4">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-md font-semibold">Auto Scheduling</span>
+        <ToggleSwitch checked={autoScheduling} onToggle={toggleAutoScheduling} />
+      </div>
+      
+      {#each routes as route}
+        <div class="flex items-center justify-between mb-2">
+          <h1 class="mr-4 text-sm">{route.RouteName}</h1>
+          <div class="w-full">
+            <StateMenuBar 
+              initialState={""} 
+              onStateChange={(newState) => updateBusState("", newState)} 
+            />
+          </div>
+        </div>
+      {/each}
+    </div>
   </div>
+  
 
   <div class="mt-8">
     <table class="min-w-full divide-y divide-gray-200">
@@ -57,7 +101,8 @@
             <tr>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Carplate</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                <!-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">State</th> -->
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
             </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
@@ -68,6 +113,10 @@
                         <td class="px-4 py-6">
                           <p class={bus.Status ? "text-green-600" : "text-orange-600"}>{bus.Status ? 'Touring' : 'Inactive'}</p>
                         </td>
+                        <!-- <td class="px-6 py-4 whitespace-nowrap">
+                          <StateMenuBar state={"true"} onStateChange={(newState) => updateBusState(bus.Carplate, newState)} />
+                        </td> -->
+                    
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex items-center">
                                 <button class="text-stone-500 hover:text-red-600 text-2xl mr-4" on:click={() => updateBusVisibility(bus.Carplate, !bus.Hidden)}>
