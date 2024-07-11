@@ -344,7 +344,8 @@ func StartResetPassword(email string) error {
 		return err
 	}
 
-	token := utils.GenerateRandomToken(20)
+	token := "reset" + utils.GenerateRandomToken(20)
+
 	query_update := `
 		UPDATE user_table
 		SET verification_token = @VerificationToken
