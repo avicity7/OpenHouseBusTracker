@@ -23,16 +23,34 @@ test.describe('Add Schedule', () => {
         // Add Schedule
         const addScheduleButton = await page.locator('[data-testid="add-schedule-button"]');
         await addScheduleButton.click();
-        const carplateDropdown = await page.locator('select[name="carplate"]');
-        await carplateDropdown.selectOption({ label: 'Green 2' }); 
-        const routeNameDropdown = await page.locator('select[name="route_name"]');
-        await routeNameDropdown.selectOption({ label: 'Green Route' }); 
-        const driverDropdown = await page.locator('select[name="driver_id"]');
-        await driverDropdown.selectOption({ label: 'John Smith' }); 
+
+        // Select Carplate
+        const carplateDropdown = await page.locator('custom-dropdown[label="Carplate"] select');
+        await carplateDropdown.click();
+        await page.waitForSelector('custom-dropdown[label="Carplate"] select option[value="Green 2"]');
+        await carplateDropdown.selectOption({ value: 'Green 2' });
+
+        // Select Route Name
+        const routeNameDropdown = await page.locator('custom-dropdown[label="Route Name"] select');
+        await routeNameDropdown.click();
+        await page.waitForSelector('custom-dropdown[label="Route Name"] select option[value="Green Route"]');
+        await routeNameDropdown.selectOption({ value: 'Green Route' });
+
+        // Select Driver
+        const driverDropdown = await page.locator('custom-dropdown[label="Driver"] select');
+        await driverDropdown.click();
+        await page.waitForSelector('custom-dropdown[label="Driver"] select option[value="John Smith"]');
+        await driverDropdown.selectOption({ value: 'John Smith' });
+
+        // Fill Start Time
         const startTimeInput = await page.locator('input[name="start_time"]');
-        await startTimeInput.fill('01/06/2024 08.30 am');
+        await startTimeInput.fill('2024-06-01T08:30');
+
+        // Fill End Time
         const endTimeInput = await page.locator('input[name="end_time"]');
-        await endTimeInput.fill('01/06/2024 05.30 pm');
+        await endTimeInput.fill('2024-06-01T17:30');
+
+        // Submit Form
         const submitButton = await page.locator('button[type="submit"]');
         await submitButton.click();
         console.log('Schedule added successfully.');
