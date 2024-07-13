@@ -22,7 +22,8 @@ test.describe('Bulk Import Users', () => {
 
         // Bulk Add Users
         const fileInput = await page.locator('[data-testid="file-input"]');
-        await fileInput.setInputFiles('C:\bulk-import-file.csv'); 
+        await fileInput.click();
+        await fileInput.setInputFiles('C:/bulk-import-file.csv'); 
         const uploadCSVButton = await page.locator('[data-testid="submit-bulk-import"]');
         await uploadCSVButton.click();
         console.log('Bulk import completed successfully.');
