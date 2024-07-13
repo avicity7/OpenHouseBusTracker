@@ -66,12 +66,13 @@
 <div class="p-6 md:p-12">
   <div class="flex items-center space-x-4 pb-2 justify-center">
     <label class="relative cursor-pointer text-black font-semibold py-2 rounded-md text-sm">
-      <input type="file" bind:this={csvFile} class=""/>
+      <input type="file" bind:this={csvFile} class="" data-testid="file-input"/>
     </label>
     <button 
       on:click={uploadCSV} 
       disabled={isLoading} 
       class="bg-red-700 text-white font-semibold py-2 px-4 rounded-md text-sm enabled:hover:bg-red-800 disabled:opacity-75 disabled:cursor-not-allowed"  
+      data-testid="submit-bulk-import"
     >
       {#if isLoading}
         <svg aria-hidden="true" role="status" class="inline w-4 h-4 me-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
