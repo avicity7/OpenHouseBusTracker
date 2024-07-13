@@ -103,7 +103,7 @@
 				</select>
 			</div> -->
 
-			<div class="mb-4" data-testid="carplate-dropdown">
+			<div class="mb-4">
 				<CustomDropdown
 				  label="Carplate"
 				  name="carplate"
