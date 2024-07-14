@@ -26,8 +26,8 @@ test.describe('Add Schedule', () => {
         await page.goto('https://open-house-bus-tracker.vercel.app/admin/schedule/add-schedule');
 
         // Select Carplate
-        await page.locator('[data-testid="dropdown-input"]').click();
-        await page.locator('label:has-text("Carplate") + div ul[role="listbox"] li button:has-text("Green 2")').click();
+        const carPlateDropdown = await page.locator("[data-testid='carplate']");
+        await carPlateDropdown.selectOption({ label: 'Green 2' });
 
         // Select Route Name
         await page.locator('label:has-text("Route Name") + div .dropdown-toggle').click();
@@ -42,7 +42,7 @@ test.describe('Add Schedule', () => {
         await startTimeInput.fill('2024-06-01T08:30');
 
         // Fill End Time
-        const endTimeInput = await page.locator('[data-testid="end-time"]');
+        const endTimeInput = await page.locator('[data-testid="start-time"]');
         await endTimeInput.fill('2024-06-01T17:30');
 
         // Submit Form
