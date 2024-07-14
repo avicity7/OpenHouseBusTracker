@@ -109,4 +109,4 @@
     {/if}
 </div>
 
-<input type="hidden" id="selectedValue" name={name} value={selected ? selected.DriverId || selected.value || selected : ''} data-testid="{name}"/>
+<input type="hidden" id="selectedValue" name={name} value={selected ? selected.DriverId || selected.value || selected : ''}/>
