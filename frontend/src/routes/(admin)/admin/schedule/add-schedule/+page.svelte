@@ -157,6 +157,7 @@
 					name="start_time"
 					required
 					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500"
+					data-testid="start-time"
 				/>
 			</div>
 
@@ -168,6 +169,7 @@
 					name="end_time"
 					required
 					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500"
+					data-testid="end-time"
 				/>
 			</div>
 
