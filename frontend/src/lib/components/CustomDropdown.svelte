@@ -56,6 +56,7 @@
         aria-invalid={!!error ? 'true' : 'false'}
         aria-describedby={!!error ? `${dropdownId}-error` : undefined}
         class="relative"
+        data-testid="{name}"
     >
         <button
             type="button"
