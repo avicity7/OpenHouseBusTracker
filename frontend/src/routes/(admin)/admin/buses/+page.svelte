@@ -54,56 +54,56 @@
   };
 
   const autoScheduleBuses = () => {
-  let demand: Demand = {};
-  for (let route of routes) {
-    let state = routeStates[route.RouteName];
-    demand[route.RouteName] = state === 'Full Bus' ? 3 : state === 'Half Full' ? 2 : 1;
-  }
+    let demand: Demand = {};
+    for (let route of routes) {
+      let state = routeStates[route.RouteName];
+      demand[route.RouteName] = state === 'Full Bus' ? 3 : state === 'Half Full' ? 2 : 1;
+    }
 
-  let touringBuses = buses.filter(bus => bus.Status);
-  touringBuses = touringBuses.filter(bus => scheduleBus.some(sb => sb.Carplate === bus.Carplate));
+    let touringBuses = buses.filter(bus => bus.Status);
+    touringBuses = touringBuses.filter(bus => scheduleBus.some(sb => sb.Carplate === bus.Carplate));
 
-  let initialAssignments = scheduleBus.filter(sb => touringBuses.some(tb => tb.Carplate === sb.Carplate));
+    let initialAssignments = scheduleBus.filter(sb => touringBuses.some(tb => tb.Carplate === sb.Carplate));
 
-  let totalBuses = touringBuses.length;
-  console.log("intitial ", initialAssignments)
-  console.log("touring buses", touringBuses);
+    let totalBuses = touringBuses.length;
+    console.log("intitial ", initialAssignments)
+    console.log("touring buses", touringBuses);
 
-  // calculation of importance for buses, could change back to fix assignment of buses if needed
-  // some issue with pop and push behaviour, to be clarified
-  let busAssignments: BusAssignments = {};
-  let totalDemand = Object.values(demand).reduce((a, b) => a + b, 0);
-  for (let route in demand) {
-    busAssignments[route] = [];
-    let numBusesForRoute = Math.round((demand[route] / totalDemand) * totalBuses);
-    for (let i = 0; i < numBusesForRoute && touringBuses.length > 0; i++) {
-      let bus = touringBuses.pop();
-      if (bus) {
-        busAssignments[route].push(bus.Carplate);
+    // calculation of importance for buses, could change back to fix assignment of buses if needed
+    // some issue with pop and push behaviour, to be clarified
+    let busAssignments: BusAssignments = {};
+    let totalDemand = Object.values(demand).reduce((a, b) => a + b, 0);
+    for (let route in demand) {
+      busAssignments[route] = [];
+      let numBusesForRoute = Math.round((demand[route] / totalDemand) * totalBuses);
+      for (let i = 0; i < numBusesForRoute && touringBuses.length > 0; i++) {
+        let bus = touringBuses.pop();
+        if (bus) {
+          busAssignments[route].push(bus.Carplate);
+        }
       }
     }
-  }
 
-  console.log('Bus Assignments:', busAssignments);
+    console.log('Bus Assignments:', busAssignments);
 
-  let assignmentData = [];
-  for (let route in busAssignments) {
-    for (let carplate of busAssignments[route]) {
-      let initialAssignment = initialAssignments.find(ia => ia.Carplate === carplate);
-      if (initialAssignment && initialAssignment.RouteName !== route) {
-        assignmentData.push({ Carplate: carplate, RouteName: route });
+    let assignmentData = [];
+    for (let route in busAssignments) {
+      for (let carplate of busAssignments[route]) {
+        let initialAssignment = initialAssignments.find(ia => ia.Carplate === carplate);
+        if (initialAssignment && initialAssignment.RouteName !== route) {
+          assignmentData.push({ Carplate: carplate, RouteName: route });
+        }
       }
     }
-  }
 
-  console.log('Assignment Data:', assignmentData);
+    console.log('Assignment Data:', assignmentData);
 
-  const assignmentDataField = document.getElementById('assignmentData') as HTMLInputElement;
-    assignmentDataField.value = JSON.stringify(assignmentData);
+    const assignmentDataField = document.getElementById('assignmentData') as HTMLInputElement;
+      assignmentDataField.value = JSON.stringify(assignmentData);
 
-  const form = document.getElementById('assignmentForm') as HTMLFormElement;
-  form.submit();
-};
+    const form = document.getElementById('assignmentForm') as HTMLFormElement;
+    form.submit();
+  };
 
   onMount(() => {
 		ws = new WebSocket(`${env == 'PROD' ? 'wss' : 'ws'}://${backend_uri.split('//')[1]}:3000/ws`);
