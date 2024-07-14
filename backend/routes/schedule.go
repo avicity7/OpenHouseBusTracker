@@ -16,6 +16,7 @@ func Schedules(r *chi.Mux) {
 		r.Get("/get-future-user-schedule/{email}", http.HandlerFunc(controllers.GetFutureScheduleByUser))
 		r.Post("/add-schedule", http.HandlerFunc(controllers.CreateBusSchedule))
 		r.Put("/update-schedule", http.HandlerFunc(controllers.UpdateBusSchedule))
+		r.Put("/update-schedule-route", http.HandlerFunc(controllers.UpdateScheduleRoutes))
 		r.Delete("/delete-schedule", http.HandlerFunc(controllers.DeleteBusSchedule))
 	})
 }

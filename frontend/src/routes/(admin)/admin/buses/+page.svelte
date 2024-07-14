@@ -1,7 +1,7 @@
 <script lang="ts">
   export let data
-  let { buses, routes, backend_uri, env } = data
-  import type { EventBus } from '$lib/types/global.js';
+  let { buses, routes, scheduleBus, backend_uri, env } = data
+  import type { EventBus, Demand, BusAssignments } from '$lib/types/global.js';
 	import { onMount } from 'svelte';
   import ToolTip from '$lib/components/ToolTip.svelte';
 	import ToggleSwitch from '$lib/components/ToggleSwitch.svelte';
@@ -10,6 +10,11 @@
 
   let showHidden = false
   let autoScheduling = false
+   type RouteStates = {
+    [key: string]: string;
+  };
+
+  let routeStates: RouteStates = {};
   
   const getBuses = async() => {
     const response = await fetch(`${backend_uri}:3000/bus/get-buses`)
@@ -33,19 +38,72 @@
   }
 
 
-  const updateBusState = async (carplate: string, newState: string) => {
-    // await fetch(`${backend_uri}:3000/bus/update-bus-state/${carplate}/${newState}`, {
-    //   method: 'PUT'
-    // });
-    // getBuses();
+  const updateBusState = async (routeName: string, newState: string) => {
+    console.log(`Route: ${routeName}, Current State: ${newState}`);
+    routeStates[routeName] = newState;
+    if (autoScheduling) {
+      autoScheduleBuses();
+    }
   };
 
   const toggleAutoScheduling = async (newChecked: boolean) => {
     autoScheduling = newChecked;
-    // Perform the action based on the autoSchedulingEnabled status
-    // Here you can handle the logic to perform work when the toggle switch is enabled/disabled
-    // For example, you might want to send a request to the backend to start/stop auto-scheduling
+    if (autoScheduling) {
+      autoScheduleBuses();
+    }
   };
+
+  const autoScheduleBuses = () => {
+  let demand: Demand = {};
+  for (let route of routes) {
+    let state = routeStates[route.RouteName];
+    demand[route.RouteName] = state === 'Full Bus' ? 3 : state === 'Half Full' ? 2 : 1;
+  }
+
+  let touringBuses = buses.filter(bus => bus.Status);
+  touringBuses = touringBuses.filter(bus => scheduleBus.some(sb => sb.Carplate === bus.Carplate));
+
+  let initialAssignments = scheduleBus.filter(sb => touringBuses.some(tb => tb.Carplate === sb.Carplate));
+
+  let totalBuses = touringBuses.length;
+  console.log("intitial ", initialAssignments)
+  console.log("touring buses", touringBuses);
+
+  // calculation of importance for buses, could change back to fix assignment of buses if needed
+  // some issue with pop and push behaviour, to be clarified
+  let busAssignments: BusAssignments = {};
+  let totalDemand = Object.values(demand).reduce((a, b) => a + b, 0);
+  for (let route in demand) {
+    busAssignments[route] = [];
+    let numBusesForRoute = Math.round((demand[route] / totalDemand) * totalBuses);
+    for (let i = 0; i < numBusesForRoute && touringBuses.length > 0; i++) {
+      let bus = touringBuses.pop();
+      if (bus) {
+        busAssignments[route].push(bus.Carplate);
+      }
+    }
+  }
+
+  console.log('Bus Assignments:', busAssignments);
+
+  let assignmentData = [];
+  for (let route in busAssignments) {
+    for (let carplate of busAssignments[route]) {
+      let initialAssignment = initialAssignments.find(ia => ia.Carplate === carplate);
+      if (initialAssignment && initialAssignment.RouteName !== route) {
+        assignmentData.push({ Carplate: carplate, RouteName: route });
+      }
+    }
+  }
+
+  console.log('Assignment Data:', assignmentData);
+
+  const assignmentDataField = document.getElementById('assignmentData') as HTMLInputElement;
+    assignmentDataField.value = JSON.stringify(assignmentData);
+
+  const form = document.getElementById('assignmentForm') as HTMLFormElement;
+  form.submit();
+};
 
   onMount(() => {
 		ws = new WebSocket(`${env == 'PROD' ? 'wss' : 'ws'}://${backend_uri.split('//')[1]}:3000/ws`);
@@ -57,8 +115,11 @@
       }
     }
   })
-    
 </script>
+
+<form id="assignmentForm" method="POST" action="?/updateScheduleRoutes">
+  <input type="hidden" id="assignmentData" name="assignmentData" />
+</form>
 
 <div class="p-6 md:p-12">
   <div class="flex justify-between">
@@ -85,8 +146,8 @@
           <h1 class="mr-4 text-sm">{route.RouteName}</h1>
           <div class="w-full">
             <StateMenuBar 
-              initialState={""} 
-              onStateChange={(newState) => updateBusState("", newState)} 
+              initialState={""}
+              onStateChange={(newState) => updateBusState(route.RouteName, newState)} 
             />
           </div>
         </div>

@@ -94,10 +94,15 @@ type UpdateSchedule struct {
 	EndTime       time.Time
 }
 
+type UpdateScheduleRoute struct {
+	Carplate 	string
+	RouteName 	string
+}
+
 type ScheduleDropdownData struct {
 	Carplate  *string
-	RouteName string
-	Driver    []Driver
+	RouteName  string
+	Driver     []Driver
 }
 
 type Driver struct {
