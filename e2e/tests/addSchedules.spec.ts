@@ -27,15 +27,21 @@ test.describe('Add Schedule', () => {
 
         // Select Carplate
         const carPlateDropdown = await page.locator("[data-testid='carplate']");
-        await carPlateDropdown.selectOption({ label: 'Green 2' });
+        await carPlateDropdown.click(); 
+        await page.waitForSelector('ul[role="listbox"] li button');
+        await page.locator('ul[role="listbox"] li button:has-text("Green 2")').click(); 
 
         // Select Route Name
-        await page.locator('label:has-text("Route Name") + div .dropdown-toggle').click();
-        await page.locator('label:has-text("Route Name") + div ul[role="listbox"] li button:has-text("Green Route")').click();
+        const routeDropdown = await page.locator("[data-testid='route_name']");
+        await routeDropdown.click(); 
+        await page.waitForSelector('ul[role="listbox"] li button');
+        await page.locator('ul[role="listbox"] li button:has-text("Green Route")').click(); 
 
         // Select Driver
-        await page.locator('label:has-text("Driver") + div .dropdown-toggle').click();
-        await page.locator('label:has-text("Driver") + div ul[role="listbox"] li button:has-text("John Smith")').click();
+        const driverDropdown = await page.locator("[data-testid='driver_id']");
+        await driverDropdown.click(); 
+        await page.waitForSelector('ul[role="listbox"] li button');
+        await page.locator('ul[role="listbox"] li button:has-text("John Smith")').click(); 
 
         // Fill Start Time
         const startTimeInput = await page.locator('[data-testid="start-time"]');
