@@ -103,7 +103,7 @@
 				</select>
 			</div> -->
 
-			<div class="mb-4">
+			<div class="mb-4 carplate">
 				<CustomDropdown
 				  label="Carplate"
 				  name="carplate"
@@ -113,7 +113,7 @@
 				/>
 			  </div>
 			  
-			  <div class="mb-4">
+			  <div class="mb-4 route-name">
 				<CustomDropdown
 				  label="Route Name"
 				  name="route_name"
@@ -122,7 +122,7 @@
 				/>
 			  </div>
 
-			  <div class="mb-4">
+			  <div class="mb-4 driver">
 				<CustomDropdown
 					label="Driver"
 					name="driver_id"
