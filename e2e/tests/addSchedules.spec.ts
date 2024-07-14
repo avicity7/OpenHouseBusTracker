@@ -6,8 +6,8 @@ test.describe('Add Schedule', () => {
         // Login
         let signInPage = new SignInPage(page);
         await signInPage.visit();
-        const email = 'sarahaxl7@gmail.com'; 
-        const password = '123'; 
+        const email = 'sarahaxl7@gmail.com';
+        const password = '123';
         console.log('Attempting to sign in with provided credentials');
         await signInPage.signIn(email, password);
         const currentURL = page.url();
@@ -23,24 +23,19 @@ test.describe('Add Schedule', () => {
         // Add Schedule
         const addScheduleButton = await page.locator('[data-testid="add-schedule-button"]');
         await addScheduleButton.click();
+        await page.goto('https://open-house-bus-tracker.vercel.app/admin/schedule/add-schedule');
 
         // Select Carplate
-        const carplateDropdown = await page.locator('custom-dropdown[label="Carplate"] select');
-        await carplateDropdown.click();
-        await page.waitForSelector('custom-dropdown[label="Carplate"] select option[value="Green 2"]');
-        await carplateDropdown.selectOption({ value: 'Green 2' });
+        await page.locator('label:has-text("Carplate") + div .dropdown-toggle').click();
+        await page.locator('label:has-text("Carplate") + div ul[role="listbox"] li button:has-text("Green 2")').click();
 
         // Select Route Name
-        const routeNameDropdown = await page.locator('custom-dropdown[label="Route Name"] select');
-        await routeNameDropdown.click();
-        await page.waitForSelector('custom-dropdown[label="Route Name"] select option[value="Green Route"]');
-        await routeNameDropdown.selectOption({ value: 'Green Route' });
+        await page.locator('label:has-text("Route Name") + div .dropdown-toggle').click();
+        await page.locator('label:has-text("Route Name") + div ul[role="listbox"] li button:has-text("Green Route")').click();
 
         // Select Driver
-        const driverDropdown = await page.locator('custom-dropdown[label="Driver"] select');
-        await driverDropdown.click();
-        await page.waitForSelector('custom-dropdown[label="Driver"] select option[value="John Smith"]');
-        await driverDropdown.selectOption({ value: 'John Smith' });
+        await page.locator('label:has-text("Driver") + div .dropdown-toggle').click();
+        await page.locator('label:has-text("Driver") + div ul[role="listbox"] li button:has-text("John Smith")').click();
 
         // Fill Start Time
         const startTimeInput = await page.locator('input[name="start_time"]');
