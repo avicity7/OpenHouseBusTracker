@@ -33,7 +33,7 @@
 
   const createEvent = async() => {
     let payload = {
-      Carplate: followBus?.Carplate,
+      BusId: followBus?.BusId,
       RouteName: followBus?.RouteName,
       EventId: 0,
       StopName: '' 
@@ -105,7 +105,7 @@
 		navigator.geolocation.watchPosition((position) => {
       let current = events[0]
       let currentStop = stops[current.Order - 1]
-      let nextStop = stops[current.Order % 4]
+      let nextStop = stops[current.Order % stops.length]
       let currentDist = haversineDistance([currentStop.Lat, currentStop.Lng], [position.coords.latitude, position.coords.longitude])
       let nextDist = haversineDistance([nextStop.Lat, nextStop.Lng], [position.coords.latitude, position.coords.longitude])
       let radius = 15
