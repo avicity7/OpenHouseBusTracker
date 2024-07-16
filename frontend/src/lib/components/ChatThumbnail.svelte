@@ -1,29 +1,47 @@
 <script lang="ts">
 	import type { ChatRoom } from "$lib/types/global";
+  import { PUBLIC_BACKEND_URL } from "$env/static/public";
   import { page } from "$app/stores";
+	import Trash from "./Trash.svelte";
   export let chat_room: ChatRoom
   export let data
 
   const { account } = data
 
   const formatTimestamp = (timestamp: string) => {
-      const utcDate = new Date(timestamp);
-      const formattedDate = utcDate.toLocaleString();
-      return formattedDate;
+    const utcDate = new Date(timestamp);
+    const formattedDate = utcDate.toLocaleString();
+    return formattedDate;
+  }
+
+  const deleteRoom = async () => {
+    await fetch(`${PUBLIC_BACKEND_URL}:3000/chat/delete-room/${chat_room.RoomId}`, {
+      method: "DELETE",
+      headers: {
+        'content-type': 'application/json'
+      },
+    })
   }
 </script>
 
-<a href={`/chat/${chat_room.RoomId}`} class={`${$page.url.pathname.includes(chat_room.RoomId) ? "bg-red-100" : "hover:bg-gray-100"} m-2 rounded-md px-3 py-2 w-80`}>
+<a href={`/chat/${chat_room.RoomId}`} class={`group ${$page.url.pathname.includes(chat_room.RoomId) ? "bg-red-100" : "hover:bg-stone-100"} m-2 rounded-md p-4 w-80`}>
   <div class="mb-2 flex flex-row justify-between items-center">
     <div>
       {chat_room.User1 == account.Name ? chat_room.User2 : chat_room.User1}
     </div>
-    <div class="text-xs">
-      {formatTimestamp(chat_room.LatestMessage.Timestamp)}
-    </div>
+    {#if chat_room.LatestMessage.Body != ''}
+      <div class="text-xs">
+        {formatTimestamp(chat_room.LatestMessage.Timestamp)}
+      </div>
+    {/if}
   </div>
 
-  <div>
-    {chat_room.LatestMessage.Body}
+  <div class="w-full flex justify-between">
+    <div class="text-ellipsis overflow-hidden text-nowrap">
+      {chat_room.LatestMessage.Body}
+    </div>
+    <button class="invisible group-hover:visible text-gray-400 hover:text-red-400" on:click={deleteRoom}>
+      <Trash />
+    </button>
   </div>
 </a>

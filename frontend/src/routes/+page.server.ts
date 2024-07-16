@@ -22,7 +22,7 @@ export const load = async () => {
 	if (!routeSteps) {
 		routeSteps = [];
 	}
-	response = await fetch(`${PUBLIC_BACKEND_URL}:3000/event/get-all-stops`);
+	response = await fetch(`${PUBLIC_BACKEND_URL}:3000/route-step/get-all-stops`);
 	let stops = (await response.json()) as Array<Stop>;
 	if (!stops) {
 		stops = [];

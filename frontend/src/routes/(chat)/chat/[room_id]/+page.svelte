@@ -37,16 +37,18 @@
       let parts = msg.data.split(' ');
       if (parts[0] == data.room_id) {
         getMessages()
+      } else if (parts[0] == data.room_id + "del") {
+        location.replace("/chat")
       }
     };
   })
 </script>
 
-<div class="w-fit h-[90vh] grid grid-rows-10">
+<div class="w-full h-[90vh] grid grid-rows-10">
   <Chat {data} />
 
-  <form class="row-span-1 pl-4 grid grid-cols-10 gap-4 items-center pl-[23em]" on:submit={createMessage} bind:this={form}>
-    <div class="col-span-1"></div>
+  <form class="row-span-1 pl-4 grid grid-cols-10 gap-4 items-center md:pl-[23em] mt-8" on:submit={createMessage} bind:this={form}>
+    <div class="md:col-span-1"></div>
     <textarea 
       class="bg-gray-100 p-4 rounded-lg w-full col-span-7 resize-none select-none focus:outline-none"
       bind:value={body}
@@ -65,6 +67,6 @@
       </button>
       {/if}
     </div>
-    <div class="col-span-1"></div>
+    <div class="md:col-span-1"></div>
   </form>
 </div>

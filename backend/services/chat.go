@@ -33,10 +33,10 @@ func GetChatRooms(email string) ([]structs.ChatRoom, error) {
 	var chat_rooms []structs.ChatRoom
 
 	query := ` 
-		SELECT cr.room_id, ut1.name, ut2.name, timestamp, "from", cr.room_id, body FROM chat_room cr 
+		SELECT cr.room_id, ut1.name, ut2.name, COALESCE(timestamp, timestamp '2000-01-01 00:00:00') AS timestamp, COALESCE("from", '') AS from, cr.room_id, COALESCE(body, '') AS body FROM chat_room cr 
 		JOIN user_table ut1 ON cr.user1 = ut1.email
 		JOIN user_table ut2 ON cr.user2 = ut2.email
-		JOIN (
+		FULL JOIN (
 			SELECT *, RANK() OVER ( PARTITION BY room_id ORDER BY timestamp DESC ) 
 			FROM chat_message cm
 		) ms ON cr.room_id = ms.room_id AND "rank" = 1
@@ -121,4 +121,59 @@ func GetMessages(room_id string) ([]structs.Message, error) {
 	}
 
 	return messages, nil
+}
+
+func DeleteMessage(message structs.Message) error {
+	query := `
+		DELETE FROM chat_message cm
+		WHERE "timestamp" = @Timestamp AND "from" = @Email AND room_id = @RoomId
+	`
+
+	args := pgx.NamedArgs{
+		"Timestamp": message.Timestamp,
+		"Email":     message.From,
+		"RoomId":    message.RoomId,
+	}
+
+	_, err := config.Dbpool.Exec(context.Background(), query, args)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	config.Melody.Broadcast([]byte(message.RoomId))
+
+	return nil
+}
+
+func DeleteRoom(room_id string) error {
+	q1 := `
+		DELETE FROM chat_message cm
+		WHERE room_id = @RoomId;
+	`
+
+	q2 := `
+		DELETE FROM chat_room
+		WHERE room_id = @RoomId
+	`
+
+	args := pgx.NamedArgs{
+		"RoomId": room_id,
+	}
+
+	_, err := config.Dbpool.Exec(context.Background(), q1, args)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	_, err = config.Dbpool.Exec(context.Background(), q2, args)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	config.Melody.Broadcast([]byte(room_id + "del"))
+
+	return nil
 }

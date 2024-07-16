@@ -3,7 +3,7 @@
   import ChatBody from "./ChatBody.svelte";
 </script>
 
-<div class={`flex flex-col-reverse overflow-auto snap-end row-span-9 w-screen pl-[24em] pr-6`}>
+<div class={`flex flex-col-reverse overflow-y-auto snap-end row-span-10 md:pl-[24em] px-10`}>
   {#each data.messages as message}
     <ChatBody {data} {message} />
   {/each}
