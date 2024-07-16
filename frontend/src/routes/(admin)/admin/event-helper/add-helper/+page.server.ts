@@ -1,17 +1,23 @@
-import type { EventHelper } from '$lib/types/global';
+import type { EventHelper, EventBus } from '$lib/types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 import { fail, redirect } from '@sveltejs/kit';
 
 export const load = async ({ fetch }) => {
     try {
-        const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/event-helpers/get-event-dropdown`);
+        let response = await fetch(`${PUBLIC_BACKEND_URL}:3000/event-helpers/get-event-dropdown`);
         if (!response.ok) {
             throw new Error("Failed to fetch event helpers");
         }
-        
         const dropdownData = await response.json() as EventHelper[];
+
+        response = await fetch(`${PUBLIC_BACKEND_URL}:3000/bus/get-buses`);
+        if (!response.ok) {
+            throw new Error("Failed to fetch dropdown data");
+        }
+        const buses = await response.json() as EventBus[]
         return {
-            dropdownData
+            dropdownData,
+            buses
         }
 
     } catch (error) {
@@ -27,12 +33,13 @@ export const actions = {
     createEventHelper: async({ request }) =>{
       const form = await request.formData()
   
-      const Carplate = form.get('carplate');
+      const Bus = form.get('bus')
+      const BusId = JSON.parse(Bus!.toString()).BusId
       const ShiftString = form.get('shift');
       const Shift = ShiftString === 'true';
       const selectedNames = form.getAll('name');
       const EventHelpers = selectedNames.map(name => ({
-        Carplate,
+        BusId,
         Name: name,
         Shift
       }));

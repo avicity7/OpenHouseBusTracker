@@ -6,7 +6,7 @@
 	import { goto } from "$app/navigation";
     
     let carplate: string
-    let bus: EventBus = { Carplate: '', Status: false, Hidden: false};
+    let bus: EventBus = { BusId: '', Carplate: '', Status: false, Hidden: false};
 
 
     async function updateBus(event: Event) {
