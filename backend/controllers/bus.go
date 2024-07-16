@@ -56,6 +56,19 @@ func GetBusStatus(w http.ResponseWriter, r *http.Request) {
 	w.Write(parsed)
 }
 
+func UpdateBus(w http.ResponseWriter, r *http.Request) {
+	bus_id := chi.URLParam(r, "bus_id")
+	carplate := chi.URLParam(r, "carplate")
+
+	err := services.UpdateBus(bus_id, carplate)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	w.WriteHeader(200)
+}
+
 func UpdateBusVisibility(w http.ResponseWriter, r *http.Request) {
 	bus_id := chi.URLParam(r, "bus_id")
 	hidden := chi.URLParam(r, "hidden")
