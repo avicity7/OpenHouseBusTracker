@@ -2,7 +2,6 @@
 	export let data;
   import type { User } from '$lib/types/global.js';
   import { PUBLIC_BACKEND_URL } from '$env/static/public';
-  import { goto } from '$app/navigation';
 
 	const { users, account } = data;
 
@@ -17,7 +16,7 @@
 			body: JSON.stringify({ User1: account?.Email, User2: selectedUser?.Email })
 		});
 
-    goto("/chat")
+		location.replace("/chat")
   }
 </script>
 

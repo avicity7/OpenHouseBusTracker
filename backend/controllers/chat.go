@@ -88,3 +88,33 @@ func GetMessages(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 	w.Write(parsed)
 }
+
+func DeleteMessage(w http.ResponseWriter, r *http.Request) {
+	var message structs.Message
+
+	err := json.NewDecoder(r.Body).Decode(&message)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = services.DeleteMessage(message)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(200)
+}
+
+func DeleteRoom(w http.ResponseWriter, r *http.Request) {
+	room_id := chi.URLParam(r, "room_id")
+
+	err := services.DeleteRoom(room_id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(200)
+}

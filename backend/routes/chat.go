@@ -13,5 +13,7 @@ func Chat(r chi.Router) {
 		r.Put("/create-message", http.HandlerFunc(controllers.CreateMessage))
 		r.Get("/get-chat-rooms/{email}", http.HandlerFunc(controllers.GetChatRooms))
 		r.Get("/get-messages/{room_id}", http.HandlerFunc(controllers.GetMessages))
+		r.Delete("/delete-message", http.HandlerFunc(controllers.DeleteMessage))
+		r.Delete("/delete-room/{room_id}", http.HandlerFunc(controllers.DeleteRoom))
 	})
 }
