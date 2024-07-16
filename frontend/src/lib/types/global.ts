@@ -9,9 +9,9 @@ export type AuthedResponse = {
 export type User = {
   Name: string,
   Email: string,
-  Contact: string,
   Role: string,
-  VerificationToken: string
+  VerificationToken: string,
+  Contact: string
 }
 
 export type UserRole = {

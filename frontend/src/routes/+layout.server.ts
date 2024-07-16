@@ -31,7 +31,6 @@ export const load = async ({ url, locals, fetch, cookies }) => {
     const parsed = await response.json()
     account = parsed.Output as User
 
-
     if (account.Role != locals.session?.Role) {
       const AccessToken = parsed.Tokens.AccessToken
       const RefreshToken = parsed.Tokens.RefreshToken
