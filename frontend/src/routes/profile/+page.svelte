@@ -1,6 +1,8 @@
 <script lang='ts'>
-  import UserSettingsOutline from '$lib/components/UserSettingsOutline.svelte';
   export let data
+  export let form
+  import UserSettingsOutline from '$lib/components/UserSettingsOutline.svelte';
+  import ErrorMessage from '$lib/components/ErrorMessage.svelte';
   let { backend_uri, session, account } = data;
 	import { onMount } from 'svelte';
 
@@ -42,8 +44,11 @@
       </div>
     {:else}
       <div class="flex flex-col">
-        <h1 class="font-bold text-3xl mb-12 w-full">Sign in</h1>
-        <form class="flex flex-col" method="POST" action="?/login">
+        <h1 class="font-bold text-3xl mb-6 w-full">Sign in</h1>
+        {#if form?.success === false}
+          <ErrorMessage message="Email and/or password is incorrect."/>
+        {/if}
+        <form class="flex flex-col mt-6" method="POST" action="?/login">
           <div class="font-medium mb-4">Email</div>
           <input
             data-testid="sign-in-email-input"
