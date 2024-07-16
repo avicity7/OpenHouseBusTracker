@@ -1,12 +1,20 @@
 <script lang="ts">
   export let data
-  let { buses, backend_uri, env } = data
-  import type { EventBus } from '$lib/types/global.js';
+  let { buses, routes, scheduleBus, backend_uri, env } = data
+  import type { EventBus, Demand, BusAssignments } from '$lib/types/global.js';
 	import { onMount } from 'svelte';
   import ToolTip from '$lib/components/ToolTip.svelte';
+	import ToggleSwitch from '$lib/components/ToggleSwitch.svelte';
+	import StateMenuBar from '$lib/components/StateMenuBar.svelte';
 	let ws: WebSocket;
 
   let showHidden = false
+  let autoScheduling = false
+   type RouteStates = {
+    [key: string]: string;
+  };
+
+  let routeStates: RouteStates = {};
   
   const getBuses = async() => {
     const response = await fetch(`${backend_uri}:3000/bus/get-buses`)
@@ -29,6 +37,74 @@
     getBuses()
   }
 
+
+  const updateBusState = async (routeName: string, newState: string) => {
+    console.log(`Route: ${routeName}, Current State: ${newState}`);
+    routeStates[routeName] = newState;
+    if (autoScheduling) {
+      autoScheduleBuses();
+    }
+  };
+
+  const toggleAutoScheduling = async (newChecked: boolean) => {
+    autoScheduling = newChecked;
+    if (autoScheduling) {
+      autoScheduleBuses();
+    }
+  };
+
+  const autoScheduleBuses = () => {
+    let demand: Demand = {};
+    for (let route of routes) {
+      let state = routeStates[route.RouteName];
+      demand[route.RouteName] = state === 'Full Bus' ? 3 : state === 'Half Full' ? 2 : 1;
+    }
+
+    let touringBuses = buses.filter(bus => bus.Status);
+    touringBuses = touringBuses.filter(bus => scheduleBus.some(sb => sb.Carplate === bus.Carplate));
+
+    let initialAssignments = scheduleBus.filter(sb => touringBuses.some(tb => tb.Carplate === sb.Carplate));
+
+    let totalBuses = touringBuses.length;
+    console.log("intitial ", initialAssignments)
+    console.log("touring buses", touringBuses);
+
+    // calculation of importance for buses, could change back to fix assignment of buses if needed
+    // some issue with pop and push behaviour, to be clarified
+    let busAssignments: BusAssignments = {};
+    let totalDemand = Object.values(demand).reduce((a, b) => a + b, 0);
+    for (let route in demand) {
+      busAssignments[route] = [];
+      let numBusesForRoute = Math.round((demand[route] / totalDemand) * totalBuses);
+      for (let i = 0; i < numBusesForRoute && touringBuses.length > 0; i++) {
+        let bus = touringBuses.pop();
+        if (bus) {
+          busAssignments[route].push(bus.Carplate);
+        }
+      }
+    }
+
+    console.log('Bus Assignments:', busAssignments);
+
+    let assignmentData = [];
+    for (let route in busAssignments) {
+      for (let carplate of busAssignments[route]) {
+        let initialAssignment = initialAssignments.find(ia => ia.Carplate === carplate);
+        if (initialAssignment && initialAssignment.RouteName !== route) {
+          assignmentData.push({ Carplate: carplate, RouteName: route });
+        }
+      }
+    }
+
+    console.log('Assignment Data:', assignmentData);
+
+    const assignmentDataField = document.getElementById('assignmentData') as HTMLInputElement;
+      assignmentDataField.value = JSON.stringify(assignmentData);
+
+    const form = document.getElementById('assignmentForm') as HTMLFormElement;
+    form.submit();
+  };
+
   onMount(() => {
 		ws = new WebSocket(`${env == 'PROD' ? 'wss' : 'ws'}://${backend_uri.split('//')[1]}:3000/ws`);
 
@@ -39,17 +115,46 @@
       }
     }
   })
-    
 </script>
 
+<form id="assignmentForm" method="POST" action="?/updateScheduleRoutes">
+  <input type="hidden" id="assignmentData" name="assignmentData" />
+</form>
+
 <div class="p-6 md:p-12">
-  <div class="max-w-md md:max-w-4xl"> 
-    <a href="/admin/buses/create-bus" class="w-fit bg-red-700 hover:bg-red-800 px-8 py-2 my-6 text-white font-semibold rounded-md">
-      Add Bus
-    </a>
-    <input class="ml-4" type="checkbox" id="hidden" name="hidden" checked={showHidden} on:change={() => {showHidden = !showHidden}}>
-    <label for="hidden">Show hidden buses</label>
+  <div class="flex justify-between">
+    <div class="flex items-end">
+      <div>
+        <a href="/admin/buses/create-bus" class="w-fit bg-red-700 hover:bg-red-800 px-8 py-2 my-6 text-white font-semibold rounded-md">
+          Add Bus
+        </a>
+      </div>
+      <div>
+        <input class="ml-4" type="checkbox" id="hidden" name="hidden" checked={showHidden} on:change={() => { showHidden = !showHidden }}>
+        <label for="hidden">Show hidden buses</label>
+      </div>
+    </div>
+  
+    <div class="bg-red-100 p-4 rounded-lg shadow-md w-full max-w-md ml-4">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-md font-semibold">Auto Scheduling</span>
+        <ToggleSwitch checked={autoScheduling} onToggle={toggleAutoScheduling} />
+      </div>
+      
+      {#each routes as route}
+        <div class="flex items-center justify-between mb-2">
+          <h1 class="mr-4 text-sm">{route.RouteName}</h1>
+          <div class="w-full">
+            <StateMenuBar 
+              initialState={""}
+              onStateChange={(newState) => updateBusState(route.RouteName, newState)} 
+            />
+          </div>
+        </div>
+      {/each}
+    </div>
   </div>
+  
 
   <div class="mt-8">
     <table class="min-w-full divide-y divide-gray-200">
@@ -57,7 +162,8 @@
             <tr>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Carplate</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                <!-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">State</th> -->
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
             </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
@@ -68,6 +174,10 @@
                         <td class="px-4 py-6">
                           <p class={bus.Status ? "text-green-600" : "text-orange-600"}>{bus.Status ? 'Touring' : 'Inactive'}</p>
                         </td>
+                        <!-- <td class="px-6 py-4 whitespace-nowrap">
+                          <StateMenuBar state={"true"} onStateChange={(newState) => updateBusState(bus.Carplate, newState)} />
+                        </td> -->
+                    
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex items-center">
                                 <button class="text-stone-500 hover:text-red-600 text-2xl mr-4" on:click={() => updateBusVisibility(bus.Carplate, !bus.Hidden)}>
@@ -79,6 +189,13 @@
                                       {/if}
                                     </ToolTip>
                                 </button>
+                                <a href={`buses/update-bus/${encodeURIComponent(JSON.stringify(bus))}`} class="text-stone-500 hover:text-green-500 mr-8">
+                                    <ToolTip text="Update Bus"> 
+                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3"/>
+                                      </svg>
+                                    </ToolTip>
+                                </a>
                                 <button class="text-stone-500 hover:text-red-600 text-2xl" on:click={() => deleteBus(bus.Carplate)}>
                                     <ToolTip text="Delete Bus"> 
                                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}>

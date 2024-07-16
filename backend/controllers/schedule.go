@@ -99,6 +99,32 @@ func UpdateBusSchedule(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Schedule updated successfully")
 }
 
+func UpdateScheduleRoutes(w http.ResponseWriter, r *http.Request) {
+	var assignments []structs.UpdateScheduleRoute
+	err := json.NewDecoder(r.Body).Decode(&assignments)
+	if err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		fmt.Println("Error decoding request body:", err)
+		return
+	}
+
+	fmt.Printf("Received assignment data: %+v\n", assignments)
+
+	err = services.UpdateScheduleRoutes(assignments)
+	if err != nil {
+		http.Error(w, "Failed to update bus routes", http.StatusInternalServerError)
+		return
+	}
+
+	config.Cache.Delete("Schedules")
+	config.Cache.Delete("CurrentUserSchedules")
+	config.Cache.Delete("FutureUserSchedules")
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Bus routes updated successfully")
+}
+
 func DeleteBusSchedule(w http.ResponseWriter, r *http.Request) {
 	// scheduleID := chi.URLParam(r, "id")
 	schedule := make([]int, 0)

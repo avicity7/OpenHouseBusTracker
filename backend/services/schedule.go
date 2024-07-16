@@ -69,7 +69,7 @@ func CreateBusSchedule(schedule structs.NewSchedule) error {
 	
 	// cant do same-time duplication handling if conditional options is needed
 
-	// to try: in the conditional dropdown options, in the check and a WHERE start/end time is not existent alr
+	// to try: in the conditional dropdown options, in the check and a WHERE start/end time is not e	xistent alr
 	// then in the CreateBusSchedule, do the check for the time inside bus schedule with a AND after the WHERE condition
     err := config.Dbpool.QueryRow(context.Background(), checkQuery, 
         schedule.Carplate,
@@ -130,6 +130,22 @@ func UpdateBusSchedule(schedule structs.UpdateSchedule) error {
 		return err
 	}
 
+	return nil
+}
+
+func UpdateScheduleRoutes(assignments []structs.UpdateScheduleRoute) error {
+	for _, assignment := range assignments {
+		query := `
+			UPDATE bus_schedule
+			SET route_name = $1
+			WHERE carplate = $2
+		`
+		_, err := config.Dbpool.Exec(context.Background(), query, assignment.RouteName, assignment.Carplate)
+		if err != nil {
+			fmt.Println("Error updating schedule:", err)
+			return err
+		}
+	}
 	return nil
 }
 

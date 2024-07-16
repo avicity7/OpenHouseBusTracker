@@ -129,6 +129,14 @@ export type ChatRoom = {
   LatestMessage: Message
 }
 
+export type Demand = {
+  [key: string]: number;
+};
+
+export type BusAssignments = {
+  [key: string]: string[];
+};
+
 // export type Schedule = {
 //   BusId: number;
 //   RouteId: number;

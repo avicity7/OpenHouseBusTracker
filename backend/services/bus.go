@@ -73,6 +73,19 @@ func DeleteBus(carplate string) error {
 	return nil
 }
 
+// func UpdateBus(oldCarplate string, newCarplate string) error {
+//     query := `UPDATE bus 
+//               SET carplate = $1
+//               WHERE carplate = $2;`
+//     _, err := config.Dbpool.Exec(context.Background(), query, newCarplate, oldCarplate)
+//     if err != nil {
+//         fmt.Println("Error updating bus carplate:", err)
+//         return err
+//     }
+//     fmt.Println("Bus carplate updated successfully")
+//     return nil
+// }	
+
 func UpdateBusStatus(status bool, carplate string) error {
 	query := `
 		UPDATE bus
