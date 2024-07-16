@@ -1,4 +1,5 @@
 <script lang="ts">
+  import haversineDistance from 'haversine-distance';
   import type { EventBus, Event, RouteStep, FollowBusEvent } from '$lib/types/global.js'
   import { PUBLIC_BACKEND_URL } from '$env/static/public'
 	import { onMount } from 'svelte';
@@ -102,7 +103,16 @@
       }
     }
 		navigator.geolocation.watchPosition((position) => {
-			console.log(position)
+      let current = events[0]
+      let currentStop = stops[current.Order - 1]
+      let nextStop = stops[current.Order % 4]
+      let currentDist = haversineDistance([currentStop.Lat, currentStop.Lng], [position.coords.latitude, position.coords.longitude])
+      let nextDist = haversineDistance([nextStop.Lat, nextStop.Lng], [position.coords.latitude, position.coords.longitude])
+      let radius = 15
+
+      if ((current.EventId == 2 && currentDist > radius) || (current.EventId == 3 && nextDist < radius)) {
+        createEvent()
+      }
 		})
   })
 </script>

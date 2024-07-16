@@ -78,26 +78,6 @@ func DeleteFollowBus(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 }
 
-func GetRouteSteps(w http.ResponseWriter, r *http.Request) {
-	routeName := chi.URLParam(r, "routeName")
-
-	response, err := services.GetRouteSteps(routeName)
-	if err != nil {
-		fmt.Println(err)
-		http.Error(w, "Error on service", 500)
-		return
-	}
-
-	parsed, err := json.Marshal(response)
-	if err != nil {
-		http.Error(w, "Error on marshalling", 500)
-		return
-	}
-
-	w.WriteHeader(200)
-	w.Write(parsed)
-}
-
 func GetEvents(w http.ResponseWriter, r *http.Request) {
 	scheduleId := chi.URLParam(r, "scheduleId")
 	scheduleIdInt, _ := strconv.Atoi(scheduleId)

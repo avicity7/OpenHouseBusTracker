@@ -17,12 +17,13 @@ type User struct {
 	Password          string
 	Role              string
 	VerificationToken string
+	Contact           string
 }
 
 type ReturnedUser struct {
 	Name              string
 	Email             string
-	Contact 		  string
+	Contact           string
 	Role              string
 	VerificationToken string
 }
@@ -33,9 +34,9 @@ type EditUserRole struct {
 }
 
 type SettingsDetails struct {
-	Email  	string
+	Email   string
 	Contact *string
-	Name 	string
+	Name    string
 }
 
 type ReturnedUserArray []ReturnedUser

@@ -98,31 +98,6 @@ func DeleteFollowBus(email string) error {
 	return nil
 }
 
-func GetRouteSteps(routeName string) ([]structs.RouteStep, error) {
-	var output []structs.RouteStep
-
-	query := `
-		SELECT * FROM route_step rs 
-		WHERE route_name = @RouteName
-	`
-	args := pgx.NamedArgs{
-		"RouteName": routeName,
-	}
-
-	rows, err := config.Dbpool.Query(context.Background(), query, args)
-	if err != nil {
-		return []structs.RouteStep{}, err
-	}
-
-	for rows.Next() {
-		var routeStep structs.RouteStep
-		rows.Scan(&routeStep.RouteName, &routeStep.StopName, &routeStep.Order)
-		output = append(output, routeStep)
-	}
-
-	return output, nil
-}
-
 func GetEvents(scheduleId int) ([]structs.Event, error) {
 	var output []structs.Event
 

@@ -16,7 +16,7 @@
   </a>
 </aside>
 
-<main class="ml-80">
+<main>
   <slot />
 </main>
 

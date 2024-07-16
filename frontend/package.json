@@ -39,6 +39,7 @@
 		"@vercel/speed-insights": "^1.0.10",
 		"autoprefixer": "^10.4.19",
 		"flowbite-svelte": "^0.46.0",
+		"haversine-distance": "^1.2.3",
 		"jsonwebtoken": "^9.0.2",
 		"jspdf": "^2.5.1",
 		"jspdf-autotable": "^3.8.2",
