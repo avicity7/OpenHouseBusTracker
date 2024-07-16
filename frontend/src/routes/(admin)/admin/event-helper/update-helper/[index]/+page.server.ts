@@ -26,7 +26,7 @@ export const load = async ({ fetch }) => {
 
 export const actions = {
     updateEventHelper: async({ request}): Promise<void> =>{
-      const form =await request.formData()
+      const form = await request.formData()
   
       const Carplate = form.get('carplate');
       const Name = form.get('name');

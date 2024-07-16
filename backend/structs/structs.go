@@ -71,6 +71,7 @@ type AuthedResponse struct {
 
 type Schedule struct {
 	BusScheduleId int
+	BusId         string
 	Carplate      string
 	RouteName     string
 	DriverName    string
@@ -79,7 +80,7 @@ type Schedule struct {
 }
 
 type NewSchedule struct {
-	Carplate  string
+	BusId     string
 	RouteName string
 	DriverId  int
 	StartTime time.Time
@@ -88,6 +89,7 @@ type NewSchedule struct {
 
 type UpdateSchedule struct {
 	BusScheduleId int
+	BusId         string
 	Carplate      string
 	RouteName     string
 	DriverId      int
@@ -96,14 +98,15 @@ type UpdateSchedule struct {
 }
 
 type UpdateScheduleRoute struct {
-	Carplate 	string
-	RouteName 	string
+	BusId     string
+	RouteName string
 }
 
 type ScheduleDropdownData struct {
-	Carplate  *string
-	RouteName  string
-	Driver     []Driver
+	BusId     string
+	Carplate  string
+	RouteName string
+	Driver    []Driver
 }
 
 type Driver struct {
@@ -112,11 +115,13 @@ type Driver struct {
 }
 
 type FollowBus struct {
+	BusId    string
 	Carplate string
 	Email    string
 }
 
 type EventBus struct {
+	BusId    string
 	Carplate string
 	Status   bool
 	Hidden   bool
@@ -124,6 +129,7 @@ type EventBus struct {
 
 type EventSchedule struct {
 	ScheduleId   int
+	BusId        string
 	Carplate     string
 	DriverName   string
 	RouteName    string
@@ -147,7 +153,7 @@ type Event struct {
 }
 
 type EventInput struct {
-	Carplate  string
+	BusId     string
 	RouteName string
 	EventId   int
 	StopName  string
@@ -159,36 +165,37 @@ type Route struct {
 }
 
 type EventHelper struct {
+	BusId    string
 	Carplate string
 	Name     string
 	Shift    bool
 }
 
 type EventHelperUpdate struct {
-	OldCarplate string
-	OldName     string
-	OldShift    bool
+	OldBusId string
+	OldName  string
+	OldShift bool
 
-	NewCarplate string
-	NewName     string
-	NewShift    bool
+	NewBusId string
+	NewName  string
+	NewShift bool
 }
 
 type FollowBusEvent struct {
-	ScheduleId       int
-	Carplate         string
-	DriverName       string
-	RouteName        string
-	Email            string
-	BusStartTime     time.Time
-	BusEndTime       time.Time
-	StudentStartTime time.Time
-	StudentEndTime   time.Time
+	ScheduleId   int
+	BusId        string
+	Carplate     string
+	DriverName   string
+	RouteName    string
+	Email        string
+	BusStartTime time.Time
+	BusEndTime   time.Time
 }
 
 type EventHelperDropdownData struct {
-	Carplate *string
-	Name     *string
+	BusId    string
+	Carplate string
+	Name     string
 }
 
 type Stop struct {
@@ -198,7 +205,7 @@ type Stop struct {
 }
 
 type CurrentBus struct {
-	Carplate  string
+	BusId     string
 	RouteName string
 	Color     string
 	EventType string

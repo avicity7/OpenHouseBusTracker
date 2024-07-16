@@ -12,7 +12,8 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
 	var eventHelpers []structs.EventHelper
 
 	query := `
-        SELECT carplate, ut.name, shift FROM event_helper eh
+        SELECT eh.bus_id, carplate, ut.name, shift FROM event_helper eh
+        JOIN bus b ON eh.bus_id = b.bus_id
 		JOIN user_table ut ON ut.email = eh.email
 		ORDER BY carplate ASC, ut.name ASC
     `
@@ -20,11 +21,12 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close() 
+	defer rows.Close()
 
 	for rows.Next() {
 		var eventHelper structs.EventHelper
 		err := rows.Scan(
+			&eventHelper.BusId,
 			&eventHelper.Carplate,
 			&eventHelper.Name,
 			&eventHelper.Shift,
@@ -38,66 +40,66 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
 }
 
 func CreateEventHelpers(eventHelpers []structs.EventHelper) error {
-    tx, err := config.Dbpool.Begin(context.Background())
-    if err != nil {
-        fmt.Println("Failed to begin transaction:", err)
-        return err
-    }
-    defer func() {
-        if err != nil {
-            tx.Rollback(context.Background())
-        } else {
-            tx.Commit(context.Background())
-        }
-    }()
+	tx, err := config.Dbpool.Begin(context.Background())
+	if err != nil {
+		fmt.Println("Failed to begin transaction:", err)
+		return err
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback(context.Background())
+		} else {
+			tx.Commit(context.Background())
+		}
+	}()
 
-    for _, eventHelper := range eventHelpers {
-        email, err := GetEmail(eventHelper.Name)
-        if err != nil {
-            fmt.Println("Error retrieving email:", err)
-            return err
-        }
+	for _, eventHelper := range eventHelpers {
+		email, err := GetEmail(eventHelper.Name)
+		if err != nil {
+			fmt.Println("Error retrieving email:", err)
+			return err
+		}
 
-        query := `
-            INSERT INTO event_helper (carplate, email, shift) 
+		query := `
+            INSERT INTO event_helper (bus_id, email, shift) 
             VALUES ($1, $2, $3)
         `
-        _, err = tx.Exec(context.Background(), query,
-            eventHelper.Carplate,
-            email,
-            eventHelper.Shift,
-        )
-        if err != nil {
-            fmt.Println("Error inserting event helper:", err)
-            return err
-        }
-        fmt.Printf("Event helper inserted successfully for email: %s\n", email)
-    }
+		_, err = tx.Exec(context.Background(), query,
+			eventHelper.BusId,
+			email,
+			eventHelper.Shift,
+		)
+		if err != nil {
+			fmt.Println("Error inserting event helper:", err)
+			return err
+		}
+		fmt.Printf("Event helper inserted successfully for email: %s\n", email)
+	}
 
-    return nil
+	return nil
 }
 
 func EventHelperExists(email string) (bool, error) {
-    var exists bool
-    query := `
+	var exists bool
+	query := `
         SELECT EXISTS (
             SELECT 1 FROM event_helper
             WHERE email = $1
         )
     `
-    err := config.Dbpool.QueryRow(context.Background(), query, email).Scan(&exists)
-    if err != nil {
-        fmt.Println("Error checking existing event helper:", err)
-        return false, err
-    }
+	err := config.Dbpool.QueryRow(context.Background(), query, email).Scan(&exists)
+	if err != nil {
+		fmt.Println("Error checking existing event helper:", err)
+		return false, err
+	}
 
-    if exists {
-        fmt.Printf("Event helper already exists for email: %s\n", email)
-    } else {
-        fmt.Printf("No existing event helper found for email: %s\n", email)
-    }
+	if exists {
+		fmt.Printf("Event helper already exists for email: %s\n", email)
+	} else {
+		fmt.Printf("No existing event helper found for email: %s\n", email)
+	}
 
-    return exists, nil
+	return exists, nil
 }
 
 func UpdateEventHelper(eventHelper structs.EventHelperUpdate) error {
@@ -113,25 +115,22 @@ func UpdateEventHelper(eventHelper structs.EventHelperUpdate) error {
 	query := `
         UPDATE event_helper
         SET 
-            carplate = $1,
+            bus_id = $1,
             email = $2,
             shift = $3
         WHERE
-            carplate = $4
+            bus_id = $4
             AND email = $5
             AND shift = $6
     `
 	_, err = config.Dbpool.Exec(context.Background(), query,
-		eventHelper.NewCarplate,
+		eventHelper.NewBusId,
 		newEmail,
 		eventHelper.NewShift,
-		eventHelper.OldCarplate,
+		eventHelper.OldBusId,
 		oldEmail,
 		eventHelper.OldShift,
 	)
-
-	fmt.Println("new email ", newEmail)
-	fmt.Println("old email ", oldEmail)
 
 	if err != nil {
 		fmt.Println("Error updating event helper:", err)
@@ -151,12 +150,12 @@ func DeleteEventHelper(eventHelper structs.EventHelper) error {
 	query := `
         DELETE FROM event_helper
         WHERE
-            carplate = $1
+            bus_id = $1
             AND email = $2
             AND shift = $3
     `
 	_, err = config.Dbpool.Exec(context.Background(), query,
-		eventHelper.Carplate,
+		eventHelper.BusId,
 		email,
 		eventHelper.Shift,
 	)
@@ -172,31 +171,33 @@ func GetEventHelperDropdownData() ([]structs.EventHelperDropdownData, error) {
 	var dropdownData []structs.EventHelperDropdownData
 
 	query := `
-        SELECT 
-            b.carplate,
-            NULL AS name
-        FROM 
-            bus b
+    SELECT
+        b.bus_id,
+        b.carplate,
+        '' AS name
+    FROM 
+        bus b
 
-        UNION ALL
+    UNION ALL
 
-        SELECT 
-            NULL AS carplate,
-            u.name
-        FROM 
-            user_table u
-        WHERE 
-            u.role_id = 1
-            AND u.name NOT IN (
-                SELECT 
-                    ut.name 
-                FROM 
-                    event_helper eh
-                JOIN 
-                    user_table ut ON ut.email = eh.email
-            )
-		ORDER BY 
-			carplate ASC, name ASC
+    SELECT
+        '00000000-0000-0000-0000-000000000000'::UUID AS bus_id,
+        '' AS carplate,
+        u.name
+    FROM 
+        user_table u
+    WHERE 
+        u.role_id = 1
+        AND u.name NOT IN (
+            SELECT 
+                ut.name 
+            FROM 
+                event_helper eh
+            JOIN 
+                user_table ut ON ut.email = eh.email
+        )
+    ORDER BY 
+        carplate ASC, name ASC
     `
 
 	rows, err := config.Dbpool.Query(context.Background(), query)
@@ -209,6 +210,7 @@ func GetEventHelperDropdownData() ([]structs.EventHelperDropdownData, error) {
 	for rows.Next() {
 		var data structs.EventHelperDropdownData
 		err := rows.Scan(
+			&data.BusId,
 			&data.Carplate,
 			&data.Name,
 		)

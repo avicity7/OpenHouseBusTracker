@@ -7,7 +7,7 @@
     export let data;
     const { dropdownData } = data;
 
-    let helper: EventHelper = { Carplate: '', Name: '', Shift: false};
+    let helper: EventHelper = {BusId: '', Carplate: '', Name: '', Shift: false};
     let carplates: string[] = [];
     let names: string[] = [];
     let selectedCarplate: string | null = null;

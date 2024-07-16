@@ -110,7 +110,7 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = services.CreateEvent(input.Carplate, input.RouteName, input.EventId, input.StopName)
+	err = services.CreateEvent(input.BusId, input.RouteName, input.EventId, input.StopName)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Error on Service", 500)
@@ -125,7 +125,7 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 		status = true
 	}
 
-	err = services.UpdateBusStatus(status, input.Carplate)
+	err = services.UpdateBusStatus(status, input.BusId)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Error on update bus", 500)
