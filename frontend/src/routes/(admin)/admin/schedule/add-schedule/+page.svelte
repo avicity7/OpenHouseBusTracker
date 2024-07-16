@@ -103,7 +103,7 @@
 				</select>
 			</div> -->
 
-			<div class="mb-4">
+			<div class="mb-4 carplate">
 				<CustomDropdown
 				  label="Carplate"
 				  name="carplate"
@@ -113,7 +113,7 @@
 				/>
 			  </div>
 			  
-			  <div class="mb-4">
+			  <div class="mb-4 route-name">
 				<CustomDropdown
 				  label="Route Name"
 				  name="route_name"
@@ -122,7 +122,7 @@
 				/>
 			  </div>
 
-			  <div class="mb-4">
+			  <div class="mb-4 driver">
 				<CustomDropdown
 					label="Driver"
 					name="driver_id"
@@ -157,6 +157,7 @@
 					name="start_time"
 					required
 					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500"
+					data-testid="start-time"
 				/>
 			</div>
 
@@ -168,6 +169,7 @@
 					name="end_time"
 					required
 					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500"
+					data-testid="end-time"
 				/>
 			</div>
 

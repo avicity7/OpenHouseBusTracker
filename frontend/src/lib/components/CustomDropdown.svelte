@@ -56,6 +56,7 @@
         aria-invalid={!!error ? 'true' : 'false'}
         aria-describedby={!!error ? `${dropdownId}-error` : undefined}
         class="relative"
+        data-testid="{name}"
     >
         <button
             type="button"
@@ -63,6 +64,7 @@
             on:click={toggleDropdown}
             aria-haspopup="listbox"
             aria-expanded={isOpen}
+            data-testid="dropdown-input"
         >
             {typeof(selected) == "boolean" ? selected ? "AM" : "PM" : selected ? typeof(selected) == "object" ? selected.DriverName : selected : "Select an option"}
             <svg class="w-5 h-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,4 +109,4 @@
     {/if}
 </div>
 
-<input type="hidden" id="selectedValue" name={name} value={selected ? selected.DriverId || selected.value || selected : ''} />
+<input type="hidden" id="selectedValue" name={name} value={selected ? selected.DriverId || selected.value || selected : ''}/>
