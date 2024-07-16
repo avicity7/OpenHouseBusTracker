@@ -19,7 +19,6 @@ export const load = async ({ fetch }) => {
             dropdownData,
             buses
         }
-
     } catch (error) {
         console.error(error);
         return {

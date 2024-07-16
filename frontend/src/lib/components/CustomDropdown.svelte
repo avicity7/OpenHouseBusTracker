@@ -8,7 +8,7 @@
 
     let isOpen = false;
     let error = "";
-    let selectedDisplay: any;
+    let selectedDisplay: any
 
     let dropdownId = `dropdown-${Math.random().toString(36).substring(2,9)}`; // either this or increment by 1
 
@@ -32,6 +32,7 @@
     }
 
     onMount(() => {
+        selectedDisplay = selected
         const handleClickOutside = (event: MouseEvent) => {
             const dropdown = document.getElementById(dropdownId);
             if (isOpen && dropdown && !dropdown.contains(event.target as Node)) {
