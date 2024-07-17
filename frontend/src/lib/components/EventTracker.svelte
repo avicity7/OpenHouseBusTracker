@@ -205,8 +205,8 @@
       {/if}
       {#if events[0].Order != 0}
         {#if events[0].EventId != 5}
-          <div class="flex flex-row mt-10">
-            <button class="mx-auto bg-orange-700 hover:bg-orange-800 px-20 py-2 rounded-lg text-white" on:click={() => createSpecificEvent(5)}>
+          <div class="flex flex-row mt-10 justify-center">
+            <button class="bg-orange-700 hover:bg-orange-800 px-10 md:px-20 py-2 rounded-lg text-white" on:click={() => createSpecificEvent(5)}>
               Start break
             </button>
           </div>

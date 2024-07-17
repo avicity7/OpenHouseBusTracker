@@ -11,6 +11,10 @@
   })
 </script>
 
+<svelte:head>
+	<title>Track Bus | SPOH Bus Tracker</title>
+</svelte:head>
+
 <div class="p-6 md:p-12">
   {#if followBus == null || followBus.Carplate == ''}
     <div class="mt-24 flex flex-col m-auto items-center">

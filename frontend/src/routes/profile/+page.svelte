@@ -13,6 +13,10 @@
   })
 </script>
 
+<svelte:head>
+	<title>{session && account.Email != '' ? "Account" : "Login | SPOH Bus Tracker"}</title>
+</svelte:head>
+
 <div class="flex flex-col justify-center items-center mt-28">
   <div class="font-albert min-w-2xl text-zinc-800 dark:text-zinc-100">
     {#if session && account.Email != ''}

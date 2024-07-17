@@ -9,6 +9,10 @@
 
 </script>
 
+<svelte:head>
+	<title>SPOH Bus Tracker</title>
+</svelte:head>
+
 {#if session?.Role == "admin"}
 	<BusTrackerMap {data}/>
 {:else}

@@ -34,6 +34,10 @@
     })
 </script>
 
+<svelte:head>
+	<title>Manage - Event Helpers | SPOH Bus Tracker</title>
+</svelte:head>
+
 <div class="p-6 md:p-12">
     <div class="flex items-center justify-between mb-4">
         <a href="/admin/event-helper/add-helper" class="border-black text-white font-semibold text-md px-6 py-2 rounded-xl bg-red-700 hover:bg-red-800 mr-2">

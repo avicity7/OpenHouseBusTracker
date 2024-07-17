@@ -6,6 +6,10 @@
   const { chat_rooms } = data
 </script>
 
+<svelte:head>
+	<title>Chat | SPOH Bus Tracker</title>
+</svelte:head>
+
 <div class="h-[90vh] hidden md:flex flex-col items-center justify-center">Select a chat room to get started!</div>
 
 <div class="flex md:hidden fixed h-full bg-white flex-col block md:px-4 w-full">
