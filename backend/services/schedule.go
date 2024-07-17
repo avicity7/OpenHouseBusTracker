@@ -231,6 +231,7 @@ func GetScheduleByID(id int) (structs.UpdateSchedule, error) {
 	query := `
 	SELECT 
 		bs.bus_schedule_id,
+		b.bus_id,
 		b.carplate AS Bus_Carplate,
 		r.route_name AS Route_Name,
 		d.driver_id AS Driver_Id,
@@ -239,7 +240,7 @@ func GetScheduleByID(id int) (structs.UpdateSchedule, error) {
 	FROM 
 		bus_schedule bs
 	JOIN 
-		bus b ON bs.carplate = b.carplate
+		bus b ON bs.bus_id = b.bus_id
 	JOIN 
 		route r ON bs.route_name = r.route_name
 	JOIN 
@@ -250,6 +251,7 @@ func GetScheduleByID(id int) (structs.UpdateSchedule, error) {
 
 	err := config.Dbpool.QueryRow(context.Background(), query, id).Scan(
 		&schedule.BusScheduleId,
+		&schedule.BusId,
 		&schedule.Carplate,
 		&schedule.RouteName,
 		&schedule.DriverId,
