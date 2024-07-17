@@ -34,10 +34,12 @@ export const load: Load = async ({ fetch }) => {
 // For form actions, submissions    
 export const actions = {
   createBusSchedule: async({ request }) =>{
+    console.log("am i here ")
     const form = await request.formData()
 
     const Bus = form.get('bus');
     const BusId = JSON.parse(Bus!.toString()).BusId
+    console.log(Bus, BusId)
     const RouteName = form.get('route_name');
     const DriverIdString = form.get('driver_id');
     const DriverId = JSON.parse(DriverIdString!.toString()).DriverId

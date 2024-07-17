@@ -165,10 +165,10 @@ func GetDropdownData() ([]structs.ScheduleDropdownData, error) {
 	var dropdownData []structs.ScheduleDropdownData
 
 	query := `
-		WITH available_buses AS (
-			SELECT carplate
+			WITH available_buses AS (
+			SELECT carplate, bus_id
 			FROM bus
-			WHERE carplate NOT IN (SELECT carplate FROM bus_schedule)
+			WHERE bus_id NOT IN (SELECT bus_id FROM bus_schedule)
 		),
 		available_drivers AS (
 			SELECT driver_id, driver_name
@@ -176,6 +176,7 @@ func GetDropdownData() ([]structs.ScheduleDropdownData, error) {
 			WHERE driver_id NOT IN (SELECT driver_id FROM bus_schedule)
 		)
 		SELECT 
+			b.bus_id,
 			COALESCE(b.carplate, NULL) AS carplate,
 			r.route_name,
 			COALESCE(d.driver_name, NULL) AS driver_name,
@@ -187,12 +188,12 @@ func GetDropdownData() ([]structs.ScheduleDropdownData, error) {
 		LEFT JOIN 
 			available_buses ab ON true
 		LEFT JOIN 
-			bus b ON ab.carplate = b.carplate
+			bus b ON ab.bus_id = b.bus_id
 		LEFT JOIN 
 			route r ON 1=1
 		LEFT JOIN 
 			available_drivers d ON true
-		ORDER BY
+		ORDER BY	
 			ab.carplate ASC, d.driver_id ASC;
     `
 
@@ -207,6 +208,7 @@ func GetDropdownData() ([]structs.ScheduleDropdownData, error) {
 		var data structs.ScheduleDropdownData
 		var driver structs.Driver
 		err := rows.Scan(
+			&data.BusId,
 			&data.Carplate,
 			&data.RouteName,
 			&driver.DriverName,
