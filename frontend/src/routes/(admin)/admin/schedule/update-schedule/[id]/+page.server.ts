@@ -1,178 +1,78 @@
 import { error, redirect, type Load } from '@sveltejs/kit';
-import type { Schedule } from '$lib/types/global';
+import type { Route, EventBus, Driver } from '$lib/types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 // used page.server.ts instead of page.js for the need of updated information and fast ssr
-export const load: Load = async (ctx) => {
-    try {
-        const dropdownDataPromise = new Promise((resolve, reject) => {
-            const fetchData = async () => {
-                try {
-                    const dropdownUrl = `${PUBLIC_BACKEND_URL}:3000/schedules/get-dropdown-data`;
+export const load: Load = async ({ fetch, params }) => {
+	const { id } = params
+	let response = await fetch(`${PUBLIC_BACKEND_URL}:3000/bus/get-buses`);
+	if (!response.ok) {
+		throw new Error("Failed to fetch dropdown data");
+	}
+	const buses = await response.json() as EventBus[]
 
-                    const response = await ctx.fetch(dropdownUrl);
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch dropdown data: ${response.statusText}`);
-                    }
+	response = await fetch(`${PUBLIC_BACKEND_URL}:3000/driver/get-drivers`);
+	if (!response.ok) {
+		throw new Error("Failed to fetch dropdown data");
+	}
+	const drivers = await response.json() as Driver[]
 
-                    const data = await response.json() as Schedule[];
-                    resolve({ data });
-                } catch (error) {
-                    console.error("Error fetching dropdown data:", error);
-                    reject({
-                        status: 500,
-                        body: { error: 'Internal Server Error' }
-                    });
-                }
-            };
+	response = await fetch(`${PUBLIC_BACKEND_URL}:3000/route/`);
+	let routes = (await response.json()) as Array<Route>;
+	if (!routes) {
+		routes = [];
+	}
+	const scheduleUrl = `${PUBLIC_BACKEND_URL}:3000/schedules/get-schedule/${id}`;
+	response = await fetch(scheduleUrl);
+	if (!response.ok) {
+		throw new Error(`Failed to fetch schedule data from id: ${id}: ${response.statusText}`);
+	}
 
-            fetchData();
-        });
+	const schedule = await response.json();
 
-        const scheduleDataPromise = new Promise((resolve, reject) => {
-            const fetchData = async () => {
-                try {
-                    const { id } = ctx.params;
-                    const scheduleUrl = `${PUBLIC_BACKEND_URL}:3000/schedules/get-schedule/${id}`;
-                    const response = await ctx.fetch(scheduleUrl);
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch schedule data from id: ${id}: ${response.statusText}`);
-                    }
-
-                    const schedule = await response.json();
-                    resolve({ schedule });
-                } catch (error) {
-                    console.error("Error fetching schedule data:", error);
-                    reject({
-                        status: 500,
-                        error: 'Failed to fetch schedule data'
-                    });
-                }
-            };
-
-            fetchData();
-        });
-
-        const allScheduleDrivers = new Promise((resolve, reject) => {
-            const driversData = async () => {
-                try {
-                    const scheduleUrl = `${PUBLIC_BACKEND_URL}:3000/driver/get-driver`;
-                    const response = await ctx.fetch(scheduleUrl);
-                    if (!response.ok) {
-                        throw new Error(`Failed to fetch schedule data from id: ${response.statusText}`);
-                    }
-
-                    const drivers = await response.json();
-                    resolve({ drivers });
-                } catch (error) {
-                    console.error("Error fetching all drivers data:", error);
-                    reject({
-                        status: 500,
-                        error: 'Failed to fetch all drivers data'
-                    });
-                }
-            };
-
-            driversData();
-        });
-
-
-        const [dropdownData, scheduleData, allDriversData] = await Promise.all([
-            dropdownDataPromise,
-            scheduleDataPromise,
-            allScheduleDrivers
-        ]);
-
-        return {     
-            dropdownData,
-            scheduleData,
-            allDriversData
-        };
-    } catch (error) {
-        console.error("Error loading data:", error);
-        return {
-            status: 500,
-            error: 'Failed to load data'
-        };
-    }
+	return {
+		buses,
+		drivers,
+		routes,
+		schedule
+	};
 };
 
 export const actions = {
-    updateBusSchedule: async({ request}): Promise<void> =>{
-      const form =await request.formData()
-        
-        const url = new URL(request.url);
-        const id = url.pathname.split('/').pop();
+	updateBusSchedule: async ({ request }): Promise<void> => {
+		const form = await request.formData()
 
-        const BusScheduleId = id ? +id : undefined;
-        const Carplate = form.get('carplate');
-        const RouteName = form.get('route_name');
-        const DriverIdString = form.get('driver_id');
-        const DriverId = DriverIdString ? +DriverIdString : null;
-        const StartTime = form.get('start_time') + ":00+08:00";
-        const EndTime = form.get('end_time') + ":00+08:00";
+		const url = new URL(request.url);
+		const id = url.pathname.split('/').pop();
 
-        console.log("Body", Carplate, RouteName,DriverId, StartTime,EndTime, BusScheduleId)
-        
-        const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/update-schedule`, {
-          method: "PUT",
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-                  Carplate, 
-                  RouteName,
-                  DriverId,
-                  StartTime,
-                  EndTime,
-                  BusScheduleId
-              })
-        });
-        
-        console.log(`update bus schedule ${id} successful`)
-        if (!response.ok) {
-            console.log(error)
-          throw new Error("Failed to create bus schedule");
-        }
+		const BusScheduleId = id ? +id : undefined;
+		const Bus = form.get('bus')
+		const BusId = JSON.parse(Bus!.toString()).BusId
+		const Route = form.get('route');
+		const RouteName = JSON.parse(Route!.toString()).RouteName
+		const Driver = form.get('driver')
+		const DriverId = JSON.parse(Driver!.toString()).DriverId
+		const StartTime = form.get('start_time') + ":00+08:00";
+		const EndTime = form.get('end_time') + ":00+08:00";
 
-        redirect(301, '/admin/schedule')
-      }
-  }
+		const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/update-schedule`, {
+			method: "PUT",
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				BusId,
+				RouteName,
+				DriverId,
+				StartTime,
+				EndTime,
+				BusScheduleId
+			})
+		});
 
+		if (!response.ok) {
+			console.log(error)
+			throw new Error("Failed to create bus schedule");
+		}
 
-// export const load: Load = async (ctx) => {
-//     try {
-//         const dropdownUrl = `${PUBLIC_BACKEND_URL}/schedules/get-dropdown-data`;
-//         const scheduleUrl = `${PUBLIC_BACKEND_URL}/schedules/get-schedule/${ctx.params.id}`;
-        
-//         console.log("Fetching dropdown data from:", dropdownUrl);
-//         console.log("Fetching schedule data from:", scheduleUrl);
-
-//         const [dropdownResponse, scheduleResponse] = await Promise.all([
-//             ctx.fetch(dropdownUrl),
-//             ctx.fetch(scheduleUrl)
-//         ]);
-
-//         console.log("am i here")
-
-//         if (!dropdownResponse.ok) {
-//             throw new Error(`Failed to fetch dropdown data: ${dropdownResponse.statusText}`);
-//         }
-
-//         if (!scheduleResponse.ok) {
-//             throw new Error(`Failed to fetch schedule data: ${scheduleResponse.statusText}`);
-//         }
-
-//         const dropdownData = await dropdownResponse.json() as Schedule[];
-//         const scheduleData = await scheduleResponse.json();
-
-//         return {
-//             dropdownData,
-//             scheduleData
-//         };
-//     } catch (error) {
-//         console.error("Error loading data:", error);
-//         return {
-//             status: 500,
-//             error: 'Failed to load data'
-//         };
-//     }
-// };
+		redirect(301, '/admin/schedule')
+	}
+}
