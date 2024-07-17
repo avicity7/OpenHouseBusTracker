@@ -31,7 +31,6 @@ func GetAllRouteSteps() ([]structs.RouteStep, error) {
 			return nil, err
 		}
 		routeSteps = append(routeSteps, routeStep)
-		fmt.Println(routeStep)
 	}
 	if err := rows.Err(); err != nil {
 		fmt.Println("Error iterating over route step rows:", err)
@@ -65,7 +64,6 @@ func GetRouteSteps(routeName string) ([]structs.RouteStep, error) {
 			return nil, err
 		}
 		routeSteps = append(routeSteps, routeStep)
-		fmt.Println(routeStep)
 	}
 	if err := rows.Err(); err != nil {
 		fmt.Println("Error iterating over route step rows:", err)
