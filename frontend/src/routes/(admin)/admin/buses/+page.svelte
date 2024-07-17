@@ -110,6 +110,10 @@
   })
 </script>
 
+<svelte:head>
+	<title>Manage - Buses | SPOH Bus Tracker</title>
+</svelte:head>
+
 <form id="assignmentForm" method="POST" action="?/updateScheduleRoutes">
   <input type="hidden" id="assignmentData" name="assignmentData" />
 </form>

@@ -35,6 +35,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Manage - Users | SPOH Bus Tracker</title>
+</svelte:head>
+
 <div class="p-6 md:p-12">
   <div class="flex items-center space-x-4 pb-2 justify-center">
     <label class="relative cursor-pointer text-black font-semibold py-2 rounded-md text-sm">
