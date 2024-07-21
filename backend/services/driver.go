@@ -18,8 +18,7 @@ func AddDriver(driver structs.Driver) error {
 	return nil
 }
 
-// Get Driver
-func GetDriver() ([]structs.Driver, error) {
+func GetDrivers() ([]structs.Driver, error) {
 	var drivers []structs.Driver
 	rows, err := config.Dbpool.Query(context.Background(), "SELECT * FROM driver")
 	if err != nil {
@@ -86,7 +85,7 @@ func GetScheduleTimeDiff() ([]structs.TimeDiff, error) {
 		if err != nil {
 			return nil, err
 		}
-		
+
 		driversTime = append(driversTime, td)
 	}
 

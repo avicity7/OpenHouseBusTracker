@@ -7,6 +7,10 @@
 
 </script>
 
+<svelte:head>
+	<title>My Shifts | SPOH Bus Tracker</title>
+</svelte:head>
+
 <div class="p-6 md:p-12">
   <h1 class="text-3xl font-semibold pt-8 mb-6">My Shifts</h1>
 

@@ -8,6 +8,11 @@
     }
   })
 </script>
+
+<svelte:head>
+	<title>Sign up | SPOH Bus Tracker</title>
+</svelte:head>
+
 <div class="w-screen flex flex-col items-center text-zinc-800 pt-16">
   <div class="max-w-xl mt-12">
     <h1 class="font-bold text-3xl w-full">Sign Up</h1>

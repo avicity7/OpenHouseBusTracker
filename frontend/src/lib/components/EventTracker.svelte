@@ -1,4 +1,5 @@
 <script lang="ts">
+  import haversineDistance from 'haversine-distance';
   import type { EventBus, Event, RouteStep, FollowBusEvent } from '$lib/types/global.js'
   import { PUBLIC_BACKEND_URL } from '$env/static/public'
 	import { onMount } from 'svelte';
@@ -32,7 +33,7 @@
 
   const createEvent = async() => {
     let payload = {
-      Carplate: followBus?.Carplate,
+      BusId: followBus?.BusId,
       RouteName: followBus?.RouteName,
       EventId: 0,
       StopName: '' 
@@ -102,7 +103,16 @@
       }
     }
 		navigator.geolocation.watchPosition((position) => {
-			console.log(position)
+      let current = events[0]
+      let currentStop = stops[current.Order - 1]
+      let nextStop = stops[current.Order % stops.length]
+      let currentDist = haversineDistance([currentStop.Lat, currentStop.Lng], [position.coords.latitude, position.coords.longitude])
+      let nextDist = haversineDistance([nextStop.Lat, nextStop.Lng], [position.coords.latitude, position.coords.longitude])
+      let radius = 15
+
+      if ((current.EventId == 2 && currentDist > radius) || (current.EventId == 3 && nextDist < radius)) {
+        createEvent()
+      }
 		})
   })
 </script>
@@ -195,8 +205,8 @@
       {/if}
       {#if events[0].Order != 0}
         {#if events[0].EventId != 5}
-          <div class="flex flex-row mt-10">
-            <button class="mx-auto bg-orange-700 hover:bg-orange-800 px-20 py-2 rounded-lg text-white" on:click={() => createSpecificEvent(5)}>
+          <div class="flex flex-row mt-10 justify-center">
+            <button class="bg-orange-700 hover:bg-orange-800 px-10 md:px-20 py-2 rounded-lg text-white" on:click={() => createSpecificEvent(5)}>
               Start break
             </button>
           </div>

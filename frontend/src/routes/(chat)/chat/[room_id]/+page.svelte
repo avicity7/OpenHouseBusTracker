@@ -2,6 +2,7 @@
   import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import Chat from '$lib/components/Chat.svelte';
   import ChatBody from '$lib/components/ChatBody.svelte';
+	import Send from '$lib/components/Send.svelte';
   import type { Message } from '$lib/types/global.js';
   export let data
 
@@ -36,34 +37,36 @@
       let parts = msg.data.split(' ');
       if (parts[0] == data.room_id) {
         getMessages()
+      } else if (parts[0] == data.room_id + "del") {
+        location.replace("/chat")
       }
     };
   })
 </script>
 
-<div class="w-fit h-[90vh] grid grid-rows-10">
-  <div class={`flex flex-col-reverse overflow-auto snap-end row-span-9`}>
-    <Chat {data} />
-  </div>
+<div class="w-full h-[90vh] grid grid-rows-10">
+  <Chat {data} />
 
-  <form class="row-span-1 w-[80vw] pl-4 grid grid-cols-10 gap-4 items-center" on:submit={createMessage} bind:this={form}>
-    <div class="col-span-3"></div>
+  <form class="row-span-1 pl-4 grid grid-cols-10 gap-4 items-center md:pl-[23em] mt-8" on:submit={createMessage} bind:this={form}>
+    <div class="md:col-span-1"></div>
     <textarea 
-      class="bg-gray-200 hover:bg-gray-200 p-4 rounded-lg w-full col-span-4 resize-y"
+      class="bg-gray-100 p-4 rounded-lg w-full col-span-7 resize-none select-none focus:outline-none"
       bind:value={body}
       placeholder="Type a message"
       on:keypress={(e) => {
-        if (e.key == 'Enter' && !e.shiftKey) {
+        if (e.key == 'Enter' && !e.shiftKey && body != "") {
           e.preventDefault()
           form.requestSubmit()
         }
       }}
     />
     <div class="col-span-1">
-      <button class="w-full bg-red-700 hover:bg-red-800 text-white py-2 px-1 rounded" type="submit">
-        Send message
+      {#if body != ""}
+      <button class="text-xl" type="submit">
+        <Send />
       </button>
+      {/if}
     </div>
-    <div class="col-span-2"></div>
+    <div class="md:col-span-1"></div>
   </form>
 </div>

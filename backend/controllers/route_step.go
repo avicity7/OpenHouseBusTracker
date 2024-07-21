@@ -9,10 +9,18 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// get all
-func GetAllRouteStepsHandler(w http.ResponseWriter, r *http.Request) {
-	routeName := chi.URLParam(r, "route_name")
-	routeSteps, err := services.GetAllRouteSteps(routeName)
+func GetAllRouteSteps(w http.ResponseWriter, r *http.Request) {
+	routeSteps, err := services.GetAllRouteSteps()
+	if err != nil {
+		http.Error(w, "Failed to fetch route steps", http.StatusInternalServerError)
+		return
+	}
+	json.NewEncoder(w).Encode(routeSteps)
+}
+
+func GetRouteSteps(w http.ResponseWriter, r *http.Request) {
+	routeName := chi.URLParam(r, "routeName")
+	routeSteps, err := services.GetRouteSteps(routeName)
 	if err != nil {
 		http.Error(w, "Failed to fetch route steps", http.StatusInternalServerError)
 		return

@@ -38,9 +38,9 @@ func GetBuses(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetBusStatus(w http.ResponseWriter, r *http.Request) {
-	carplate := chi.URLParam(r, "carplate")
+	bus_id := chi.URLParam(r, "bus_id")
 
-	status, err := services.GetBusStatus(carplate)
+	status, err := services.GetBusStatus(bus_id)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -56,11 +56,24 @@ func GetBusStatus(w http.ResponseWriter, r *http.Request) {
 	w.Write(parsed)
 }
 
-func UpdateBusVisibility(w http.ResponseWriter, r *http.Request) {
+func UpdateBus(w http.ResponseWriter, r *http.Request) {
+	bus_id := chi.URLParam(r, "bus_id")
 	carplate := chi.URLParam(r, "carplate")
+
+	err := services.UpdateBus(bus_id, carplate)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	w.WriteHeader(200)
+}
+
+func UpdateBusVisibility(w http.ResponseWriter, r *http.Request) {
+	bus_id := chi.URLParam(r, "bus_id")
 	hidden := chi.URLParam(r, "hidden")
 
-	err := services.UpdateBusVisibility(hidden, carplate)
+	err := services.UpdateBusVisibility(hidden, bus_id)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -70,9 +83,9 @@ func UpdateBusVisibility(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteBus(w http.ResponseWriter, r *http.Request) {
-	carplate := chi.URLParam(r, "carplate")
+	bus_id := chi.URLParam(r, "bus_id")
 
-	err := services.DeleteBus(carplate)
+	err := services.DeleteBus(bus_id)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return

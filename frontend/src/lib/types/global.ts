@@ -9,9 +9,9 @@ export type AuthedResponse = {
 export type User = {
   Name: string,
   Email: string,
-  Contact: string,
   Role: string,
-  VerificationToken: string
+  VerificationToken: string,
+  Contact: string
 }
 
 export type UserRole = {
@@ -20,14 +20,15 @@ export type UserRole = {
 }
 
 export type Schedule = {
-  BusScheduleId: number;
-  Carplate: string;
-  RouteName: string;
+  BusScheduleId: number,
+  BusId: string,
+  Carplate: string,
+  RouteName: string,
   DriverId: number,
-  DriverName: string;
-  StartTime: string;
-  EndTime: string;
-  Driver: Driver[];
+  DriverName: string,
+  StartTime: string,
+  EndTime: string,
+  Driver: Driver[]
 }
 
 export type Driver = {
@@ -42,6 +43,7 @@ export type Session = {
 
 export type FollowBus = {
   ScheduleId: number,
+  BusId: string,
   Carplate: string,
   DriverName: string,
   RouteName: string,
@@ -51,6 +53,7 @@ export type FollowBus = {
 
 export type FollowBusEvent = {
   ScheduleId: number,
+  BusId: string,
   Carplate: string,
   DriverName: string,
   RouteName: string,
@@ -62,6 +65,7 @@ export type FollowBusEvent = {
 }
 
 export type EventBus = {
+  BusId: string,
   Carplate: string,
   Status: boolean,
   Hidden: boolean
@@ -88,6 +92,7 @@ export type Route = {
 }
 
 export type EventHelper = {
+  BusId: string,
   Carplate: string,
   Name: string,
   Shift: boolean
@@ -100,6 +105,7 @@ export type Stop = {
 }
 
 export type CurrentBus = {
+  BusId: string,
   Carplate: string,
   RouteName: string,
   Color: string,
@@ -128,6 +134,14 @@ export type ChatRoom = {
   User2: string
   LatestMessage: Message
 }
+
+export type Demand = {
+  [key: string]: number;
+};
+
+export type BusAssignments = {
+  [key: string]: string[];
+};
 
 // export type Schedule = {
 //   BusId: number;

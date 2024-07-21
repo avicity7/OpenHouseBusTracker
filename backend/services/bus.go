@@ -10,7 +10,7 @@ import (
 )
 
 func CreateBus(carplate string) error {
-	query := `INSERT INTO bus(carplate, status) VALUES (@Carplate, FALSE)`
+	query := `INSERT INTO bus(bus_id, carplate, status) VALUES (gen_random_uuid(), @Carplate, FALSE)`
 
 	args := pgx.NamedArgs{
 		"Carplate": carplate,
@@ -37,18 +37,18 @@ func GetBuses() ([]structs.EventBus, error) {
 
 	for rows.Next() {
 		var eventBus structs.EventBus
-		rows.Scan(&eventBus.Carplate, &eventBus.Status, &eventBus.Hidden)
+		rows.Scan(&eventBus.Carplate, &eventBus.Status, &eventBus.Hidden, &eventBus.BusId)
 		output = append(output, eventBus)
 	}
 
 	return output, nil
 }
 
-func GetBusStatus(carplate string) (bool, error) {
+func GetBusStatus(bus_id string) (bool, error) {
 	var status bool
-	query := `SELECT status FROM bus WHERE carplate = @Carplate`
+	query := `SELECT status FROM bus WHERE bus_id = @BusId`
 	args := pgx.NamedArgs{
-		"Carplate": carplate,
+		"BusId": bus_id,
 	}
 	err := config.Dbpool.QueryRow(context.Background(), query, args).Scan(&status)
 	if err != nil {
@@ -59,11 +59,11 @@ func GetBusStatus(carplate string) (bool, error) {
 	return status, nil
 }
 
-func DeleteBus(carplate string) error {
-	query := `DELETE FROM bus WHERE carplate = @Carplate`
+func DeleteBus(bus_id string) error {
+	query := `DELETE FROM bus WHERE bus_id = @BusId`
 
 	args := pgx.NamedArgs{
-		"Carplate": carplate,
+		"BusId": bus_id,
 	}
 	_, err := config.Dbpool.Exec(context.Background(), query, args)
 	if err != nil {
@@ -73,16 +73,31 @@ func DeleteBus(carplate string) error {
 	return nil
 }
 
-func UpdateBusStatus(status bool, carplate string) error {
+func UpdateBus(bus_id string, newCarplate string) error {
+	query := `
+			UPDATE bus
+      SET carplate = $1
+			WHERE bus_id = $2
+		`
+	_, err := config.Dbpool.Exec(context.Background(), query, newCarplate, bus_id)
+	if err != nil {
+		fmt.Println("Error updating bus carplate:", err)
+		return err
+	}
+	fmt.Println("Bus carplate updated successfully")
+	return nil
+}
+
+func UpdateBusStatus(status bool, bus_id string) error {
 	query := `
 		UPDATE bus
 		SET status = @Status 
-		WHERE carplate = @Carplate
+		WHERE bus_id = @BusId
 	`
 
 	args := pgx.NamedArgs{
-		"Carplate": carplate,
-		"Status":   status,
+		"BusId":  bus_id,
+		"Status": status,
 	}
 	_, err := config.Dbpool.Exec(context.Background(), query, args)
 	if err != nil {
@@ -92,16 +107,16 @@ func UpdateBusStatus(status bool, carplate string) error {
 	return nil
 }
 
-func UpdateBusVisibility(hidden string, carplate string) error {
+func UpdateBusVisibility(hidden string, bus_id string) error {
 	query := `
 		UPDATE bus
 		SET hidden = @Hidden 
-		WHERE carplate = @Carplate
+		WHERE bus_id = @BusId
 	`
 
 	args := pgx.NamedArgs{
-		"Carplate": carplate,
-		"Hidden":   hidden,
+		"BusId":  bus_id,
+		"Hidden": hidden,
 	}
 
 	_, err := config.Dbpool.Exec(context.Background(), query, args)

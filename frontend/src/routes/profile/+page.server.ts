@@ -24,10 +24,11 @@ export const actions = {
 			cookies.set('refreshToken', RefreshToken, { path: '/' });
 			locals.session = User;
 			return {
+				success: true,
 				account: User
 			};
 		} catch (err) {
-			console.log(err);
+			return { success: false }
 		}
 	},
 	signOut: async ({ cookies, locals }) => {

@@ -17,7 +17,6 @@ func Event(r chi.Router) {
 		r.Get("/get-current-buses", http.HandlerFunc(controllers.GetCurrentBuses))
 		r.Get("/get-route-steps/{routeName}", http.HandlerFunc(controllers.GetRouteSteps))
 		r.Get("/get-events/{scheduleId}", http.HandlerFunc(controllers.GetEvents))
-		r.Get("/get-all-stops", http.HandlerFunc(controllers.GetAllStops))
 		r.Delete("/delete-follow-bus/{email}", http.HandlerFunc(controllers.DeleteFollowBus))
 	})
 }

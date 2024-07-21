@@ -31,7 +31,7 @@ func AddDriver(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get Driver
-func GetDriver(w http.ResponseWriter, r *http.Request) {
+func GetDrivers(w http.ResponseWriter, r *http.Request) {
 	if data, found := config.Cache.Get("drivers"); found {
 		if drivers, ok := data.([]structs.Driver); ok {
 			w.Header().Set("Content-Type", "application/json")
@@ -42,7 +42,7 @@ func GetDriver(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	drivers, err := services.GetDriver()
+	drivers, err := services.GetDrivers()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -69,7 +69,7 @@ func UpdateDriver(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid driver ID", http.StatusBadRequest)
 		return
 	}
-	drivers, err := services.GetDriver()
+	drivers, err := services.GetDrivers()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -113,7 +113,7 @@ func DeleteDriver(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	drivers, err := services.GetDriver()
+	drivers, err := services.GetDrivers()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -140,7 +140,6 @@ func DeleteDriver(w http.ResponseWriter, r *http.Request) {
 	config.Cache.Delete("drivers")
 	fmt.Fprintln(w, "Driver deleted successfully")
 }
-
 
 func GetScheduleTimeDiff(w http.ResponseWriter, r *http.Request) {
 	timeDiffs, err := services.GetScheduleTimeDiff()

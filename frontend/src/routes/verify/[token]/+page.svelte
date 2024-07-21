@@ -17,6 +17,10 @@
   })
 </script>
 
+<svelte:head>
+	<title>Verify account | SPOH Bus Tracker</title>
+</svelte:head>
+
 {#if loaded}
   <div class="flex flex-col text-center items-center my-auto mx-8">
     <h1 class="mt-16 text-3xl font-semibold">You're verified!</h1>

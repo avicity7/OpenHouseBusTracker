@@ -1,19 +1,24 @@
-import type { EventHelper } from '$lib/types/global';
+import type { EventHelper, EventBus } from '$lib/types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 import { redirect } from '@sveltejs/kit';
 
 export const load = async ({ fetch }) => {
     try {
-        const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/event-helpers/get-event-dropdown`);
+        let response = await fetch(`${PUBLIC_BACKEND_URL}:3000/event-helpers/get-event-dropdown`);
         if (!response.ok) {
             throw new Error("Failed to fetch event helpers");
         }
-        
         const dropdownData = await response.json() as EventHelper[];
-        return {
-            dropdownData
-        };
 
+        response = await fetch(`${PUBLIC_BACKEND_URL}:3000/bus/get-buses`);
+        if (!response.ok) {
+            throw new Error("Failed to fetch dropdown data");
+        }
+        const buses = await response.json() as EventBus[]
+        return {
+            dropdownData,
+            buses
+        }
     } catch (error) {
         console.error(error);
         return {
@@ -26,15 +31,16 @@ export const load = async ({ fetch }) => {
 
 export const actions = {
     updateEventHelper: async({ request}): Promise<void> =>{
-      const form =await request.formData()
+      const form = await request.formData()
   
       const Carplate = form.get('carplate');
+      const BusId = JSON.parse(Carplate!.toString()).BusId
       const Name = form.get('name');
       const ShiftString = form.get('shift');
 
       const Shift = ShiftString === 'true';
 
-      const OldCarplate = form.get('old_carplate');
+      const OldBusId = form.get('old_bus_id');
       const OldName = form.get('old_name');
       const OldShiftString =  form.get('old_shift');
 
@@ -44,10 +50,10 @@ export const actions = {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            NewCarplate: Carplate,
+            NewBusId: BusId,
             NewName: Name,
             NewShift: Shift,
-            OldCarplate,
+            OldBusId,
             OldName,
             OldShift,
             })

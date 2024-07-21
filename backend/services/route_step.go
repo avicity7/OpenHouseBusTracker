@@ -11,12 +11,45 @@ import (
 	// "github.com/jackc/pgx/v5"
 )
 
-func GetAllRouteSteps(routeName string) ([]structs.RouteStep, error) {
+func GetAllRouteSteps() ([]structs.RouteStep, error) {
 	rows, err := config.Dbpool.Query(context.Background(), `
 		SELECT route_name, stop.stop_name, "order", lng, lat FROM route_step rs
 		JOIN stop ON rs.stop_name = stop.stop_name 
 		ORDER BY "order" ASC
 	`)
+	if err != nil {
+		fmt.Println("Error fetching route steps:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var routeSteps []structs.RouteStep
+	for rows.Next() {
+		var routeStep structs.RouteStep
+		if err := rows.Scan(&routeStep.RouteName, &routeStep.StopName, &routeStep.Order, &routeStep.Lng, &routeStep.Lat); err != nil {
+			fmt.Println("Error scanning route step row:", err)
+			return nil, err
+		}
+		routeSteps = append(routeSteps, routeStep)
+	}
+	if err := rows.Err(); err != nil {
+		fmt.Println("Error iterating over route step rows:", err)
+		return nil, err
+	}
+
+	return routeSteps, nil
+}
+
+func GetRouteSteps(routeName string) ([]structs.RouteStep, error) {
+	args := pgx.NamedArgs{
+		"RouteName": routeName,
+	}
+	rows, err := config.Dbpool.Query(context.Background(), `
+		SELECT route_name, stop.stop_name, "order", lng, lat FROM route_step rs
+		JOIN stop ON rs.stop_name = stop.stop_name 
+		WHERE route_name = @RouteName
+		ORDER BY "order" ASC
+	`, args)
 	if err != nil {
 		fmt.Println("Error fetching route steps:", err)
 		return nil, err
@@ -68,7 +101,11 @@ func GetAllStops() ([]structs.Stop, error) {
 // get route
 func GetRouteStep(routeName, stopName string) (structs.RouteStep, error) {
 	var routeStep structs.RouteStep
-	err := config.Dbpool.QueryRow(context.Background(), `SELECT route_name, stop_name, "order" FROM route_step WHERE route_name = $1 AND stop_name = $2`, routeName, stopName).Scan(&routeStep.RouteName, &routeStep.StopName, &routeStep.Order)
+	err := config.Dbpool.QueryRow(context.Background(), `
+	SELECT route_name, stop.stop_name, "order", lng, lat FROM route_step rs
+	JOIN stop ON rs.stop_name = stop.stop_name 
+	WHERE route_name = $1 AND stop_name = $2`, routeName, stopName).Scan(&routeStep.RouteName, &routeStep.StopName, &routeStep.Order)
+
 	if err == sql.ErrNoRows {
 		return structs.RouteStep{}, nil
 	} else if err != nil {

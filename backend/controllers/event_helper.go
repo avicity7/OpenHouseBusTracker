@@ -115,10 +115,10 @@ func UpdateEventHelper(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("Executing SQL query:")
 	fmt.Println("Values:")
-	fmt.Println("NewCarplate:", eventHelper.NewCarplate)
+	fmt.Println("NewCarplate:", eventHelper.NewBusId)
 	fmt.Println("NewEmail:", eventHelper.NewName)
 	fmt.Println("NewShift:", eventHelper.NewShift)
-	fmt.Println("OldCarplate:", eventHelper.OldCarplate)
+	fmt.Println("OldCarplate:", eventHelper.OldBusId)
 	fmt.Println("OldEmail:", eventHelper.OldName)
 	fmt.Println("OldShift:", eventHelper.OldShift)
 
@@ -126,7 +126,7 @@ func UpdateEventHelper(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Failed to update Event Helper", http.StatusInternalServerError)
 		return
-	} 
+	}
 
 	config.Cache.Delete("EventHelpers")
 

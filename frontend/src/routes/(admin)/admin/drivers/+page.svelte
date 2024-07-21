@@ -17,6 +17,7 @@
   let search = '';
   let driverToDelete: Driver | null = null;
   let timers = writable<Record<number, { startTime: number | null, elapsedTime: number }>>({});
+  let payRate = 0;
 
   const getDrivers = async () => {
     const response = await fetch(`${PUBLIC_BACKEND_URL}:3000/driver/get-driver`);
@@ -37,15 +38,17 @@
       const driverHour = ScheduleTimeDiff.find((d: { DriverId: number }) => d.DriverId === driver.DriverId);
       const hoursWorked = driverHour ? convertToHours(driverHour.TimeDifference) : 0;
 
+      const pay = Math.abs(payRate * hoursWorked);
+
       return [
         driver.DriverName,
         hoursWorked.toFixed(2),
-        (100 * hoursWorked).toFixed(2) // to make an input for admin to set pay/hr
+        pay.toFixed(2)
       ];
     });
   }
 
-  async function exportToPDF() {
+  async function exportAllDriversToPDF() {
     const doc = new jsPDF({ putOnlyUsedFonts: true, orientation: 'landscape' });
 
     doc.text('Driver Paysheet', 15, 10);
@@ -67,7 +70,7 @@
       console.error('Error generating table:', error);
     }
 
-    doc.save('drivers_data-autotable.pdf');
+    doc.save('drivers_paysheet.pdf');
   }
 
   // to do: fixed pay/hr?, time diff should always be positive to not show negative pay
@@ -104,6 +107,10 @@
 
 </script>
 
+<svelte:head>
+	<title>Manage - Drivers | SPOH Bus Tracker</title>
+</svelte:head>
+
 <div class="p-6 md:p-12">
   <div class="flex items-center justify-between mb-4">
       <a href="/admin/drivers/add-driver" class="border-black text-white font-semibold text-md px-6 py-2 rounded-xl bg-red-700 hover:bg-red-800 mr-2" data-testid="add-driver-button">
@@ -128,13 +135,13 @@
                   {#each $drivers.filter(driver => driver.DriverName.toLowerCase().includes(search.toLowerCase())) as driver}
                       <tr class="hover:bg-gray-100">
                           <td class="px-6 py-4 whitespace-nowrap text-center">{driver.DriverName}</td>
-                          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                              <div class="flex items-center justify-center">
+                          <td class="px-6 py-2 whitespace-nowrap text-sm font-medium">
+                              <div class="flex items-center justify-center ml-2">
                                   <a href={`drivers/update-driver/${encodeURIComponent(JSON.stringify(driver))}`} class="text-stone-500 hover:text-green-500 mr-8">
                                       <ToolTip text="Update Driver"> 
-                                      <svg xmlns="http://www.w3.org/2 000/svg" class="h-5 w-5 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                           <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3"/>
-                                      </svg>
+                                        </svg>
                                       </ToolTip>
                                   </a>
                                   <button class="text-stone-500 hover:text-red-600 text-2xl" on:click={() => deleteDriver(driver.DriverId, driver.DriverName)}>
@@ -158,7 +165,11 @@
   </div>
 
   <div class="mt-8">
-      <button on:click={exportToPDF} class="border-black text-white font-semibold text-md px-6 py-2 rounded-xl bg-red-700 hover:bg-red-800">
+      <div>
+        <label for="payRate">Pay Rate:</label>
+        <input id="payRate" type="number" bind:value={payRate} class="rounded p-1 w-20 mb-2" />
+      </div>
+      <button on:click={exportAllDriversToPDF} class="border-black text-white font-semibold text-md px-6 py-2 rounded-xl bg-red-700 hover:bg-red-800">
           Export Data to PDF
       </button>
   </div>
