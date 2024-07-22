@@ -1,8 +1,5 @@
 <script lang="ts">
   import SideBarHeader from '$lib/components/SideBarHeader.svelte';
-  import { fade } from 'svelte/transition';
-
-  export let data;
 </script>
 <aside class="fixed h-full bg-white flex flex-col block" data-testid="sidebar">
   <SideBarHeader uri="/admin/users" text="Users" />
@@ -13,9 +10,5 @@
   <SideBarHeader uri="/admin/event-helper" text="Helpers" />
 </aside>
 <aside class="ml-40 bg-zinc-100 transition-all ease-in-out duration-50 min-h-[94vh]">
-  {#key data.pathname}
-    <div in:fade={{ duration: 100, delay: 150 }} out:fade={{ duration: 100 }}>
-      <slot />
-    </div>
-  {/key}
+  <slot />
 </aside>
