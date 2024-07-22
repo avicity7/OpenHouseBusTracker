@@ -14,6 +14,7 @@ func GetSchedule() ([]structs.Schedule, error) {
 	query := `
 		SELECT 
 			bs.bus_schedule_id,
+			bs.bus_id,
 			b.carplate AS Bus_Carplate,
 			r.route_name AS Route_Name,
 			d.driver_name AS Driver_Name,
@@ -41,6 +42,7 @@ func GetSchedule() ([]structs.Schedule, error) {
 		var schedule structs.Schedule
 		err := rows.Scan(
 			&schedule.BusScheduleId,
+			&schedule.BusId,
 			&schedule.Carplate,
 			&schedule.RouteName,
 			&schedule.DriverName,
@@ -152,72 +154,6 @@ func DeleteBusSchedule(scheduleID []int) error {
 
 	return nil
 }
-
-// func GetDropdownData() ([]structs.ScheduleDropdownData, error) {
-// 	var dropdownData []structs.ScheduleDropdownData
-
-// 	query := `
-// 			WITH available_buses AS (
-// 			SELECT carplate, bus_id
-// 			FROM bus
-// 			WHERE bus_id NOT IN (SELECT bus_id FROM bus_schedule)
-// 		),
-// 		available_drivers AS (
-// 			SELECT driver_id, driver_name
-// 			FROM driver
-// 			WHERE driver_id NOT IN (SELECT driver_id FROM bus_schedule)
-// 		)
-// 		SELECT 
-// 			b.bus_id,
-// 			COALESCE(b.carplate, NULL) AS carplate,
-// 			r.route_name,
-// 			COALESCE(d.driver_name, NULL) AS driver_name,
-// 			COALESCE(d.driver_id, NULL) AS driver_id
-// 		FROM 
-// 			(
-// 				SELECT 1 AS dummy
-// 			) dummy_table
-// 		LEFT JOIN 
-// 			available_buses ab ON true
-// 		LEFT JOIN 
-// 			bus b ON ab.bus_id = b.bus_id
-// 		LEFT JOIN 
-// 			route r ON 1=1
-// 		LEFT JOIN 
-// 			available_drivers d ON true
-// 		ORDER BY	
-// 			ab.carplate ASC, d.driver_id ASC;
-//     `
-
-// 	rows, err := config.Dbpool.Query(context.Background(), query)
-// 	if err != nil {
-// 		fmt.Println("Error executing query:", err)
-// 		return nil, err
-// 	}
-// 	defer rows.Close()
-
-// 	for rows.Next() {
-// 		var data structs.ScheduleDropdownData
-// 		var driver structs.Driver
-// 		err := rows.Scan(
-// 			&data.BusId,
-// 			&data.Carplate,
-// 			&data.RouteName,
-// 			&driver.DriverName,
-// 			&driver.DriverId,
-// 		)
-// 		if err != nil {
-// 			fmt.Println("Error scanning row:", err)
-// 			return nil, err
-// 		}
-
-// 		data.Driver = append(data.Driver, driver)
-// 		dropdownData = append(dropdownData, data)
-
-// 	}
-
-// 	return dropdownData, nil
-// }
 
 func GetDropdownData() (structs.ScheduleDropdownData, error) {
 	var dropdownData structs.ScheduleDropdownData

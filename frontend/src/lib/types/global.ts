@@ -141,6 +141,10 @@ export type ChatRoom = {
   LatestMessage: Message
 }
 
+export type RouteStates = {
+  [key: string]: string;
+};
+
 export type Demand = {
   [key: string]: number;
 };
