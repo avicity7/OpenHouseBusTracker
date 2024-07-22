@@ -33,6 +33,7 @@
 	"dependencies": {
 		"@iconify/json": "^2.2.201",
 		"@sveltejs/adapter-vercel": "^5.3.0",
+		"@types/grecaptcha": "^3.0.9",
 		"@types/jsonwebtoken": "^9.0.6",
 		"@types/mapbox-gl": "^3.1.0",
 		"@types/tinycolor2": "^1.4.6",
