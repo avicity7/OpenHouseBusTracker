@@ -1,7 +1,7 @@
 <script lang="ts">
   export let data
   let { buses, routes, scheduleBus, backend_uri, env } = data
-  import type { EventBus, Demand, BusAssignments } from '$lib/types/global.js';
+  import type { EventBus,RouteStates, Demand, BusAssignments } from '$lib/types/global.js';
 	import { onMount } from 'svelte';
   import ToolTip from '$lib/components/ToolTip.svelte';
 	import ToggleSwitch from '$lib/components/ToggleSwitch.svelte';
@@ -10,9 +10,6 @@
 
   let showHidden = false
   let autoScheduling = false
-   type RouteStates = {
-    [key: string]: string;
-  };
 
   let routeStates: RouteStates = {};
   
@@ -60,10 +57,11 @@
     }
 
     let touringBuses = buses.filter(bus => bus.Status);
-    touringBuses = touringBuses.filter(bus => scheduleBus.some(sb => sb.Carplate === bus.Carplate));
+    touringBuses = touringBuses.filter(bus => scheduleBus.some(sb => sb.BusId === bus.BusId));
 
-    let initialAssignments = scheduleBus.filter(sb => touringBuses.some(tb => tb.Carplate === sb.Carplate));
+    let initialAssignments = scheduleBus.filter(sb => touringBuses.some(tb => tb.BusId === sb.BusId));
 
+    console.log(initialAssignments)
     let totalBuses = touringBuses.length;
 
     // calculation of importance for buses, could change back to fix assignment of buses if needed
@@ -76,17 +74,17 @@
       for (let i = 0; i < numBusesForRoute && touringBuses.length > 0; i++) {
         let bus = touringBuses.pop();
         if (bus) {
-          busAssignments[route].push(bus.Carplate);
+          busAssignments[route].push(bus.BusId);
         }
       }
     }
 
     let assignmentData = [];
     for (let route in busAssignments) {
-      for (let carplate of busAssignments[route]) {
-        let initialAssignment = initialAssignments.find(ia => ia.Carplate === carplate);
+      for (let busId of busAssignments[route]) {
+        let initialAssignment = initialAssignments.find(ia => ia.BusId === busId);
         if (initialAssignment && initialAssignment.RouteName !== route) {
-          assignmentData.push({ Carplate: carplate, RouteName: route });
+          assignmentData.push({ BusId: busId, RouteName: route });
         }
       }
     }
