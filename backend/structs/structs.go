@@ -110,8 +110,8 @@ type ScheduleDropdownData struct {
 }
 
 type Driver struct {
-	DriverId   *int
-	DriverName *string
+	DriverId   int
+	DriverName string
 }
 
 type FollowBus struct {
