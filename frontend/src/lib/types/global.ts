@@ -31,6 +31,12 @@ export type Schedule = {
   Driver: Driver[]
 }
 
+export type DropdownData = {
+  Buses:  EventBus[],
+  Routes: Route[],
+  Drivers: Driver[]
+}
+
 export type Driver = {
 	DriverId: number;
 	DriverName: string;

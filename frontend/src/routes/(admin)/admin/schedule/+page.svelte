@@ -12,11 +12,11 @@
     let startTime = "";
     let endTime = "";
 
-    let uniqueRoutes = [];
-    let uniqueCarplates = [];
+    let uniqueRoutes: string[] = [];
+    let uniqueCarplates: string[] = [];
 
     export let data;
-    const { backend_uri, schedules, dropdownData } = data
+    const { backend_uri, schedules, routes, carplates } = data
 
     async function deleteSchedule(id: number | number[]) {
         try {
@@ -109,28 +109,18 @@
         });
     }
 
-        function getUniqueRoutes() {
-            if (dropdownData) {
-                return [...new Set(dropdownData.map(item => item.RouteName))];
-            } else {
-                return [];
-            }
-        }
-
-        function getUniqueCarplates() {
-            if (dropdownData) {
-                return [...new Set(dropdownData.map(item => item.Carplate))];
-            } else {
-                return [];
-            }
-        }
 
     onMount(() => {
         if (data && schedules) {
             busSchedule = schedules;
         }
-        uniqueRoutes = getUniqueRoutes();
-        uniqueCarplates = getUniqueCarplates();
+        
+        if (Array.isArray(routes)) {
+                uniqueRoutes = routes.map(route => route.RouteName);
+            }
+        if (Array.isArray(carplates)) {
+            uniqueCarplates = carplates.map(carplate => carplate.Carplate);
+        }
     });
 
 </script>
@@ -156,13 +146,13 @@
         <div class="ml-auto">
             <select class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={selectedRoute} on:change ={filterSchedules} data-testid="search-route">
                 <option value="">All Routes</option>
-                {#each getUniqueRoutes() as route}
+                {#each uniqueRoutes as route}
                     <option value={route}>{route}</option>
                 {/each}
             </select>
             <select class="border border-gray-300 text-sm rounded-xl px-3 py-2" bind:value={selectedCarplate} on:change={filterSchedules} data-testid="search-carplate">
                 <option value="">All Carplates</option>
-                {#each getUniqueCarplates() as carplate}
+                {#each uniqueCarplates as carplate}
                     <option value={carplate}>{carplate}</option>
                 {/each}
             </select>

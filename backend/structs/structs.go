@@ -103,10 +103,9 @@ type UpdateScheduleRoute struct {
 }
 
 type ScheduleDropdownData struct {
-	BusId     string
-	Carplate  string
-	RouteName string
-	Driver    []Driver
+	Buses      []EventBus
+	Routes     []Route
+	Drivers    []Driver
 }
 
 type Driver struct {
