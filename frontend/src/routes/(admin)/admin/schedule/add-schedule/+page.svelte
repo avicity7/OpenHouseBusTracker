@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import type { Schedule, Driver, EventBus } from '$lib/types/global.js';
+	import type { EventBus } from '$lib/types/global.js';
 	import { page } from '$app/stores';
 	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
 	import CustomDropdown from '$lib/components/CustomDropdown.svelte';
@@ -8,59 +7,15 @@
 	export let data
 	const { dropdownData } = data
 
-	let buses: Array<EventBus> = []
-	let routeNames: Array<string> = []
-	let drivers: Array<Driver> = []
 	let selectedBus: EventBus
 	let selectedRouteName: string | null = null;
 	let selectedDriverId: number | null = null;
 	let errorMessage: string | null = null;
 
-	const setDropdownOptions = () => {
-        if (!dropdownData) return;
-
-        const uniqueBusId = new Set<string>();
-        const uniqueRouteNames = new Set<string>();
-        const validDrivers: Map<number, string> = new Map();
-
-        dropdownData.forEach(({ BusId, Carplate, RouteName, Driver }: Schedule) => {
-			let bus = {BusId: BusId, Carplate: Carplate, Status: false, Hidden: false}
-            if (Carplate && BusId) {	
-				let ol = uniqueBusId.size
-                uniqueBusId.add(BusId)
-				if (uniqueBusId.size != ol) buses.push(bus)
-            }
-            if (RouteName) {
-                uniqueRouteNames.add(RouteName);
-            }
-            if (Driver && Array.isArray(Driver)) {
-                Driver.forEach(({ DriverId, DriverName }) => {
-                    if (DriverId !== null && DriverName !== null) {
-                        validDrivers.set(DriverId, DriverName);
-                    }
-                });
-            }
-        });
-
-        routeNames = Array.from(uniqueRouteNames);
-        drivers = Array.from(validDrivers.entries()).map(([DriverId, DriverName]) => ({
-            DriverId,
-            DriverName,
-        }));
-    };
-
-	$: selectedBus, () => {
-		console.log('Selected bus:', selectedBus);
-	};
-	 	
 	if ($page.status === 409) {
       errorMessage = $page.error?.message || 'A schedule with the same carplate or driver already exists.';
     }
 
-	onMount(() => {
-		console.log(dropdownData)
-		setDropdownOptions();
-	});
 </script>
 
 <div class="flex justify-center items-center h-full">
@@ -72,7 +27,7 @@
 				<CustomDropdown
 				  label="Bus"
 				  name="bus"
-				  options={buses}
+				  options={dropdownData?.Buses}
 				  required
 				  bind:selected={selectedBus}
 				/>
@@ -82,7 +37,7 @@
 				<CustomDropdown
 				  label="Route Name"
 				  name="route_name"
-				  options={routeNames}
+				  options={dropdownData?.Routes}
 				  bind:selected={selectedRouteName}
 				/>
 			  </div>
@@ -91,7 +46,7 @@
 				<CustomDropdown
 					label="Driver"
 					name="driver_id"
-					options={drivers}
+					options={dropdownData?.Drivers}
 					bind:selected={selectedDriverId}
 				/>
 			  </div>

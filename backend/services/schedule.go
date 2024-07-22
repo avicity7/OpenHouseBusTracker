@@ -62,15 +62,6 @@ func CreateBusSchedule(schedule structs.NewSchedule) error {
         SELECT COUNT(*) FROM bus_schedule 
         WHERE (bus_id = $1 OR driver_id = $2)
     `
-	// TO BE CONFIRMED: can admin only create one bus/driver, with his full schedule length? or should it be the admin can
-	// create the same one diff route with diff timing
-
-	// having schedule by same driver/carplate and diff timing makes the dynamic options useless, allows all carplates and driver to be available
-
-	// cant do same-time duplication handling if conditional options is needed
-
-	// to try: in the conditional dropdown options, in the check and a WHERE start/end time is not e	xistent alr
-	// then in the CreateBusSchedule, do the check for the time inside bus schedule with a AND after the WHERE condition
 	err := config.Dbpool.QueryRow(context.Background(), checkQuery,
 		schedule.BusId,
 		schedule.DriverId).Scan(&existingCount)
@@ -88,6 +79,7 @@ func CreateBusSchedule(schedule structs.NewSchedule) error {
         INSERT INTO bus_schedule (bus_id, route_name, driver_id, start_time, end_time) 
         VALUES ($1, $2, $3, $4, $5)
     `
+
 	_, err = config.Dbpool.Exec(context.Background(), insertQuery,
 		schedule.BusId,
 		schedule.RouteName,
@@ -161,68 +153,135 @@ func DeleteBusSchedule(scheduleID []int) error {
 	return nil
 }
 
-func GetDropdownData() ([]structs.ScheduleDropdownData, error) {
-	var dropdownData []structs.ScheduleDropdownData
+// func GetDropdownData() ([]structs.ScheduleDropdownData, error) {
+// 	var dropdownData []structs.ScheduleDropdownData
 
-	query := `
-			WITH available_buses AS (
-			SELECT carplate, bus_id
-			FROM bus
-			WHERE bus_id NOT IN (SELECT bus_id FROM bus_schedule)
-		),
-		available_drivers AS (
-			SELECT driver_id, driver_name
-			FROM driver
-			WHERE driver_id NOT IN (SELECT driver_id FROM bus_schedule)
-		)
-		SELECT 
-			b.bus_id,
-			COALESCE(b.carplate, NULL) AS carplate,
-			r.route_name,
-			COALESCE(d.driver_name, NULL) AS driver_name,
-			COALESCE(d.driver_id, NULL) AS driver_id
-		FROM 
-			(
-				SELECT 1 AS dummy
-			) dummy_table
-		LEFT JOIN 
-			available_buses ab ON true
-		LEFT JOIN 
-			bus b ON ab.bus_id = b.bus_id
-		LEFT JOIN 
-			route r ON 1=1
-		LEFT JOIN 
-			available_drivers d ON true
-		ORDER BY	
-			ab.carplate ASC, d.driver_id ASC;
-    `
+// 	query := `
+// 			WITH available_buses AS (
+// 			SELECT carplate, bus_id
+// 			FROM bus
+// 			WHERE bus_id NOT IN (SELECT bus_id FROM bus_schedule)
+// 		),
+// 		available_drivers AS (
+// 			SELECT driver_id, driver_name
+// 			FROM driver
+// 			WHERE driver_id NOT IN (SELECT driver_id FROM bus_schedule)
+// 		)
+// 		SELECT 
+// 			b.bus_id,
+// 			COALESCE(b.carplate, NULL) AS carplate,
+// 			r.route_name,
+// 			COALESCE(d.driver_name, NULL) AS driver_name,
+// 			COALESCE(d.driver_id, NULL) AS driver_id
+// 		FROM 
+// 			(
+// 				SELECT 1 AS dummy
+// 			) dummy_table
+// 		LEFT JOIN 
+// 			available_buses ab ON true
+// 		LEFT JOIN 
+// 			bus b ON ab.bus_id = b.bus_id
+// 		LEFT JOIN 
+// 			route r ON 1=1
+// 		LEFT JOIN 
+// 			available_drivers d ON true
+// 		ORDER BY	
+// 			ab.carplate ASC, d.driver_id ASC;
+//     `
 
-	rows, err := config.Dbpool.Query(context.Background(), query)
+// 	rows, err := config.Dbpool.Query(context.Background(), query)
+// 	if err != nil {
+// 		fmt.Println("Error executing query:", err)
+// 		return nil, err
+// 	}
+// 	defer rows.Close()
+
+// 	for rows.Next() {
+// 		var data structs.ScheduleDropdownData
+// 		var driver structs.Driver
+// 		err := rows.Scan(
+// 			&data.BusId,
+// 			&data.Carplate,
+// 			&data.RouteName,
+// 			&driver.DriverName,
+// 			&driver.DriverId,
+// 		)
+// 		if err != nil {
+// 			fmt.Println("Error scanning row:", err)
+// 			return nil, err
+// 		}
+
+// 		data.Driver = append(data.Driver, driver)
+// 		dropdownData = append(dropdownData, data)
+
+// 	}
+
+// 	return dropdownData, nil
+// }
+
+func GetDropdownData() (structs.ScheduleDropdownData, error) {
+	var dropdownData structs.ScheduleDropdownData
+
+	busQuery := `SELECT bus_id, carplate FROM bus 
+				 WHERE bus_id 
+				 NOT IN (SELECT bus_id FROM bus_schedule)`
+	busRows, err := config.Dbpool.Query(context.Background(), busQuery)
 	if err != nil {
-		fmt.Println("Error executing query:", err)
-		return nil, err
+		fmt.Println("Error executing bus query:", err)
+		return dropdownData, err
 	}
-	defer rows.Close()
+	defer busRows.Close()
 
-	for rows.Next() {
-		var data structs.ScheduleDropdownData
-		var driver structs.Driver
-		err := rows.Scan(
-			&data.BusId,
-			&data.Carplate,
-			&data.RouteName,
-			&driver.DriverName,
-			&driver.DriverId,
-		)
-		if err != nil {
-			fmt.Println("Error scanning row:", err)
-			return nil, err
+	var buses []structs.EventBus
+	for busRows.Next() {
+		var bus structs.EventBus
+		if err := busRows.Scan(&bus.BusId, &bus.Carplate); err != nil {
+			fmt.Println("Error scanning bus row:", err)
+			return dropdownData, err
 		}
-
-		data.Driver = append(data.Driver, driver)
-		dropdownData = append(dropdownData, data)
-
+		buses = append(buses, bus)
 	}
+	dropdownData.Buses = buses
+
+	routeQuery := `SELECT route_name, color FROM route`
+	routeRows, err := config.Dbpool.Query(context.Background(), routeQuery)
+	if err != nil {
+		fmt.Println("Error executing route query:", err)
+		return dropdownData, err
+	}
+	defer routeRows.Close()
+
+	var routes []structs.Route
+	for routeRows.Next() {
+		var route structs.Route
+		if err := routeRows.Scan(&route.RouteName, &route.Color); err != nil {
+			fmt.Println("Error scanning route row:", err)
+			return dropdownData, err
+		}
+		routes = append(routes, route)
+	}
+	dropdownData.Routes = routes
+
+	driverQuery := `SELECT driver_id, driver_name FROM driver 
+					WHERE driver_id 
+					NOT IN (SELECT driver_id FROM bus_schedule)`
+	driverRows, err := config.Dbpool.Query(context.Background(), driverQuery)
+	if err != nil {
+		fmt.Println("Error executing driver query:", err)
+		return dropdownData, err
+	}
+	defer driverRows.Close()
+
+	var drivers []structs.Driver
+	for driverRows.Next() {
+		var driver structs.Driver
+		if err := driverRows.Scan(&driver.DriverId, &driver.DriverName); err != nil {
+			fmt.Println("Error scanning driver row:", err)
+			return dropdownData, err
+		}
+		drivers = append(drivers, driver)
+	}
+	dropdownData.Drivers = drivers
 
 	return dropdownData, nil
 }

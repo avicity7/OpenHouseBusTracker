@@ -1,8 +1,7 @@
 import { error, redirect, type Load } from '@sveltejs/kit';
-import type { Route, EventBus, Driver } from '$lib/types/global';
+import type { Route, EventBus, Driver, DropdownData } from '$lib/types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
-// used page.server.ts instead of page.js for the need of updated information and fast ssr
 export const load: Load = async ({ fetch, params }) => {
 	const { id } = params
 	let response = await fetch(`${PUBLIC_BACKEND_URL}:3000/bus/get-buses`);
@@ -22,6 +21,13 @@ export const load: Load = async ({ fetch, params }) => {
 	if (!routes) {
 		routes = [];
 	}
+
+	response = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/get-dropdown-data`);
+	if (!response.ok) {
+		throw new Error("Failed to fetch dropdown data");
+	}
+	const dropdownData = await response.json() as DropdownData;
+
 	const scheduleUrl = `${PUBLIC_BACKEND_URL}:3000/schedules/get-schedule/${id}`;
 	response = await fetch(scheduleUrl);
 	if (!response.ok) {
@@ -34,6 +40,7 @@ export const load: Load = async ({ fetch, params }) => {
 		buses,
 		drivers,
 		routes,
+		dropdownData,
 		schedule
 	};
 };
