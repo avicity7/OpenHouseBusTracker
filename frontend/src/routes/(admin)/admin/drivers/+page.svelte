@@ -2,18 +2,16 @@
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { jsPDF } from 'jspdf';
-	// import type { CellConfig } from 'jspdf'
 	import ToolTip from '$lib/components/ToolTip.svelte';
 	import type { Driver } from '$lib/types/global';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 	import autoTable from 'jspdf-autotable';
 
 	export let data;
-	let { backend_uri, ScheduleTimeDiff, drivers } = data;
+	let { ScheduleTimeDiff, drivers } = data;
 
 	if (!drivers) drivers = [];
 	let driverHours = data.ScheduleTimeDiff;
-	let alert = '';
 	let search = '';
 	let driverToDelete: Driver | null = null;
 	let timers = writable<Record<number, { startTime: number | null; elapsedTime: number }>>({});
@@ -70,7 +68,57 @@
 		doc.save('drivers_paysheet.pdf');
 	}
 
-	// to do: fixed pay/hr?, time diff should always be positive to not show negative pay
+	function exportDriverToPDF(driver: Driver) {
+		const doc = new jsPDF();
+
+		const logoUrl = '/favicon.png';
+		const logoWidth = 15;
+		const logoHeight = 15;
+
+		doc.addImage(logoUrl, 'PNG', 10, 10, logoWidth, logoHeight);
+
+		doc.setFont('helvetica', 'bold');
+		doc.setFontSize(14);
+
+		doc.text('Driver Pay Statement', 10, 35);
+
+		doc.setFontSize(12);
+		doc.setFont('helvetica', 'normal');
+
+		doc.text(`Driver Name: ${driver.DriverName}`, 10, 50);
+		doc.text(`Pay Rate: $${payRate.toFixed(2)} per hour`, 10, 60);
+
+		const driverHour = ScheduleTimeDiff.find(
+			(d: { DriverId: number }) => d.DriverId === driver.DriverId
+		);
+		const hoursWorked = driverHour ? convertToHours(driverHour.TimeDifference) : 0;
+		const pay = Math.abs(payRate * hoursWorked);
+
+		doc.text(`Hours Worked: ${hoursWorked.toFixed(2)} hours`, 10, 70);
+		doc.text(`Total Pay: $${pay.toFixed(2)}`, 10, 80);
+
+		doc.setFont('helvetica', 'italic');
+		doc.text(
+			`This document serves as a formal statement of hours worked and pay for the period specified.`,
+			10,
+			100
+		);
+		doc.text(
+			`Please review the information provided and sign below to confirm receipt of payment.`,
+			10,
+			110
+		);
+
+		doc.setDrawColor(0, 0, 0);
+		doc.line(10, 140, 80, 140);
+		doc.text('Signature', 10, 145);
+
+		doc.setDrawColor(0, 0, 0);
+		doc.line(100, 140, 170, 140);
+		doc.text('Date', 100, 145);
+
+		doc.save(`${driver.DriverName}_paysheet.pdf`);
+	}
 
 	async function deleteDriver(driver: Driver) {
 		driverToDelete = driver;
@@ -96,9 +144,6 @@
 
 	onMount(() => {
 		getDrivers();
-		const interval = setInterval(() => {
-			timers.update((currentTimers) => ({ ...currentTimers }));
-		}, 1000);
 	});
 </script>
 
@@ -145,13 +190,13 @@
 					{#each drivers.filter( (driver) => driver.DriverName.toLowerCase().includes(search.toLowerCase()) ) as driver}
 						<tr class="hover:bg-gray-100">
 							<td class="px-6 py-4 whitespace-nowrap text-center">{driver.DriverName}</td>
-							<td class="px-6 py-2 whitespace-nowrap text-sm font-medium">
-								<div class="flex items-center justify-center ml-2">
+							<td class="px-6 py-2 whitespace-nowrap text-sm font-medium ">
+								<div class="flex items-center justify-center ml-2 gap-4">
 									<a
 										href={`drivers/update-driver/${encodeURIComponent(JSON.stringify(driver))}`}
-										class="text-stone-500 hover:text-green-500 mr-8"
+										class="text-stone-500 hover:text-green-500"
 									>
-										<ToolTip text="Update Driver">
+										<ToolTip text="Update Driver">	
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
 												class="h-5 w-5 mr-1"
@@ -197,6 +242,20 @@
 														/>
 													</g>
 												</svg>
+											</svg>
+										</ToolTip>
+									</button>
+									<!-- colour undetermined LOL -->
+									<button
+										class="text-stone-500 hover:text-red-600 text-2xl"
+										on:click={() => exportDriverToPDF(driver)}
+									>
+										<ToolTip text="Export to PDF">
+											<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}>
+												<g fill="none" fill-rule="evenodd">
+													<path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.019-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z" />
+													<path fill="currentColor" d="M13.586 2a2 2 0 0 1 1.284.467l.13.119L19.414 7a2 2 0 0 1 .578 1.238l.008.176V20a2 2 0 0 1-1.85 1.995L18 22H6a2 2 0 0 1-1.995-1.85L4 20V4a2 2 0 0 1 1.85-1.995L6 2zM12 4H6v16h12V10h-4.5a1.5 1.5 0 0 1-1.493-1.356L12 8.5zm.988 7.848a6.22 6.22 0 0 0 2.235 3.872c.887.717.076 2.121-.988 1.712a6.22 6.22 0 0 0-4.47 0c-1.065.41-1.876-.995-.989-1.712a6.22 6.22 0 0 0 2.235-3.872c.178-1.127 1.8-1.126 1.977 0m-.99 2.304l-.688 1.196h1.38zM14 4.414V8h3.586z" />
+												</g>
 											</svg>
 										</ToolTip>
 									</button>
