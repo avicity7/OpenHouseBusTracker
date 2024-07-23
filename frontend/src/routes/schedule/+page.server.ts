@@ -1,4 +1,4 @@
-import type { Schedule } from '$lib/types/global.ts';
+import type { Schedule, SwapRequest } from '$lib/types/global.ts';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 export const load = async ({ fetch, locals }) => {
@@ -19,12 +19,16 @@ export const load = async ({ fetch, locals }) => {
             throw new Error("Failed to fetch future schedules");
         }
 
+        const swapRequestResponse = await fetch(`${PUBLIC_BACKEND_URL}:3000/event-helpers/get-swap-requests/${email}`)
+
         const currentSchedules = await currentResponse.json() as Schedule[];
         const futureSchedules = await futureResponse.json() as Schedule[];
+        const swapRequests = await swapRequestResponse.json() as SwapRequest[]
 
         return {
             currentSchedules,
-            futureSchedules
+            futureSchedules,
+            swapRequests
         };
 
     } catch (error) {
