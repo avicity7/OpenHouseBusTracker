@@ -9,11 +9,11 @@ export const load = async () => {
 		}
 		const ScheduleTimeDiff = await response.json();
 
-   	response = await fetch(`${PUBLIC_BACKEND_URL}:3000/driver/get-drivers`);
-    if (!response.ok) {
-			throw new Error(`Failed to fetch: ${response.statusText}`);
-    }
-    const drivers = await response.json() as Driver[];
+		response = await fetch(`${PUBLIC_BACKEND_URL}:3000/driver/get-drivers`);
+		if (!response.ok) {
+				throw new Error(`Failed to fetch: ${response.statusText}`);
+		}
+		const drivers = await response.json() as Driver[];
 
 		return {
 			ScheduleTimeDiff,
