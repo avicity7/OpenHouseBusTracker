@@ -5,10 +5,13 @@
     export let label: string = "";
     export let required: boolean = false;
     export let name: string = "";
+    export let searchable: boolean = false; 
 
     let isOpen = false;
     let error = "";
-    let selectedDisplay: any
+    let selectedDisplay: any;
+    let searchQuery: string = '';
+    let filteredOptions: any[] = [];
 
     let dropdownId = `dropdown-${Math.random().toString(36).substring(2,9)}`; // either this or increment by 1
 
@@ -17,8 +20,8 @@
     }
 
     function selectOption(option: any) {
-        selected = typeof(option) == "object" ? JSON.stringify(option) : option
-        selectedDisplay = option
+        selected = typeof(option) == "object" ? JSON.stringify(option) : option;
+        selectedDisplay = option;
         isOpen = false;
         validateSelection();
     }
@@ -31,10 +34,21 @@
         }
     }
 
+    function filterOptions() {
+        filteredOptions = options.filter(option => {
+            const displayText = typeof(option) === 'object' ?
+                (option.DriverName || option.RouteName || option.Carplate) :
+                option;
+
+            return displayText.toLowerCase().includes(searchQuery.toLowerCase());
+        });
+    }
+
     onMount(() => {
-        let mutated = typeof(selected) == "object"
-        selected = typeof(selected) == "object" ? JSON.stringify(selected) : selected
-        selectedDisplay = mutated ? JSON.parse(selected) : selected
+        let mutated = typeof(selected) == "object";
+        selected = typeof(selected) == "object" ? JSON.stringify(selected) : selected;
+        selectedDisplay = mutated ? JSON.parse(selected) : selected;
+
         const handleClickOutside = (event: MouseEvent) => {
             const dropdown = document.getElementById(dropdownId);
             if (isOpen && dropdown && !dropdown.contains(event.target as Node)) {
@@ -48,6 +62,9 @@
             document.removeEventListener('click', handleClickOutside);
         };
     });
+
+    $: searchQuery, filterOptions();
+    $: options, filterOptions();
 </script>
 
 <div class="mb-4">
@@ -77,9 +94,19 @@
             </svg>
         </button>
         {#if isOpen}
-            <ul id={`${dropdownId}-list`} role="listbox" class="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1">
-                {#if options.length > 0}    
-                    {#each options as option (option)}
+            <ul id={`${dropdownId}-list`} role="listbox" class="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-96 overflow-y-auto">
+                {#if searchable}
+                    <div class="px-3 py-2">
+                        <input
+                            type="text"
+                            placeholder="Search..."
+                            bind:value={searchQuery}
+                            class="block w-full px-3 py-2 border rounded-md text-sm focus:border-red-500 focus:outline-none"
+                        />
+                    </div>
+                {/if}
+                {#if filteredOptions.length > 0}
+                    {#each filteredOptions as option (option)}
                         <li>
                             <button
                                 type="button"

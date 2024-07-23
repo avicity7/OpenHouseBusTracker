@@ -10,6 +10,8 @@
 
 	let carplates: string[] = [];
 	let names: string[] = [];
+	let filteredNames: string[] = [];
+	let searchQuery: string = '';
 
 	let selectedCarplate: string;
 	let selectedNames: Set<string> = new Set();
@@ -33,6 +35,13 @@
 
 		carplates = Array.from(uniqueCarplates);
 		names = Array.from(uniqueNames);
+		filterNames();
+	}
+
+	function filterNames() {
+		filteredNames = names.filter(name =>
+			name.toLowerCase().includes(searchQuery.toLowerCase())
+		);
 	}
 
 	function toggleNameSelection(name: string) {
@@ -54,7 +63,12 @@
 		}
 	});
 
-	const shiftOptions = [true, false];
+	$: searchQuery, filterNames();
+
+	const shiftOptions = [
+		{ label: "AM", value: "true" },
+		{ label: "PM", value: "false" }
+	];
 </script>
 
 <div class="flex justify-center items-center h-full">
@@ -68,6 +82,7 @@
 					name="bus"
 					options={buses}
 					required
+					searchable
 					bind:selected={selectedCarplate}
 				/>
 			</div>
@@ -75,10 +90,18 @@
 			<div class="mb-4">
 				<fieldset>
 					<legend class="block text-sm font-medium mb-1">Names:</legend>
-					{#if names.length === 0 || names === null}
+					<div class="mb-4 ">
+						<input
+							type="text"
+							placeholder="Search names..."
+							bind:value={searchQuery}
+							class="block w-full px-3 py-2 border rounded-md text-sm focus:border-red-600 focus:outline-none"
+							/>
+					</div>
+					{#if filteredNames.length === 0 || filteredNames === null}
 						<p class="text-sm text-gray-500">No options available</p>
 					{:else}
-						{#each names as name}
+						{#each filteredNames as name}
 							<div class="flex items-center mb-2">
 								<input
 									type="checkbox"
@@ -95,26 +118,27 @@
 				</fieldset>
 			</div>
 
-			<!-- <div class="mb-4">
-				<label for="shift" class="block text-sm font-medium mb-1">Shift:</label>
-				<select
-					id="shift"
-					name="shift"
-					bind:value={selectedShift}
-					required
-					class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-500"
-				>
-					<option value="true">AM</option>
-					<option value="false">PM</option>
-				</select>
-			</div> -->
-
-			<CustomDropdown
-				label="Shift"
-				name="shift"
-				options={shiftOptions}
-				bind:selected={selectedShift}
-			/>
+			<div class="mb-4">
+				<fieldset>
+					<legend class="block text-sm font-medium mb-1">Shift:</legend>
+					<div class="flex items-center space-x-4">
+						{#each shiftOptions as { label, value }}
+							<div class="flex items-center">
+								<input
+									type="radio"
+									name="shift"
+									id={label}
+									value={value}
+									bind:group={selectedShift}
+									class="mr-2"
+									required
+								/>
+								<label for={label} class="text-sm">{label}</label>
+							</div>
+						{/each}
+					</div>
+				</fieldset>
+			</div>
 
 			<div class="mt-4 flex justify-center">
 				<button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-800">
