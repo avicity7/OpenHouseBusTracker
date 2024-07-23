@@ -54,7 +54,10 @@
 		}
 	});
 
-	const shiftOptions = [true, false];
+	const shiftOptions = [
+		{ label: "AM", value: "true" },
+		{ label: "PM", value: "false" }
+	];
 </script>
 
 <div class="flex justify-center items-center h-full">
@@ -109,12 +112,34 @@
 				</select>
 			</div> -->
 
-			<CustomDropdown
+			<!-- <CustomDropdown
 				label="Shift"
 				name="shift"
 				options={shiftOptions}
 				bind:selected={selectedShift}
-			/>
+			/> -->
+			
+			<div class="mb-4">
+				<fieldset>
+					<legend class="block text-sm font-medium mb-1">Shift:</legend>
+					<div class="flex items-center space-x-4">
+						{#each shiftOptions as { label, value }}
+							<div class="flex items-center">
+								<input
+									type="radio"
+									name="shift"
+									id={label}
+									value={value}
+									bind:group={selectedShift}
+									class="mr-2"
+									required
+								/>
+								<label for={label} class="text-sm">{label}</label>
+							</div>
+						{/each}
+					</div>
+				</fieldset>
+			</div>
 
 			<div class="mt-4 flex justify-center">
 				<button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-800">
