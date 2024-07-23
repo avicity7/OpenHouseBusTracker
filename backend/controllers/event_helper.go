@@ -10,6 +10,7 @@ import (
 	"server/structs"
 
 	// "github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5"
 	"github.com/patrickmn/go-cache"
 )
 
@@ -111,17 +112,6 @@ func UpdateEventHelper(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("Received update request for event helper: %+v\n", eventHelper)
-
-	fmt.Println("Executing SQL query:")
-	fmt.Println("Values:")
-	fmt.Println("NewCarplate:", eventHelper.NewBusId)
-	fmt.Println("NewEmail:", eventHelper.NewName)
-	fmt.Println("NewShift:", eventHelper.NewShift)
-	fmt.Println("OldCarplate:", eventHelper.OldBusId)
-	fmt.Println("OldEmail:", eventHelper.OldName)
-	fmt.Println("OldShift:", eventHelper.OldShift)
-
 	err = services.UpdateEventHelper(eventHelper)
 	if err != nil {
 		http.Error(w, "Failed to update Event Helper", http.StatusInternalServerError)
@@ -174,4 +164,90 @@ func GetEventHelperDropdownData(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(response)
+}
+
+func GetAvailableSwaps(w http.ResponseWriter, r *http.Request) {
+	email := chi.URLParam(r, "email")
+
+	helpers, err := services.GetAvailableSwaps(email)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+
+	response, err := json.Marshal(helpers)
+	if err != nil {
+		http.Error(w, "Failed to marshal dropdown data", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(200)
+	w.Write(response)
+}
+
+func CreateSwapRequest(w http.ResponseWriter, r *http.Request) {
+	var swap_request structs.SwapRequest
+	err := json.NewDecoder(r.Body).Decode(&swap_request)
+	if err != nil {
+		http.Error(w, "Error on Decoding Follow Bus", 500)
+		return
+	}
+
+	err = services.CreateSwapRequest(swap_request)
+	if err != nil {
+		http.Error(w, "Failed to marshal dropdown data", http.StatusInternalServerError)
+	}
+
+	w.WriteHeader(200)
+}
+
+func GetSwapRequests(w http.ResponseWriter, r *http.Request) {
+	email := chi.URLParam(r, "email")
+
+	swap_requests, err := services.GetSwapRequests(email)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+
+	response, err := json.Marshal(swap_requests)
+	if err != nil {
+		http.Error(w, "Failed to marshal dropdown data", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(200)
+	w.Write(response)
+}
+
+func AcceptSwapRequest(w http.ResponseWriter, r *http.Request) {
+	var swap_request structs.SwapRequest
+	err := json.NewDecoder(r.Body).Decode(&swap_request)
+	if err != nil {
+		http.Error(w, "Error on Decoding Follow Bus", 500)
+		return
+	}
+
+	err = services.AcceptSwapRequest(swap_request)
+	if err != nil {
+		w.WriteHeader(500)
+	}
+
+	w.WriteHeader(200)
+}
+
+func DeleteSwapRequest(w http.ResponseWriter, r *http.Request) {
+	var swap_request structs.SwapRequest
+	err := json.NewDecoder(r.Body).Decode(&swap_request)
+	if err != nil {
+		http.Error(w, "Error on Decoding Follow Bus", 500)
+		return
+	}
+
+	err = services.DeleteSwapRequest(swap_request)
+	if err != nil {
+		w.WriteHeader(500)
+	}
+
+	w.WriteHeader(200)
 }

@@ -266,7 +266,7 @@ func GetScheduleByUser(email string) ([]structs.Schedule, error) {
 	var schedules []structs.Schedule
 
 	query := `
-			SELECT bus_schedule_id, bus.carplate, route_name, driver_name, bs.start_time, bs.end_time FROM event_helper eh
+			SELECT bus_schedule_id, bus.bus_id, bus.carplate, route_name, driver_name, bs.start_time, bs.end_time FROM event_helper eh
 			JOIN bus ON eh.bus_id = bus.bus_id 
 			JOIN bus_schedule bs ON eh.bus_id  = bs.bus_id 
 			JOIN driver d ON bs.driver_id = d.driver_id 
@@ -287,9 +287,10 @@ func GetScheduleByUser(email string) ([]structs.Schedule, error) {
 		var schedule structs.Schedule
 		err := rows.Scan(
 			&schedule.BusScheduleId,
+			&schedule.BusId,
 			&schedule.Carplate,
-			&schedule.DriverName,
 			&schedule.RouteName,
+			&schedule.DriverName,
 			&schedule.StartTime,
 			&schedule.EndTime,
 		)
@@ -357,9 +358,10 @@ func GetFutureScheduleByUser(email string) ([]structs.Schedule, error) {
 		var schedule structs.Schedule
 		err := rows.Scan(
 			&schedule.BusScheduleId,
+			&schedule.BusId,
 			&schedule.Carplate,
-			&schedule.DriverName,
 			&schedule.RouteName,
+			&schedule.DriverName,
 			&schedule.StartTime,
 			&schedule.EndTime,
 		)

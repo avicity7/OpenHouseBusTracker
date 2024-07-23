@@ -19,16 +19,15 @@ export type UserRole = {
   Description: string 
 }
 
+
 export type Schedule = {
   BusScheduleId: number,
   BusId: string,
   Carplate: string,
   RouteName: string,
-  DriverId: number,
   DriverName: string,
   StartTime: string,
   EndTime: string,
-  Driver: Driver[]
 }
 
 export type DropdownData = {
@@ -101,6 +100,7 @@ export type EventHelper = {
   BusId: string,
   Carplate: string,
   Name: string,
+  Email: string,
   Shift: boolean
 }
 
@@ -152,6 +152,14 @@ export type Demand = {
 export type BusAssignments = {
   [key: string]: string[];
 };
+
+export type SwapRequest = {
+  From: string,
+  FromName: string,
+  With: string,
+  WithName: string,
+  TargetShift: boolean
+}
 
 // export type Schedule = {
 //   BusId: number;

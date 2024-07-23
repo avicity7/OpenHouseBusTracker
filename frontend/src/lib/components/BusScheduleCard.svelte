@@ -1,5 +1,6 @@
 <script lang="ts">
-  export let bus;
+  import type { Schedule } from "$lib/types/global";
+  export let bus: Schedule;
 
   function formatTime(timestamp: string | number | Date) {
     const utcDate = new Date(timestamp);
@@ -11,7 +12,7 @@
     <div class="flex flex-row justify-between">
       <div>
         <h1 class="text-3xl font-bold">
-          {bus.DriverName}
+          {bus.Carplate}
         </h1>
       </div>
       <div class="flex flex-col items-end">
