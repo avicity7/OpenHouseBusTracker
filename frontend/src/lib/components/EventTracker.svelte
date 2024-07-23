@@ -71,7 +71,7 @@
 
   const createSpecificEvent = async(eventId: number) => {
     let payload = {
-      Carplate: followBus?.Carplate,
+      BusId: followBus?.BusId,
       RouteName: followBus?.RouteName,
       EventId: eventId,
       StopName: events[0].StopName 
@@ -88,8 +88,8 @@
   }
 
 
-  const createRestartEvent = () => {
-    createSpecificEvent(6)
+  const createRestartEvent = async () => {
+    await createSpecificEvent(6)
     createSpecificEvent(1)
   }
 
@@ -161,26 +161,30 @@
       </div>
     </div>
     <div class="mt-20 flex flex-col items-center">
-      {#if events[0].EventId == 3 || events[0].Order == 0 || events[0].EventId == 1}
-        <h2 class="text-orange-800 font-semibold">On the way to:</h2>
-      {:else}
-        <h2 class="text-green-800 font-semibold">Picking up passengers at:</h2>
-      {/if}
-      <div class="text-4xl font-semibold mt-4">
-        {#if events[0].Order != 0}
-          {#if events[0].EventId == 3}
-            {#if events[0].Order != stops.length}
-              <h1>{stops[events[0].Order].StopName}</h1>
-            {:else}
+      {#if events[0].EventId != 5}
+        {#if events[0].EventId == 3 || events[0].Order == 0 || events[0].EventId == 1}
+          <h2 class="text-orange-800 font-semibold">On the way to:</h2>
+        {:else}
+          <h2 class="text-green-800 font-semibold">Picking up passengers at:</h2>
+        {/if}
+        <div class="text-4xl font-semibold mt-4">
+          {#if events[0].Order != 0}
+            {#if events[0].EventId == 3}
+              {#if events[0].Order != stops.length}
+                <h1>{stops[events[0].Order].StopName}</h1>
+              {:else}
+                <h1>{stops[0].StopName}</h1>
+              {/if}
+            {:else if events[0].EventId == 1}
               <h1>{stops[0].StopName}</h1>
+            {:else}
+              <h1>{stops[events[0].Order - 1].StopName}</h1>
             {/if}
           {:else}
-            <h1>{stops[events[0].Order - 1].StopName}</h1>
+            <h1>{stops[0].StopName}</h1>
           {/if}
-        {:else}
-          <h1>{stops[0].StopName}</h1>
-        {/if}
-      </div>
+        </div>
+      {/if}
     </div>
     {#if isEditable}
       <div class="mt-8 items-center mx-auto">
@@ -218,12 +222,6 @@
           </div>
         {/if}
       {/if}
-      <!-- <div class="flex mx-auto mt-12 text-stone-700 font-medium">
-        <p>Have an emergency?</p>
-        <button class="ml-1 text-red-700 hover:text-red-800" on:click|preventDefault={createEmergency}>
-          Alert admins
-        </button>
-      </div> -->
     {/if}
   </div>
 </div>
