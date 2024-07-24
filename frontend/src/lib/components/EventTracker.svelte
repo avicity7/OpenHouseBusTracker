@@ -110,7 +110,7 @@
       let nextDist = haversineDistance([nextStop.Lat, nextStop.Lng], [position.coords.latitude, position.coords.longitude])
       let radius = 15
 
-      if ((current.EventId == 2 && currentDist > radius) || (current.EventId == 3 && nextDist < radius)) {
+      if ((current.EventId == 2 && currentDist > radius) || (current.EventId == 3 && nextDist < radius) || (current.EventId == 1 && currentDist < radius)) {
         createEvent()
       }
 		})
