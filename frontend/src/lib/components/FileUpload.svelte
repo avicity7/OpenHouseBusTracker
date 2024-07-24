@@ -39,7 +39,7 @@
   role="button"
   tabindex="0"
   aria-label="File upload area, drag and drop or browse files"
-  class={`bg-gray-100 border-dashed border-2 rounded-lg p-4 w-full md:w-1/2 text-center ${dragActive ? 'border-blue-400' : 'border-gray-300'}`}
+  class={`bg-gray-100 border-dashed border-2 rounded-lg p-4 w-full md:w-1/2 text-center ${dragActive ? 'border-red-400' : 'border-gray-300'}`}
   on:dragover={handleDragOver}
   on:dragleave={handleDragLeave}
   on:drop={handleDrop}
