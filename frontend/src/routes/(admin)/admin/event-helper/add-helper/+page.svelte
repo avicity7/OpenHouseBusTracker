@@ -61,8 +61,9 @@
 		if (dropdownData) {
 			setEventHelperDropdownOptions();
 		}
+		
 	});
-
+	
 	$: searchQuery, filterNames();
 
 	const shiftOptions = [
