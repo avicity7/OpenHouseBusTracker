@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"server/config"
 	"server/structs"
@@ -14,8 +15,8 @@ func GetEventHelpers() ([]structs.EventHelper, error) {
 	var eventHelpers []structs.EventHelper
 
 	query := `
-    SELECT eh.bus_id, carplate, ut.name, ut.email, shift FROM event_helper eh
-    JOIN bus b ON eh.bus_id = b.bus_id
+		SELECT eh.bus_id, carplate, ut.name, ut.email, shift FROM event_helper eh
+		JOIN bus b ON eh.bus_id = b.bus_id
 		JOIN user_table ut ON ut.email = eh.email
 		ORDER BY carplate ASC, ut.name ASC
   `
@@ -80,6 +81,52 @@ func CreateEventHelpers(eventHelpers []structs.EventHelper) error {
 	}
 
 	return nil
+}
+
+func BulkCreateEventHelpers(eventHelpers []structs.EventHelper) error {
+	tx, err := config.Dbpool.Begin(context.Background())
+	if err != nil {
+		fmt.Println("Failed to begin transaction:", err)
+		return err
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback(context.Background())
+		} else {
+			tx.Commit(context.Background())
+		}
+	}()
+
+	for _, eventHelper := range eventHelpers {
+		query := `
+            INSERT INTO event_helper (bus_id, email, shift) 
+            VALUES ($1, $2, $3)
+        `
+		_, err = tx.Exec(context.Background(), query,
+			eventHelper.BusId,
+			eventHelper.Email,
+			eventHelper.Shift,
+		)
+		if err != nil {
+			fmt.Println("Error inserting event helper:", err)
+			return err
+		}
+		fmt.Printf("Event helper inserted successfully for email: %s\n", eventHelper.Email)
+	}
+
+	return nil
+}
+
+func GetBusIdByCarplate(carplate string) (string, error) {
+    var busId string
+
+    query := `SELECT bus_id FROM bus WHERE carplate = $1`
+    err := config.Dbpool.QueryRow(context.Background(), query, carplate).Scan(&busId)
+    if err != nil {
+        return "", errors.New("bus ID not found")
+    }
+
+    return busId, nil
 }
 
 func EventHelperExists(email string) (bool, error) {
