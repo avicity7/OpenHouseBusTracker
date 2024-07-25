@@ -3,6 +3,7 @@
   import type { EventBus, Event, RouteStep, FollowBusEvent } from '$lib/types/global.js'
   import { PUBLIC_BACKEND_URL } from '$env/static/public'
 	import { onMount } from 'svelte';
+	import Back from './Back.svelte';
   export let data
   const { session } = data
   export let stops: Array<RouteStep>
@@ -85,6 +86,15 @@
     })
 
     getEvents()
+  }
+  
+  const deleteLastEvent = async() => {
+    await fetch(`${PUBLIC_BACKEND_URL}:3000/event/delete-last-event/${followBus.BusId}`, {
+      method: 'DELETE',
+      headers: {
+        'content-type': 'application/json'
+      },
+    })
   }
 
 
@@ -203,6 +213,9 @@
         {/if}
       </div>
       {#if events[0].EventId == 1 || events[0].EventId == 2 || events[0].EventId == 3}
+        <button on:click|preventDefault={deleteLastEvent} class="mx-auto mt-8 text-stone-400 hover:text-red-600 text-xl">
+          <Back /> 
+        </button>
         <button on:click|preventDefault={createRestartEvent} class="mx-auto mt-8 text-stone-400 hover:text-red-600">
           <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><path fill="currentColor" d="M18.258 3.508a.75.75 0 0 1 .463.693v4.243a.75.75 0 0 1-.75.75h-4.243a.75.75 0 0 1-.53-1.28L14.8 6.31a7.25 7.25 0 1 0 4.393 5.783a.75.75 0 0 1 1.488-.187A8.75 8.75 0 1 1 15.93 5.18l1.51-1.51a.75.75 0 0 1 .817-.162"/></svg>
         </button>

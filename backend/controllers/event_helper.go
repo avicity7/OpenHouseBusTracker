@@ -233,6 +233,10 @@ func AcceptSwapRequest(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(500)
 	}
 
+	config.Cache.Delete("Schedules")
+	config.Cache.Delete("CurrentUserSchedules")
+	config.Cache.Delete("FutureUserSchedules")
+
 	w.WriteHeader(200)
 }
 
