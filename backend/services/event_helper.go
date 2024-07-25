@@ -190,7 +190,6 @@ func UpdateEventHelper(eventHelper structs.EventHelperUpdate) error {
 	return nil
 }
 
-// need to think bout how to make it take a body of ids with composite keys
 func DeleteEventHelper(eventHelper structs.EventHelper) error {
 	email, err := GetEmail(eventHelper.Name)
 	if err != nil {
