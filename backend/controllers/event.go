@@ -135,6 +135,17 @@ func CreateEvent(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 }
 
+func DeleteLastEvent(w http.ResponseWriter, r *http.Request) {
+	bus_id := chi.URLParam(r, "bus_id")
+	err := services.DeleteLastEvent(bus_id)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+
+	w.WriteHeader(200)
+}
+
 func GetAllStops(w http.ResponseWriter, r *http.Request) {
 	output, err := services.GetAllStops()
 	if err != nil {
