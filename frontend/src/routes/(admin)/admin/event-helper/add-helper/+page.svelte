@@ -44,12 +44,17 @@
 		);
 	}
 
-	function toggleNameSelection(name: string) {
-		if (selectedNames.has(name)) {
-			selectedNames.delete(name);
+	function toggleNameSelection(name: string, checked: boolean) {
+		if (checked) {
+		selectedNames.add(name);
 		} else {
-			selectedNames.add(name);
+		selectedNames.delete(name);
 		}
+	}
+
+	function handleCheckboxChange(event: Event, name: string) {
+		const target = event.target as HTMLInputElement;
+		toggleNameSelection(name, target.checked);
 	}
 
 	if ($page.status === 409) {
@@ -61,8 +66,9 @@
 		if (dropdownData) {
 			setEventHelperDropdownOptions();
 		}
+		
 	});
-
+	
 	$: searchQuery, filterNames();
 
 	const shiftOptions = [
@@ -108,8 +114,9 @@
 									name="name"
 									id={name}
 									value={name}
-									on:change={() => toggleNameSelection(name)}
+									on:change={(e) => handleCheckboxChange(e, name)}
 									class="mr-2"
+									checked={selectedNames.has(name)}
 								/>
 								<label for={name} class="text-sm">{name}</label>
 							</div>

@@ -14,6 +14,7 @@ func EventHelper(r chi.Router) {
 		r.Get("/get-helpers", http.HandlerFunc(controllers.GetEventHelpers))
 		r.Get("/get-event-dropdown", http.HandlerFunc(controllers.GetEventHelperDropdownData))
 		r.Post("/create-helpers", http.HandlerFunc(controllers.CreateEventHelpers))
+		r.Post("/bulk-create-shifts", http.HandlerFunc(controllers.BulkCreateEventHelpers))
 		r.Post("/create-swap-request", http.HandlerFunc(controllers.CreateSwapRequest))
 		r.Put("/update-helper", http.HandlerFunc(controllers.UpdateEventHelper))
 		r.Put("/accept-swap-request", http.HandlerFunc(controllers.AcceptSwapRequest))

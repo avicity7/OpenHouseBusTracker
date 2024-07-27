@@ -1,38 +1,46 @@
 <script lang="ts">
   import UserRow from '$lib/components/UserRow.svelte';
-	import ToolTip from '$lib/components/ToolTip.svelte';
+  import FileUpload from '$lib/components/FileUpload.svelte';
 
 	export let data;
 	let { backend_uri, session, users, roles } = data;
 
-	let csvFile: HTMLInputElement | null = null;
+  let selectedFile: File | null = null;
+  let showSuccessMessage = false;
 	let isLoading = false;
 
-	const uploadCSV = async () => {
-		if (!csvFile || !csvFile.files || csvFile.files.length === 0) {
-			alert('Please select a file.');
-			return;
-		}
+  const uploadCSV = async () => {
+    if (!selectedFile) {
+      alert('Please select a file.');
+      return;
+    }
 
-		isLoading = true;
+    isLoading = true; 
 
-		const formData = new FormData();
-		formData.append('file', csvFile.files[0]);
+    const formData = new FormData();
+    formData.append('file', selectedFile);
 
-		const response = await fetch(`${backend_uri}:3000/auth/bulk-create-users`, {
-			method: 'POST',
-			body: formData
-		});
+    const response = await fetch(`${backend_uri}:3000/auth/bulk-create-users`, {
+      method: 'POST',
+      body: formData
+    });
 
-		if (response.ok) {
-			users = users;
-		} else {
-			const error = await response.text();
-		}
+    if (response.ok) {
+      showSuccessMessage = true;
+      console.log("File uploaded successfully");
+    } else {
+      const error = await response.text();
+      showSuccessMessage = false;
+      console.error(`Error: ${error}`);
+    }
 
-		isLoading = false;
-		location.reload();
-	};
+    isLoading = false;
+    location.reload();
+  };
+
+  function handleFileSelected(event: CustomEvent<File>) {
+    selectedFile = event.detail;
+  }
 </script>
 
 <svelte:head>
@@ -40,12 +48,10 @@
 </svelte:head>
 
 <div class="p-6 md:p-12">
-  <div class="flex items-center space-x-4 pb-2 justify-center">
-    <label class="relative cursor-pointer text-black font-semibold py-2 rounded-md text-sm">
-      <input type="file" bind:this={csvFile} class="" data-testid="file-input"/>
-    </label>
+  <div class="flex flex-col items-center space-y-4 pb-2">
+    <FileUpload on:fileSelected={handleFileSelected} />
     <button 
-      on:click={uploadCSV} 
+      on:click={uploadCSV}
       disabled={isLoading} 
       class="bg-red-700 text-white font-semibold py-2 px-4 rounded-md text-sm enabled:hover:bg-red-800 disabled:opacity-75 disabled:cursor-not-allowed"  
       data-testid="submit-bulk-import"
@@ -58,9 +64,12 @@
       {/if}
       Upload CSV
     </button>  
-  </div> 
+    {#if showSuccessMessage}
+      <p class="text-green-600 text-sm font-semibold mt-2">File uploaded successfully!</p>
+    {/if}
+  </div>  
 
-	<div class="mt-2">
+	<div class="mt-1">
     <h1 class="text-xl font-semibold p-2 py-8 text-stone-800">Pending Verification</h1>
 		<table class="min-w-full divide-y divide-gray-200">
 			<thead class="bg-gray-50">

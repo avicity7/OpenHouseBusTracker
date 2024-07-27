@@ -160,7 +160,8 @@ func GetDropdownData() (structs.ScheduleDropdownData, error) {
 
 	busQuery := `SELECT bus_id, carplate FROM bus 
 				 WHERE bus_id 
-				 NOT IN (SELECT bus_id FROM bus_schedule)`
+				 NOT IN (SELECT bus_id FROM bus_schedule)
+				 ORDER BY carplate ASC`
 	busRows, err := config.Dbpool.Query(context.Background(), busQuery)
 	if err != nil {
 		fmt.Println("Error executing bus query:", err)
@@ -200,7 +201,8 @@ func GetDropdownData() (structs.ScheduleDropdownData, error) {
 
 	driverQuery := `SELECT driver_id, driver_name FROM driver 
 					WHERE driver_id 
-					NOT IN (SELECT driver_id FROM bus_schedule)`
+					NOT IN (SELECT driver_id FROM bus_schedule)
+					ORDER BY driver_name ASC`
 	driverRows, err := config.Dbpool.Query(context.Background(), driverQuery)
 	if err != nil {
 		fmt.Println("Error executing driver query:", err)

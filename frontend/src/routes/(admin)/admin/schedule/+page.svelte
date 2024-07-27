@@ -116,8 +116,8 @@
         }
         
         if (Array.isArray(routes)) {
-                uniqueRoutes = routes.map(route => route.RouteName);
-            }
+            uniqueRoutes = routes.map(route => route.RouteName);
+        }
         if (Array.isArray(carplates)) {
             uniqueCarplates = carplates.map(carplate => carplate.Carplate);
         }
