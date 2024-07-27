@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
 	"server/services"
 	"server/structs"
@@ -10,14 +12,26 @@ import (
 )
 
 func CreateChatRoom(w http.ResponseWriter, r *http.Request) {
-	var chat_room structs.CreateChatRoom
-	err := json.NewDecoder(r.Body).Decode(&chat_room)
+	var req struct {
+		SelectedUsers []string
+		Groupname     string
+	}
+
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		fmt.Println("Error reading request body:", err)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	room_id, err := services.CreateChatRoom(chat_room.User1, chat_room.User2)
+	err = json.Unmarshal(body, &req)
+	if err != nil {
+		fmt.Println("Error unmarshalling request body:", err)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	room_id, err := services.CreateChatRoom(req.SelectedUsers, req.Groupname)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

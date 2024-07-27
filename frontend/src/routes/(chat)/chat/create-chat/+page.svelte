@@ -1,19 +1,18 @@
 <script lang="ts">
 	export let data;
   import type { User } from '$lib/types/global.js';
-  import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
-	const { users, account } = data;
+	const { users, account, backend_uri } = data;
 
 	let selectedUser: User = {} as User
 
   const createChatRoom = async () => {
-		await fetch(`${PUBLIC_BACKEND_URL}:3000/chat/create-chat-room`, {
+		await fetch(`${backend_uri}:3000/chat/create-chat-room`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ User1: account?.Email, User2: selectedUser?.Email })
+			body: JSON.stringify({SelectedUsers: [selectedUser.Email, account?.Email], Groupname: ""})
 		});
 
 		location.replace("/chat")
