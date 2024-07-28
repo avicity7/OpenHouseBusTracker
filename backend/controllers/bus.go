@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"server/config"
 	"server/services"
 
 	"github.com/go-chi/chi/v5"
@@ -66,6 +67,8 @@ func UpdateBus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	config.Cache.Delete("Schedules")
+
 	w.WriteHeader(200)
 }
 
@@ -90,6 +93,8 @@ func DeleteBus(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
+
+	config.Cache.Delete("Schedules")
 
 	w.WriteHeader(200)
 }

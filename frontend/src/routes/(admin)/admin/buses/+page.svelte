@@ -1,7 +1,7 @@
 <script lang="ts">
   export let data
   let { buses, routes, scheduleBus, backend_uri, env } = data
-  import type { EventBus, Demand, BusAssignments } from '$lib/types/global.js';
+  import type { EventBus,RouteStates, Demand, BusAssignments } from '$lib/types/global.js';
 	import { onMount } from 'svelte';
   import ToolTip from '$lib/components/ToolTip.svelte';
 	import ToggleSwitch from '$lib/components/ToggleSwitch.svelte';
@@ -10,9 +10,6 @@
 
   let showHidden = false
   let autoScheduling = false
-   type RouteStates = {
-    [key: string]: string;
-  };
 
   let routeStates: RouteStates = {};
   
@@ -60,10 +57,11 @@
     }
 
     let touringBuses = buses.filter(bus => bus.Status);
-    touringBuses = touringBuses.filter(bus => scheduleBus.some(sb => sb.Carplate === bus.Carplate));
+    touringBuses = touringBuses.filter(bus => scheduleBus.some(sb => sb.BusId === bus.BusId));
 
-    let initialAssignments = scheduleBus.filter(sb => touringBuses.some(tb => tb.Carplate === sb.Carplate));
+    let initialAssignments = scheduleBus.filter(sb => touringBuses.some(tb => tb.BusId === sb.BusId));
 
+    console.log(initialAssignments)
     let totalBuses = touringBuses.length;
 
     // calculation of importance for buses, could change back to fix assignment of buses if needed
@@ -76,17 +74,17 @@
       for (let i = 0; i < numBusesForRoute && touringBuses.length > 0; i++) {
         let bus = touringBuses.pop();
         if (bus) {
-          busAssignments[route].push(bus.Carplate);
+          busAssignments[route].push(bus.BusId);
         }
       }
     }
 
     let assignmentData = [];
     for (let route in busAssignments) {
-      for (let carplate of busAssignments[route]) {
-        let initialAssignment = initialAssignments.find(ia => ia.Carplate === carplate);
+      for (let busId of busAssignments[route]) {
+        let initialAssignment = initialAssignments.find(ia => ia.BusId === busId);
         if (initialAssignment && initialAssignment.RouteName !== route) {
-          assignmentData.push({ Carplate: carplate, RouteName: route });
+          assignmentData.push({ BusId: busId, RouteName: route });
         }
       }
     }
@@ -159,7 +157,6 @@
             <tr>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Carplate</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <!-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">State</th> -->
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
             </tr>
         </thead>
@@ -171,10 +168,6 @@
                         <td class="px-4 py-6">
                           <p class={bus.Status ? "text-green-600" : "text-orange-600"}>{bus.Status ? 'Touring' : 'Inactive'}</p>
                         </td>
-                        <!-- <td class="px-6 py-4 whitespace-nowrap">
-                          <StateMenuBar state={"true"} onStateChange={(newState) => updateBusState(bus.Carplate, newState)} />
-                        </td> -->
-                    
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex items-center">
                                 <button class="text-stone-500 hover:text-red-600 text-2xl mr-4" on:click={() => updateBusVisibility(bus.BusId, !bus.Hidden)}>

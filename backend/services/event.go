@@ -152,6 +152,27 @@ func CreateEvent(bus_id string, routeName string, eventId int, stopName string) 
 	return nil
 }
 
+func DeleteLastEvent(bus_id string) error {
+	query := `
+		DELETE FROM "event" 
+		WHERE timestamp IN (SELECT timestamp FROM "event" WHERE bus_id = @BusId ORDER BY timestamp DESC LIMIT 1)
+		AND bus_id IN (SELECT bus_id FROM "event" WHERE bus_id = @BusId ORDER BY timestamp DESC LIMIT 1)
+	`
+
+	args := pgx.NamedArgs{
+		"BusId": bus_id,
+	}
+
+	_, err := config.Dbpool.Exec(context.Background(), query, args)
+	if err != nil {
+		return err
+	}
+
+	config.Melody.Broadcast([]byte("refresh"))
+
+	return nil
+}
+
 func GetCurrentBuses() ([]structs.CurrentBus, error) {
 	query := `
 		WITH ranked AS (

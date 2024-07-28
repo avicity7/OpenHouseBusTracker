@@ -1,15 +1,18 @@
 import { fail, redirect, type Load } from '@sveltejs/kit';
-import type { Schedule, EventBus } from '$lib/types/global';
+import type { DropdownData, EventBus } from '$lib/types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
-// For initial load using SSR
 export const load: Load = async ({ fetch }) => {
     try {
         let response = await fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/get-dropdown-data`);
         if (!response.ok) {
             throw new Error("Failed to fetch dropdown data");
         }
-        const dropdownData = await response.json() as Schedule[];
+        
+        let dropdownData = await response.json() as DropdownData;
+        if (!dropdownData) {
+          dropdownData = {} as DropdownData
+        }
 
         response = await fetch(`${PUBLIC_BACKEND_URL}:3000/bus/get-buses`);
         if (!response.ok) {
@@ -31,16 +34,14 @@ export const load: Load = async ({ fetch }) => {
     }
 };
 
-// For form actions, submissions    
 export const actions = {
   createBusSchedule: async({ request }) =>{
-    console.log("am i here ")
     const form = await request.formData()
 
     const Bus = form.get('bus');
     const BusId = JSON.parse(Bus!.toString()).BusId
-    console.log(Bus, BusId)
-    const RouteName = form.get('route_name');
+    const Route = form.get('route_name');
+    const RouteName = JSON.parse(Route!.toString()).RouteName
     const DriverIdString = form.get('driver_id');
     const DriverId = JSON.parse(DriverIdString!.toString()).DriverId
       

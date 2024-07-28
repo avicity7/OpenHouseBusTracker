@@ -103,15 +103,14 @@ type UpdateScheduleRoute struct {
 }
 
 type ScheduleDropdownData struct {
-	BusId     string
-	Carplate  string
-	RouteName string
-	Driver    []Driver
+	Buses   []EventBus
+	Routes  []Route
+	Drivers []Driver
 }
 
 type Driver struct {
-	DriverId   *int
-	DriverName *string
+	DriverId   int
+	DriverName string
 }
 
 type FollowBus struct {
@@ -168,6 +167,7 @@ type EventHelper struct {
 	BusId    string
 	Carplate string
 	Name     string
+	Email    string
 	Shift    bool
 }
 
@@ -244,6 +244,19 @@ type ChatRoom struct {
 	User1         string
 	User2         string
 	LatestMessage Message
+}
+
+type SwapRequest struct {
+	From string
+	With string
+}
+
+type SwapRequestResponse struct {
+	From        string
+	FromName    string
+	With        string
+	WithName    string
+	TargetShift bool
 }
 
 // could try to use clearer seperation of structs / reduce structs needed

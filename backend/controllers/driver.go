@@ -7,9 +7,7 @@ import (
 	"server/config"
 	"server/services"
 	"server/structs"
-	"strconv"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/patrickmn/go-cache"
 )
 
@@ -55,7 +53,6 @@ func GetDrivers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Update Driver
 func UpdateDriver(w http.ResponseWriter, r *http.Request) {
 	var driver structs.Driver
 	err := json.NewDecoder(r.Body).Decode(&driver)
@@ -63,34 +60,7 @@ func UpdateDriver(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	idStr := chi.URLParam(r, "id")
-	id, err := strconv.ParseInt(idStr, 10, 64)
-	if err != nil {
-		http.Error(w, "Invalid driver ID", http.StatusBadRequest)
-		return
-	}
-	drivers, err := services.GetDrivers()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	var currentDriver *structs.Driver
-	for _, d := range drivers {
-		if d.DriverId != nil && *d.DriverId == int(id) {
-			currentDriver = &d
-			break
-		}
-	}
-	if currentDriver == nil {
-		http.Error(w, "Driver not found", http.StatusNotFound)
-		return
-	}
-	if driver.DriverName != nil && currentDriver.DriverName != nil && *driver.DriverName == *currentDriver.DriverName {
-		w.WriteHeader(http.StatusNoContent)
-		return
-	}
 
-	*driver.DriverId = int(id)
 	err = services.UpdateDriver(driver)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -100,45 +70,25 @@ func UpdateDriver(w http.ResponseWriter, r *http.Request) {
 	config.Cache.Delete("drivers")
 	config.Cache.Delete("Schedules")
 
-	fmt.Fprintln(w, "Driver updated successfully")
+	w.WriteHeader(200)
 }
 
-// Delete Driver
 func DeleteDriver(w http.ResponseWriter, r *http.Request) {
-	driverID := chi.URLParam(r, "id")
-
-	id, err := strconv.Atoi(driverID)
+	var driver structs.Driver
+	err := json.NewDecoder(r.Body).Decode(&driver)
 	if err != nil {
-		http.Error(w, "Invalid driver ID", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	drivers, err := services.GetDrivers()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	var currentDriver *structs.Driver
-	for _, d := range drivers {
-		if *d.DriverId == id {
-			currentDriver = &d
-			break
-		}
-	}
-
-	if currentDriver == nil {
-		http.Error(w, "Driver not found", http.StatusNotFound)
-		return
-	}
-
-	err = services.DeleteDriver(id)
+	err = services.DeleteDriver(driver.DriverId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	config.Cache.Delete("drivers")
-	fmt.Fprintln(w, "Driver deleted successfully")
+	w.WriteHeader(200)
 }
 
 func GetScheduleTimeDiff(w http.ResponseWriter, r *http.Request) {

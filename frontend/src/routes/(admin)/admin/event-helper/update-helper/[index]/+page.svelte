@@ -7,13 +7,12 @@
     export let data;
     const { dropdownData, buses } = data;
 
-    let helper: EventHelper = {BusId: '', Carplate: '', Name: '', Shift: false};
+    let helper: EventHelper = {BusId: '', Carplate: '', Email: '', Name: '', Shift: false};
     let carplates: string[] = [];
     let names: string[] = [];
     let selectedBus: EventBus
     let selectedName: string
     let selectedShift: boolean
-    let loaded = false
 
     function setEventHelperDropdownOptions() {
         if (!dropdownData) return;
@@ -43,14 +42,16 @@
         selectedName = helper.Name;
         selectedShift = helper.Shift
 
+        // console.log(selectedBus, selectedName, selectedShift)
         if (dropdownData) {
             setEventHelperDropdownOptions()
         }
-
-        loaded = true
     });
 
-    const shiftOptions = [true, false]
+    const shiftOptions = [
+		{ label: "AM", value: "true" },
+		{ label: "PM", value: "false" }
+	];
 </script>
 
 <div class="flex justify-center items-center h-full">
@@ -60,7 +61,7 @@
             <input type="hidden" name="old_bus_id" value={helper.BusId}>
             <input type="hidden" name="old_name" value={helper.Name}>
             <input type="hidden" name="old_shift" value={helper.Shift}>
-            {#if loaded}
+         
             <div class="mb-4">
                 <CustomDropdown
                     label="Carplate"
@@ -80,14 +81,35 @@
                     bind:selected={selectedName}
                 />
             </div>
+            <!-- value is assigned but displayOption is not showing -->
 
-            <CustomDropdown
+            <!-- <CustomDropdown
 				label="Shift"
 				name="shift"
 				options={shiftOptions}
 				bind:selected={selectedShift}
-			/>
-            {/if}
+			/> -->
+            <div class="mb-4">
+				<fieldset>
+					<legend class="block text-sm font-medium mb-1">Shift:</legend>
+					<div class="flex items-center space-x-4">
+						{#each shiftOptions as { label, value }}
+							<div class="flex items-center">
+								<input
+									type="radio"
+									name="shift"
+									id={label}
+									value={value}
+									bind:group={selectedShift}
+									class="mr-2"
+									required
+								/>
+								<label for={label} class="text-sm">{label}</label>
+							</div>
+						{/each}
+					</div>
+				</fieldset>
+			</div>         
 
             <div class="mt-4 flex justify-center">
                 <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-800">Update Event Helper</button>

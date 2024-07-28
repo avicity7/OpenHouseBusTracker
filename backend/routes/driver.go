@@ -12,7 +12,7 @@ func Driver(r chi.Router) {
 		r.Get("/get-drivers", http.HandlerFunc(controllers.GetDrivers))
 		r.Get("/get-driver-hours", http.HandlerFunc(controllers.GetScheduleTimeDiff))
 		r.Post("/add-driver", http.HandlerFunc(controllers.AddDriver))
-		r.Put("/update-driver/{id}", http.HandlerFunc(controllers.UpdateDriver))
-		r.Delete("/delete-driver/{id}", http.HandlerFunc(controllers.DeleteDriver))
+		r.Put("/update-driver", http.HandlerFunc(controllers.UpdateDriver))
+		r.Delete("/delete-driver", http.HandlerFunc(controllers.DeleteDriver))
 	})
 }

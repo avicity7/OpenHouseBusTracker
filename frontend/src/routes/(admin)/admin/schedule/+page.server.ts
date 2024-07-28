@@ -1,5 +1,5 @@
 import type { Load } from '@sveltejs/kit';
-import type { Schedule } from '$lib/types/global';
+import type { EventBus, Route, Schedule } from '$lib/types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 
@@ -17,23 +17,35 @@ export const load: Load = async ({ fetch }) => {
             });
         });
 
-        const getDropdownData = new Promise<Schedule[]>((resolve) => {
-            fetch(`${PUBLIC_BACKEND_URL}:3000/schedules/get-dropdown-data`)
+        const getRoutes = new Promise<Route>((resolve) => {
+            fetch(`${PUBLIC_BACKEND_URL}:3000/route/`)
             .then(async (response) => {
                 const data = await response.json();
                 resolve(data);
             })
             .catch((error) => {
-                console.error("Failed to fetch dropdown data:", error);
-                resolve([]);
+                console.error("Failed to fetch routes data:", error);
             });
         });
 
-        const [schedules, dropdownData] = await Promise.all([getSchedules, getDropdownData]);
+        const getCarplates = new Promise<EventBus>((resolve) => {
+            fetch(`${PUBLIC_BACKEND_URL}:3000/bus/get-buses`)
+            .then(async (response) => {
+                const data = await response.json();
+                resolve(data);
+            })
+            .catch((error) => {
+                console.error("Failed to fetch buses data:", error);
+            });
+        });
+
+
+        const [schedules, routes, carplates] = await Promise.all([getSchedules, getRoutes, getCarplates]);
 
         return {
             schedules,
-            dropdownData
+            routes,
+            carplates
         };
     } catch (error) {
         console.error("Internal Server Error:", error);

@@ -1,23 +1,42 @@
 <script lang="ts">
-  export let bus;
+  import type { Schedule } from "$lib/types/global";
+  export let bus: Schedule;
 
   function formatTime(timestamp: string | number | Date) {
     const utcDate = new Date(timestamp);
     return utcDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
+
+  function getRouteColor(routeName: string): string {
+    switch (routeName.toLowerCase()) {
+      case 'green route':
+        return '#2eff58';
+      case 'yellow route':
+        return '#ffee38';
+      default:
+        return '#cccccc'; // this is gray
+    }
+  }
+
 </script>
 
   <div class="p-8 h-[300px] bg-white rounded-2xl shadow-md mt-6 md:mr-4">
     <div class="flex flex-row justify-between">
       <div>
         <h1 class="text-3xl font-bold">
-          {bus.DriverName}
+          {bus.Carplate}
         </h1>
       </div>
       <div class="flex flex-col items-end">
-        <p class="mt-1 font-semibold text-lg">
-          {bus.RouteName}
-        </p>
+        <div class="flex items-center">
+          <div
+            class="w-4 h-4 rounded-full mr-2 mb-1"
+            style="background-color: {getRouteColor(bus.RouteName)}"
+          ></div>
+          <p class="font-semibold text-lg">
+            {bus.RouteName}
+          </p>
+        </div>
       </div>
     </div>
 
@@ -32,16 +51,3 @@
       </div>
     </div>
   </div>
-
-
- <!-- <h1 class="text-2xl font-semibold">
-        Bus {bus.BusScheduleId}
-      </h1>
-      <p class="text-lg mt-1">
-        {bus.Carplate}
-      </p> -->
-
-  <!-- <div class={"flex flex-row items-center font-semibold " + (bus.Status ? "text-green-600" : "text-red-700")}> -->
-    <!-- <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" width="0.75em" height="0.75em" viewBox="0 0 24 24" {...$$props}><path fill="currentColor" d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10s10-4.47 10-10S17.53 2 12 2"/></svg> -->
-  <!-- {bus.Status ? "Touring" : "Inactive"} -->
-<!-- </div> -->
