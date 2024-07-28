@@ -32,7 +32,7 @@ test.describe('Reassign Bus and Drivers', () => {
         await page.locator('ul[role="listbox"] li button:has-text("Yellow 5")').click(); 
 
         //Select Shift
-        const shiftRadio = await page.locator("[data-testid='PM']");
+        const shiftRadio = await page.locator("[data-testid='false']");
         await shiftRadio.click();
         await expect(shiftRadio).toBeChecked();
 
