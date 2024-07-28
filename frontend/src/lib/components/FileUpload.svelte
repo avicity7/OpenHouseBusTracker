@@ -55,7 +55,7 @@
     </div>
     <span class="block text-md mb-2">Drag & drop your CSV file here</span>
     <span class="block text-sm text-gray-500">or</span>
-    <span class="block text-md text-red-600 hover:text-red-800">Browse Files</span>
+    <span class="block text-md text-red-600 hover:text-red-800" data-testid="file-input">Browse Files</span>
     <input
       id="file-upload"
       type="file"

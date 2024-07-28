@@ -3,11 +3,11 @@ import SignInPage from '../models/SignInPage';
 
 test.describe('Add Schedule', () => {
     test('Add Schedule to assign student helpers', async ({ page }) => {
-        // Login
+        //Login
         let signInPage = new SignInPage(page);
         await signInPage.visit();
-        const email = 'sarahaxl7@gmail.com';
-        const password = '123';
+        const email = 'sarahaxl7@gmail.com'; 
+        const password = '123'; 
         console.log('Attempting to sign in with provided credentials');
         await signInPage.signIn(email, password);
         const currentURL = page.url();
@@ -18,7 +18,7 @@ test.describe('Add Schedule', () => {
         }
         const finalURL = page.url();
         expect(finalURL).toContain('/admin/schedule');
-        await page.screenshot({ path: 'admin-schedules-page.png' });
+        await page.screenshot({ path: 'admin-schedule-page.png' });
 
         // Add Schedule
         const addScheduleButton = await page.locator('[data-testid="add-schedule-button"]');
@@ -26,16 +26,22 @@ test.describe('Add Schedule', () => {
         await page.goto('https://open-house-bus-tracker.vercel.app/admin/schedule/add-schedule');
 
         // Select Carplate
-        const carPlateDropdown = await page.locator("[data-testid='carplate']");
-        await carPlateDropdown.selectOption({ label: 'Green 2' });
+        const carPlateDropdown = await page.locator("[data-testid='bus']");
+        await carPlateDropdown.click(); 
+        await page.waitForSelector('ul[role="listbox"] li button');
+        await page.locator('ul[role="listbox"] li button:has-text("Green 2")').click(); 
 
         // Select Route Name
-        await page.locator('label:has-text("Route Name") + div .dropdown-toggle').click();
-        await page.locator('label:has-text("Route Name") + div ul[role="listbox"] li button:has-text("Green Route")').click();
+        const routeDropdown = await page.locator("[data-testid='route_name']");
+        await routeDropdown.click(); 
+        await page.waitForSelector('ul[role="listbox"] li button');
+        await page.locator('ul[role="listbox"] li button:has-text("Green Route")').click(); 
 
         // Select Driver
-        await page.locator('label:has-text("Driver") + div .dropdown-toggle').click();
-        await page.locator('label:has-text("Driver") + div ul[role="listbox"] li button:has-text("John Smith")').click();
+        const driverDropdown = await page.locator("[data-testid='driver_id']");
+        await driverDropdown.click(); 
+        await page.waitForSelector('ul[role="listbox"] li button');
+        await page.locator('ul[role="listbox"] li button:has-text("G4 -")').click(); 
 
         // Fill Start Time
         const startTimeInput = await page.locator('[data-testid="start-time"]');
