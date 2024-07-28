@@ -6,6 +6,9 @@
   import type { ChatRoom } from '$lib/types/global.js';
 
   let { account, chat_rooms, env, backend_uri } = data
+
+  let menu = false
+  let button:HTMLElement
   
   let rooms: Array<string> = []
   chat_rooms.forEach(room => {
@@ -19,6 +22,11 @@
 
   onMount(() => {
     const ws = new WebSocket(`${env == 'PROD' ? 'wss' : 'ws'}://${backend_uri.split('//')[1]}:3000/ws`);
+    document.addEventListener('click', (e: MouseEvent) => {
+      if (!button.contains(e.target as Node)) {
+        menu = false
+      }
+    })
 
     ws.onmessage = async (msg) => {
       let parts = msg.data.split(' ');
@@ -31,14 +39,28 @@
   })
 </script>
 
-<aside class="hidden md:flex fixed h-full bg-white flex-col block px-4 items-center">
-  <a href="/chat" class="w-full font-semibold text-2xl text-left m-8 ml-16 mb-16">Chats</a>
+<aside class="hidden md:flex fixed h-full bg-white flex-col block px-4 items-center min-w-[20em]">
+  <div class="flex flex-row justify-between min-w-full items-center p-8">
+    <a href="/chat" class="w-full font-semibold text-2xl text-left">Chats</a>
+    <div class="flex flex-col">
+      <button class="text-sm font-light hover:bg-red-100 rounded-full p-2" on:click={() => menu = !menu} bind:this={button}>
+        <Plus />
+      </button>
+      {#if menu}
+        <div class="bg-white absolute mt-10 w-[10em] shadow-lg flex flex-col items-center rounded-lg overflow-hidden text-sm font-medium">
+          <a href="/chat/create-chat" class="py-4 hover:bg-red-100 flex w-full justify-center">
+            Create chat
+          </a>
+          <a href="/chat/create-group" class="py-4 hover:bg-red-100 flex w-full justify-center">
+            Create group
+          </a>
+        </div>
+      {/if}
+    </div>
+  </div>
   {#each chat_rooms as chat_room}
-    <ChatThumbnail {chat_room} {data}/>
+    <ChatThumbnail {chat_room} />
   {/each}
-  <a href="/chat/create-chat" class="text-sm mb-8 mt-4 font-light p-2 hover:bg-red-100 rounded-full">
-    <Plus />
-  </a>
 </aside>
 
 <main>

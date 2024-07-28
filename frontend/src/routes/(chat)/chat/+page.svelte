@@ -16,7 +16,7 @@
   <a href="/chat" class="font-semibold text-2xl text-left m-8 md:ml-16 mb-16">Chats</a>
   <div class="mx-8 md:mx-0 flex flex-col items-center">
     {#each chat_rooms as chat_room}
-      <ChatThumbnail {chat_room} {data}/>
+      <ChatThumbnail {chat_room} />
     {/each}
     <a href="/chat/create-chat" class="text-sm mt-4 font-light hover:bg-red-100 rounded-full">
       <Plus />

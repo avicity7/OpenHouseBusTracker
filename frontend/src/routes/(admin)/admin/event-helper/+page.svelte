@@ -17,19 +17,19 @@
     let showSuccessMessage = false;
     let isLoading = false;
 
-    async function deleteEventHelper(eventHelperToDelete: EventHelper) {
-        try {
-            const response = await fetch(`${backend_uri}:3000/event-helpers/delete-helper`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(eventHelperToDelete)
-            });
+	async function deleteEventHelper(eventHelperToDelete: EventHelper) {
+		try {
+			const response = await fetch(`${backend_uri}:3000/event-helpers/delete-helper`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(eventHelperToDelete)
+			});
 
-            if (!response.ok) {
-                throw new Error('Failed to delete event helper');
-            }
+			if (!response.ok) {
+				throw new Error('Failed to delete event helper');
+			}
 
             eventHelper = eventHelper.filter(item => item !== eventHelperToDelete);
             applyFilters();

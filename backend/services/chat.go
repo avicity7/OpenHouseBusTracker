@@ -10,44 +10,86 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func CreateChatRoom(user1 string, user2 string) (string, error) {
+func CreateChatRoom(users []string, groupname string) (string, error) {
 	room_id := uuid.NewString()
 
-	query := `INSERT INTO chat_room (room_id, user1, user2) VALUES (@RoomID, @User1, @User2)`
+	q := `INSERT INTO room_name(room_id, name) VALUES(@RoomID, @Groupname)`
 
 	args := pgx.NamedArgs{
-		"RoomID": room_id,
-		"User1":  user1,
-		"User2":  user2,
+		"Groupname": groupname,
+		"RoomID":    room_id,
 	}
 
-	_, err := config.Dbpool.Exec(context.Background(), query, args)
+	_, err := config.Dbpool.Exec(context.Background(), q, args)
 	if err != nil {
 		fmt.Println(err)
 		return "", err
 	}
+
+	for _, user := range users {
+		q := `INSERT INTO chat_room (room_id, email) VALUES (@RoomID, @Email)`
+
+		args := pgx.NamedArgs{
+			"RoomID": room_id,
+			"Email":  user,
+		}
+
+		_, err := config.Dbpool.Exec(context.Background(), q, args)
+		if err != nil {
+			fmt.Println(err)
+			return "", err
+		}
+	}
+
 	return room_id, nil
 }
 
 func GetChatRooms(email string) ([]structs.ChatRoom, error) {
 	var chat_rooms []structs.ChatRoom
 
-	query := ` 
-		SELECT cr.room_id, ut1.name, ut2.name, COALESCE(timestamp, timestamp '2000-01-01 00:00:00') AS timestamp, COALESCE("from", '') AS from, cr.room_id, COALESCE(body, '') AS body FROM chat_room cr 
-		JOIN user_table ut1 ON cr.user1 = ut1.email
-		JOIN user_table ut2 ON cr.user2 = ut2.email
+	q1 := ` 
+		SELECT cr.room_id, cr.email, ut.name, COALESCE(timestamp, timestamp '2000-01-01 00:00:00') AS timestamp, COALESCE("from", '') AS from, cr.room_id, COALESCE(body, '') AS body FROM chat_room cr 
+		JOIN user_table ut ON cr.email = ut.email
 		FULL JOIN (
 			SELECT *, RANK() OVER ( PARTITION BY room_id ORDER BY timestamp DESC ) 
 			FROM chat_message cm
 		) ms ON cr.room_id = ms.room_id AND "rank" = 1
-		WHERE user1 = @Email OR user2 = @Email
+		WHERE NOT cr.email = @Email
+		AND cr.room_id IN (SELECT room_id FROM chat_room cr WHERE cr.email = @Email)
+		AND cr.room_id NOT IN (SELECT room_id FROM room_name)
+	`
+	q2 := ` 
+		SELECT cr.room_id, rn.name, cr.email, ut.name, COALESCE(timestamp, timestamp '2000-01-01 00:00:00') AS timestamp, COALESCE("from", '') AS from, cr.room_id, COALESCE(body, '') AS body FROM chat_room cr 
+		JOIN user_table ut ON cr.email = ut.email
+		JOIN room_name rn ON cr.room_id = rn.room_id
+		FULL JOIN (
+			SELECT *, RANK() OVER ( PARTITION BY room_id ORDER BY timestamp DESC ) 
+			FROM chat_message cm
+		) ms ON cr.room_id = ms.room_id AND "rank" = 1
+		WHERE cr.email = @Email
+		AND cr.room_id IN (SELECT room_id FROM chat_room cr WHERE cr.email = @Email)
+		AND cr.room_id IN (SELECT room_id FROM room_name)
 	`
 
 	args := pgx.NamedArgs{
 		"Email": email,
 	}
 
-	rows, err := config.Dbpool.Query(context.Background(), query, args)
+	rows, err := config.Dbpool.Query(context.Background(), q1, args)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	for rows.Next() {
+		var chat_room structs.ChatRoom
+		if err := rows.Scan(&chat_room.RoomId, "", &chat_room.Email, &chat_room.Name, &chat_room.LatestMessage.Timestamp, &chat_room.LatestMessage.From, &chat_room.LatestMessage.RoomId, &chat_room.LatestMessage.Body); err != nil {
+			return nil, err
+		}
+		chat_rooms = append(chat_rooms, chat_room)
+	}
+
+	rows, err = config.Dbpool.Query(context.Background(), q2, args)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -56,7 +98,7 @@ func GetChatRooms(email string) ([]structs.ChatRoom, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var chat_room structs.ChatRoom
-		if err := rows.Scan(&chat_room.RoomId, &chat_room.User1, &chat_room.User2, &chat_room.LatestMessage.Timestamp, &chat_room.LatestMessage.From, &chat_room.LatestMessage.RoomId, &chat_room.LatestMessage.Body); err != nil {
+		if err := rows.Scan(&chat_room.RoomId, &chat_room.RoomName, &chat_room.Email, &chat_room.Name, &chat_room.LatestMessage.Timestamp, &chat_room.LatestMessage.From, &chat_room.LatestMessage.RoomId, &chat_room.LatestMessage.Body); err != nil {
 			return nil, err
 		}
 		chat_rooms = append(chat_rooms, chat_room)
@@ -70,7 +112,7 @@ func GetChatRooms(email string) ([]structs.ChatRoom, error) {
 }
 
 func CreateMessage(email string, room_id string, body string) error {
-	query := `INSERT INTO chat_message ("from", room_id, body) VALUES (@Email, @RoomId, @Body)`
+	query := `INSERT INTO chat_message (timestamp, "from", room_id, body) VALUES (NOW(), @Email, @RoomId, @Body)`
 
 	args := pgx.NamedArgs{
 		"Email":  email,
