@@ -36,7 +36,7 @@
   {#if currentSchedules && currentSchedules.length > 0}
     <div class="md:grid grid-cols-3">
       {#each currentSchedules as bus}
-        <BusScheduleCard {bus} />
+        <BusScheduleCard {bus} shift={true}/>
       {/each}
     </div>
   {:else}
@@ -49,7 +49,7 @@
   {#if futureSchedules && futureSchedules.length > 0}
     <div class="md:grid grid-cols-3">
       {#each futureSchedules as bus}
-        <BusScheduleCard {bus} />
+        <BusScheduleCard {bus} shift={false}/>
       {/each}
     </div>
   {:else}
@@ -59,7 +59,7 @@
   <div class="flex flex-row items-center align-center my-12">
     <h1 class="text-3xl font-semibold">Shift Swap Requests</h1>
 
-    <a href="/schedule/swap" class="ml-4 text-neutral-400 hover:text-red-600">
+    <a href="/schedule/swap" class="mt-2 ml-6 text-neutral-400 hover:text-red-600">
       + Make a request
     </a>
   </div>
@@ -81,10 +81,10 @@
           <h1 class="text-2xl font-semibold">{swapRequest.FromName}</h1>
           <h2 class="text-xl font-medium mt-8">for your {swapRequest.TargetShift ? " AM" : "PM"} shift</h2>
           <div class="flex flex-row items-center">
-            <button class="px-3 py-2 bg-red-700 hover:bg-red-800 text-white rounded my-8 mx-2" on:click={() => deleteRequest(swapRequest)}>
+            <button class="px-3 py-2 bg-red-800 hover:bg-red-700 text-white rounded my-8 mx-2" on:click={() => deleteRequest(swapRequest)}>
               Cancel request
             </button>
-            <button class="px-3 py-2 bg-green-800 hover:bg-green-900 text-white rounded my-8 mx-2" on:click={() => acceptRequest(swapRequest)}>
+            <button class="px-3 py-2 bg-green-900 hover:bg-green-800 text-white rounded my-8 mx-2" on:click={() => acceptRequest(swapRequest)}>
               Accept request
             </button>
           </div>
