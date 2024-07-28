@@ -118,15 +118,15 @@ func BulkCreateEventHelpers(eventHelpers []structs.EventHelper) error {
 }
 
 func GetBusIdByCarplate(carplate string) (string, error) {
-    var busId string
+	var busId string
 
-    query := `SELECT bus_id FROM bus WHERE carplate = $1`
-    err := config.Dbpool.QueryRow(context.Background(), query, carplate).Scan(&busId)
-    if err != nil {
-        return "", errors.New("bus ID not found")
-    }
+	query := `SELECT bus_id FROM bus WHERE carplate = $1`
+	err := config.Dbpool.QueryRow(context.Background(), query, carplate).Scan(&busId)
+	if err != nil {
+		return "", errors.New("bus ID not found")
+	}
 
-    return busId, nil
+	return busId, nil
 }
 
 func EventHelperExists(email string) (bool, error) {
@@ -336,9 +336,9 @@ func GetSwapRequests(email string) ([]structs.SwapRequestResponse, error) {
 
 	query := `
 		WITH sr AS (
-			SELECT "from", "with", shift FROM swap_request sr JOIN event_helper eh ON sr."with" = eh.email WHERE "from" = @Email OR "with" = @Email
+			SELECT timestamp, "from", "with", shift FROM swap_request sr JOIN event_helper eh ON sr."with" = eh.email WHERE accepted = FALSE AND ("from" = @Email OR "with" = @Email)
 		)
-		SELECT "from", (SELECT name FROM user_table WHERE email = "from"), "with", (SELECT name FROM user_table WHERE email = "with"), shift FROM sr
+		SELECT timestamp, "from", (SELECT name FROM user_table WHERE email = "from"), "with", (SELECT name FROM user_table WHERE email = "with"), shift FROM sr
 	`
 
 	args := pgx.NamedArgs{
@@ -352,7 +352,7 @@ func GetSwapRequests(email string) ([]structs.SwapRequestResponse, error) {
 
 	for rows.Next() {
 		var data structs.SwapRequestResponse
-		err := rows.Scan(&data.From, &data.FromName, &data.With, &data.WithName, &data.TargetShift)
+		err := rows.Scan(&data.Timestamp, &data.From, &data.FromName, &data.With, &data.WithName, &data.TargetShift)
 		if err != nil {
 			return nil, err
 		}
@@ -365,7 +365,7 @@ func GetSwapRequests(email string) ([]structs.SwapRequestResponse, error) {
 func AcceptSwapRequest(swap_request structs.SwapRequest) error {
 	updateFrom := `UPDATE event_helper SET shift = NOT shift WHERE email = @From`
 	updateWith := `UPDATE event_helper SET shift = NOT shift WHERE email = @With`
-	query := `DELETE FROM swap_request WHERE "from" = @From AND "with" = @With`
+	query := `UPDATE swap_request SET accepted = TRUE WHERE "from" = @From AND "with" = @With`
 
 	args := pgx.NamedArgs{
 		"From": swap_request.From,
@@ -404,4 +404,32 @@ func DeleteSwapRequest(swap_request structs.SwapRequest) error {
 	}
 
 	return nil
+}
+
+func GetAcceptedSwapRequests() ([]structs.SwapRequestResponse, error) {
+	var swap_requests []structs.SwapRequestResponse
+
+	query := `
+		WITH sr AS (
+			SELECT timestamp, "from", "with", shift FROM swap_request sr JOIN event_helper eh ON sr."with" = eh.email WHERE accepted = TRUE
+		)
+		SELECT timestamp, "from", (SELECT name FROM user_table WHERE email = "from"), "with", (SELECT name FROM user_table WHERE email = "with"), shift FROM sr
+		ORDER BY timestamp DESC 
+	`
+
+	rows, err := config.Dbpool.Query(context.Background(), query)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var data structs.SwapRequestResponse
+		err := rows.Scan(&data.Timestamp, &data.From, &data.FromName, &data.With, &data.WithName, &data.TargetShift)
+		if err != nil {
+			return nil, err
+		}
+		swap_requests = append(swap_requests, data)
+	}
+
+	return swap_requests, nil
 }

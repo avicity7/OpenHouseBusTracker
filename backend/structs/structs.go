@@ -253,6 +253,7 @@ type SwapRequest struct {
 }
 
 type SwapRequestResponse struct {
+	Timestamp   time.Time
 	From        string
 	FromName    string
 	With        string

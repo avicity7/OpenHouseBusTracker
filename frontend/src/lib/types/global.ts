@@ -155,6 +155,7 @@ export type BusAssignments = {
 };
 
 export type SwapRequest = {
+  Timestamp: string,
   From: string,
   FromName: string,
   With: string,
