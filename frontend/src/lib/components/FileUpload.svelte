@@ -44,7 +44,7 @@
   on:dragleave={handleDragLeave}
   on:drop={handleDrop}
 >
-  <label for="file-upload" class="block cursor-pointer text-gray-700 font-semibold mb-2">
+  <label for="file-upload" class="block cursor-pointer text-gray-700 font-semibold mb-2" data-testid="file-input">
     <div class="flex justify-center mb-2">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-red-600" viewBox="0 0 24 24">
         <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
@@ -55,7 +55,7 @@
     </div>
     <span class="block text-md mb-2">Drag & drop your CSV file here</span>
     <span class="block text-sm text-gray-500">or</span>
-    <span class="block text-md text-red-600 hover:text-red-800" data-testid="file-input">Browse Files</span>
+    <span class="block text-md text-red-600 hover:text-red-800">Browse Files</span>
     <input
       id="file-upload"
       type="file"
