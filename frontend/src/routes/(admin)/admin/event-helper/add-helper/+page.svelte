@@ -72,8 +72,8 @@
 	$: searchQuery, filterNames();
 
 	const shiftOptions = [
-		{ label: "AM", value: "true" },
-		{ label: "PM", value: "false" }
+		{ label: "AM", value: true },
+		{ label: "PM", value: false }
 	];
 </script>
 

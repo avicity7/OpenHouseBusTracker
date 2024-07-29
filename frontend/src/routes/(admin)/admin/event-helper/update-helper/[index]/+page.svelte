@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import type { EventBus, EventHelper } from "$lib/types/global";
 	import { page } from "$app/stores";
 	import CustomDropdown from "$lib/components/CustomDropdown.svelte";
@@ -33,24 +32,21 @@
         names = Array.from(uniqueNames)
     }
 
-    onMount(() => {
-        const { index } = $page.params; 
-        helper = JSON.parse(decodeURIComponent(index));
-        buses?.forEach(bus => {
-            if (bus.BusId == helper.BusId) selectedBus = bus
-        })
-        selectedName = helper.Name;
-        selectedShift = helper.Shift
+    const { index } = $page.params; 
+    helper = JSON.parse(decodeURIComponent(index));
+    buses?.forEach(bus => {
+        if (bus.BusId == helper.BusId) selectedBus = bus
+    })
+    selectedName = helper.Name;
+    selectedShift = helper.Shift
 
-        // console.log(selectedBus, selectedName, selectedShift)
-        if (dropdownData) {
-            setEventHelperDropdownOptions()
-        }
-    });
+    if (dropdownData) {
+        setEventHelperDropdownOptions()
+    }
 
     const shiftOptions = [
-		{ label: "AM", value: "true" },
-		{ label: "PM", value: "false" }
+		{ label: "AM", value: true },
+		{ label: "PM", value: false }
 	];
 </script>
 
@@ -68,6 +64,7 @@
                     name="carplate"
                     options={buses}
                     required
+                    searchable
                     bind:selected={selectedBus}
                 />
             </div>
@@ -78,6 +75,7 @@
                     name="name"
                     options={names}
                     required
+                    searchable
                     bind:selected={selectedName}
                 />
             </div>
@@ -117,4 +115,3 @@
         </form>
     </div>
 </div>
-

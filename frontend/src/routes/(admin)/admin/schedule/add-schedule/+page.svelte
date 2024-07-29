@@ -29,6 +29,7 @@
 				  name="bus"
 				  options={dropdownData?.Buses}
 				  required
+				  searchable
 				  bind:selected={selectedBus}
 				/>
 			  </div>
@@ -39,6 +40,7 @@
 				  name="route_name"
 				  options={dropdownData?.Routes}
 				  bind:selected={selectedRouteName}
+				  required
 				/>
 			  </div>
 
@@ -48,6 +50,8 @@
 					name="driver_id"
 					options={dropdownData?.Drivers}
 					bind:selected={selectedDriverId}
+					required
+					searchable
 				/>
 			  </div>
 
