@@ -33,7 +33,11 @@
 					label="Bus" 
 					name="bus" 
 					options={dropdownData.Buses} 
-					bind:selected={selectedBus} />
+					bind:selected={selectedBus}
+					required
+					searchable 
+				/>
+
 			</div>
 			<div class="mb-4">
 				<CustomDropdown
@@ -51,6 +55,8 @@
 						name="driver"
 						options={dropdownData.Drivers}
 						bind:selected={selectedDriver}
+						required
+						searchable
 					/>
 				</div>
 			{/if}
