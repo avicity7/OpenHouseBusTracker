@@ -22,10 +22,18 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
+
 	err = services.CreateUser(newUser)
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	err = services.SavePassword(newUser.Email, newUser.Password)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(500)
+	}
+
 	login := structs.Login{
 		Email:    newUser.Email,
 		Password: newUser.Password,
@@ -35,6 +43,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		w.WriteHeader(500)
 	}
+
 	access, refresh := services.CreateJWTPair(user)
 	formatted, _ := json.Marshal(structs.LoginResponse{User: user, AccessToken: string(access), RefreshToken: string(refresh)})
 	config.Cache.Delete("Users")
@@ -162,6 +171,16 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	exists, err := services.CheckPassword(ResetPasswordStruct.Token, ResetPasswordStruct.Password)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if exists {
+		w.WriteHeader(500)
+		return
 	}
 
 	err = services.ResetPassword(ResetPasswordStruct.Token, ResetPasswordStruct.Password)
