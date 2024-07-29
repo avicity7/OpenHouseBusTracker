@@ -123,6 +123,77 @@ func CreateUser(user structs.NewUser) error {
 	return nil
 }
 
+func CheckPassword(token string, password string) (bool, error) {
+	var passwords []string
+
+	query_select := `
+		SELECT email FROM user_table
+		WHERE verification_token = @VerificationToken
+	`
+	query := `
+		SELECT password FROM past_passwords WHERE email = @Email
+	`
+
+	args := pgx.NamedArgs{
+		"VerificationToken": token,
+	}
+
+	var username string
+
+	err := config.Dbpool.QueryRow(context.Background(), query_select, args).Scan(&username)
+	if err != nil {
+		return false, err
+	}
+
+	args = pgx.NamedArgs{
+		"Email": username,
+	}
+
+	rows, err := config.Dbpool.Query(context.Background(), query, args)
+	if err != nil {
+		return false, err
+	}
+
+	for rows.Next() {
+		var hash string
+		rows.Scan(&hash)
+		passwords = append(passwords, hash)
+	}
+
+	for _, hash := range passwords {
+		err = bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+		if err == nil {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+func SavePassword(email string, password string) error {
+	query := `
+		INSERT INTO past_passwords (email, password) 
+		VALUES (LOWER(@Email), @Password)
+	`
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	if err != nil {
+		return err
+	}
+
+	args := pgx.NamedArgs{
+		"Email":    email,
+		"Password": hashedPassword,
+	}
+
+	_, err = config.Dbpool.Exec(context.Background(), query, args)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func BulkCreateUsers(csvFilePath string) error {
 	file, err := os.Open(csvFilePath)
 	if err != nil {
@@ -334,6 +405,8 @@ func ResetPassword(token string, password string) error {
 	if err != nil {
 		return err
 	}
+
+	SavePassword(username, password)
 
 	return nil
 }
