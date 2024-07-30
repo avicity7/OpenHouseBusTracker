@@ -44,9 +44,11 @@
           <li class="block md:hidden">
             <a href="/chat" class="block px-4 py-2 hover:bg-gray-100" on:click={() => menuOpen = false}>Chat</a>
           </li>
-          <li class="block md:hidden">
-            <a href="/event" class="block px-4 py-2 hover:bg-gray-100" on:click={() => menuOpen = false}>Follow Bus</a>
-          </li>
+          {#if session.Role == "user"}
+            <li class="block md:hidden">
+              <a href="/event" class="block px-4 py-2 hover:bg-gray-100" on:click={() => menuOpen = false}>Follow Bus</a>
+            </li>
+          {/if}
         </ul>
         <form method="POST" action="/?/signOut">
           <button class="w-full py-1">
