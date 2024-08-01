@@ -206,6 +206,7 @@ type Stop struct {
 
 type CurrentBus struct {
 	BusId     string
+	Carplate  string
 	RouteName string
 	Color     string
 	EventType string
