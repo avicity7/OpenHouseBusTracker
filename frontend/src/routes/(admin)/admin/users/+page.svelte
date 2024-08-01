@@ -9,6 +9,17 @@
   let showSuccessMessage = false;
 	let isLoading = false;
 
+  let pendingSearch = '';
+  let verifiedSearch = '';
+
+  $: filteredPendingUsers = users.filter(user =>
+    user.Role === 'public' && user.Name.toLowerCase().includes(pendingSearch.toLowerCase())
+  );
+
+  $: filteredVerifiedUsers = users.filter(user =>
+    user.Role !== 'public' && user.Name.toLowerCase().includes(verifiedSearch.toLowerCase())
+  );
+
   const uploadCSV = async () => {
     if (!selectedFile) {
       alert('Please select a file.');
@@ -68,62 +79,73 @@
       <p class="text-green-600 text-sm font-semibold mt-2">File uploaded successfully!</p>
     {/if}
   </div>  
+  
 
-	<div class="mt-1">
+	<div class="mt-1 flex justify-between items-center">
     <h1 class="text-xl font-semibold p-2 py-8 text-stone-800">Pending Verification</h1>
-		<table class="min-w-full divide-y divide-gray-200">
+    <input
+      type="text"
+      placeholder="Search Pending Users..."
+      bind:value={pendingSearch}
+      class="border border-gray-300 p-2 rounded-md"
+    />
+  </div>
+  
+	<div class="mt-1">
+    <table class="min-w-full divide-y divide-gray-200">
 			<thead class="bg-gray-50">
 				<tr>
-					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Name
-          </th>
-					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Email
-          </th>
-					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Role
-          </th>
-					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Actions
-          </th>
+					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
 				</tr>
 			</thead>
 			<tbody class="bg-white divide-y divide-gray-200">
-				{#each users as user}
-          {#if user.Role == "public"}
+        {#if filteredPendingUsers.length === 0}
+          <tr>
+            <td colspan="4" class="px-6 py-4 whitespace-nowrap text-center text-gray-400">No matching Pending Users found</td>
+          </tr>
+        {:else}
+          {#each filteredPendingUsers as user}
             <UserRow bind:users {user} {roles} />
-          {/if}
-				{/each}
-			</tbody>
+          {/each}
+        {/if}
+      </tbody>
 		</table>
 	</div>
 
-	<div class="mt-8">
+	<div class="mt-8 flex justify-between items-center">
     <h1 class="text-xl font-semibold p-2 py-8 text-stone-800">Admins & Student Helpers</h1>
-		<table class="min-w-full divide-y divide-gray-200">
+    <input
+      type="text"
+      placeholder="Search Admins & Student Helpers..."
+      bind:value={verifiedSearch}
+      class="border border-gray-300 p-2 rounded-md"
+    />
+  </div>
+  
+	<div class="mt-8">
+    <table class="min-w-full divide-y divide-gray-200">
 			<thead class="bg-gray-50">
 				<tr>
-					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Name
-          </th>
-					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Email
-          </th>
-					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Role
-          </th>
-					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Actions
-          </th>
+					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
 				</tr>
 			</thead>
 			<tbody class="bg-white divide-y divide-gray-200">
-				{#each users as user}
-          {#if user.Role != "public"}
+        {#if filteredVerifiedUsers.length === 0}
+          <tr>
+            <td colspan="4" class="px-6 py-4 whitespace-nowrap text-center text-gray-400">No matching Admin or Student Helpers found</td>
+          </tr>
+        {:else}
+          {#each filteredVerifiedUsers as user}
             <UserRow bind:users {user} {roles} />
-          {/if}
-				{/each}
-			</tbody>
+          {/each}
+        {/if}
+      </tbody>
 		</table>
 	</div>
 </div>

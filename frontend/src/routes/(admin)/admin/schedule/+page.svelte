@@ -222,7 +222,7 @@
                     {/each} 
                 {:else if searchTerm !== '' || selectedCarplate !== '' || selectedRoute !== '' || startTime !== '' || endTime !== ''}
                     <tr>
-                        <td colspan="8" class="px-6 py-4 whitespace-nowrap text-center">No matching schedules found</td>
+                        <td colspan="8" class="px-6 py-4 whitespace-nowrap text-center text-gray-400">No matching schedules found</td>
                     </tr>
                 {:else}
                     {#each busSchedule as schedule (schedule.BusScheduleId)}
