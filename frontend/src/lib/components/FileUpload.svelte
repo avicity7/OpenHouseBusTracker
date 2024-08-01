@@ -44,7 +44,7 @@
   on:dragleave={handleDragLeave}
   on:drop={handleDrop}
 >
-  <label for="file-upload" class="block cursor-pointer text-gray-700 font-semibold mb-2">
+  <label for="file-upload" class="block cursor-pointer text-gray-700 font-semibold mb-2" data-testid="file-input">
     <div class="flex justify-center mb-2">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-red-600" viewBox="0 0 24 24">
         <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">

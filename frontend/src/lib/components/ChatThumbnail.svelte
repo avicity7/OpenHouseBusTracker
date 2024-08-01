@@ -4,9 +4,6 @@
   import { page } from "$app/stores";
 	import Trash from "./Trash.svelte";
   export let chat_room: ChatRoom
-  export let data
-
-  const { account } = data
 
   const formatTimestamp = (timestamp: string) => {
     const utcDate = new Date(timestamp);
@@ -27,7 +24,7 @@
 <a href={`/chat/${chat_room.RoomId}`} class={`group ${$page.url.pathname.includes(chat_room.RoomId) ? "bg-red-100" : "hover:bg-stone-100"} rounded-md p-4 w-80`}>
   <div class="mb-2 flex flex-row justify-between items-center">
     <div>
-      {chat_room.User1 == account.Name ? chat_room.User2 : chat_room.User1}
+      {chat_room.RoomName != "" ? chat_room.RoomName : chat_room.Name}
     </div>
     {#if chat_room.LatestMessage.Body != ''}
       <div class="text-xs">

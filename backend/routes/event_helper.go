@@ -9,6 +9,7 @@ import (
 
 func EventHelper(r chi.Router) {
 	r.Route("/event-helpers", func(r chi.Router) {
+		r.Get("/get-accepted-swaps", http.HandlerFunc(controllers.GetAcceptedSwapRequests))
 		r.Get("/get-available-swaps/{email}", http.HandlerFunc(controllers.GetAvailableSwaps))
 		r.Get("/get-swap-requests/{email}", http.HandlerFunc(controllers.GetSwapRequests))
 		r.Get("/get-helpers", http.HandlerFunc(controllers.GetEventHelpers))

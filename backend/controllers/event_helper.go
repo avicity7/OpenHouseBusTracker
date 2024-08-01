@@ -102,73 +102,73 @@ func CreateEventHelpers(w http.ResponseWriter, r *http.Request) {
 }
 
 func BulkCreateEventHelpers(w http.ResponseWriter, r *http.Request) {
-    file, _, err := r.FormFile("file")
-    if err != nil {
-        fmt.Println("Error getting form file:", err)
-        http.Error(w, "Invalid file", http.StatusBadRequest)
-        return
-    }
-    defer file.Close()
+	file, _, err := r.FormFile("file")
+	if err != nil {
+		fmt.Println("Error getting form file:", err)
+		http.Error(w, "Invalid file", http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
 
-    csvReader := csv.NewReader(file)
-    var eventHelpers []structs.EventHelper
+	csvReader := csv.NewReader(file)
+	var eventHelpers []structs.EventHelper
 
-    if _, err := csvReader.Read(); err != nil {
-        fmt.Println("Error skipping header row:", err)
-        http.Error(w, "Failed to parse CSV", http.StatusInternalServerError)
-        return
-    }
+	if _, err := csvReader.Read(); err != nil {
+		fmt.Println("Error skipping header row:", err)
+		http.Error(w, "Failed to parse CSV", http.StatusInternalServerError)
+		return
+	}
 
-    for {
-        record, err := csvReader.Read()
-        if err == io.EOF {
-            break
-        }
-        if err != nil {
-            fmt.Println("Error reading CSV record:", err)
-            http.Error(w, "Failed to parse CSV", http.StatusInternalServerError)
-            return
-        }
+	for {
+		record, err := csvReader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			fmt.Println("Error reading CSV record:", err)
+			http.Error(w, "Failed to parse CSV", http.StatusInternalServerError)
+			return
+		}
 
-        fmt.Println("CSV Record:", record)
+		fmt.Println("CSV Record:", record)
 
-        var shift bool
-        switch record[2] {
-        case "AM":
-            shift = true
-        case "PM":
-            shift = false
-        default:
-            fmt.Println("Invalid shift value:", record[2])
-            http.Error(w, "Invalid shift value", http.StatusBadRequest)
-            return
-        }
+		var shift bool
+		switch record[2] {
+		case "AM":
+			shift = true
+		case "PM":
+			shift = false
+		default:
+			fmt.Println("Invalid shift value:", record[2])
+			http.Error(w, "Invalid shift value", http.StatusBadRequest)
+			return
+		}
 
-        busId, err := services.GetBusIdByCarplate(record[0])
-        if err != nil {
-            fmt.Println("Error getting bus ID:", err)
-            http.Error(w, "Failed to get Bus ID", http.StatusInternalServerError)
-            return
-        }
+		busId, err := services.GetBusIdByCarplate(record[0])
+		if err != nil {
+			fmt.Println("Error getting bus ID:", err)
+			http.Error(w, "Failed to get Bus ID", http.StatusInternalServerError)
+			return
+		}
 
-        eventHelper := structs.EventHelper{
-            BusId:    busId,
-            Carplate: record[0],
-            Email:    record[1],
-            Shift:    shift,
-        }
-        eventHelpers = append(eventHelpers, eventHelper)
-    }
+		eventHelper := structs.EventHelper{
+			BusId:    busId,
+			Carplate: record[0],
+			Email:    record[1],
+			Shift:    shift,
+		}
+		eventHelpers = append(eventHelpers, eventHelper)
+	}
 
-    err = services.BulkCreateEventHelpers(eventHelpers)
-    if err != nil {
-        fmt.Println("Error creating event helpers:", err)
-        http.Error(w, "Failed to create event helpers", http.StatusInternalServerError)
-        return
-    }
-    config.Cache.Delete("EventHelpers")
+	err = services.BulkCreateEventHelpers(eventHelpers)
+	if err != nil {
+		fmt.Println("Error creating event helpers:", err)
+		http.Error(w, "Failed to create event helpers", http.StatusInternalServerError)
+		return
+	}
+	config.Cache.Delete("EventHelpers")
 
-    w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusOK)
 }
 
 func UpdateEventHelper(w http.ResponseWriter, r *http.Request) {
@@ -304,6 +304,10 @@ func AcceptSwapRequest(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(500)
 	}
 
+	config.Cache.Delete("Schedules")
+	config.Cache.Delete("CurrentUserSchedules")
+	config.Cache.Delete("FutureUserSchedules")
+
 	w.WriteHeader(200)
 }
 
@@ -321,4 +325,21 @@ func DeleteSwapRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(200)
+}
+
+func GetAcceptedSwapRequests(w http.ResponseWriter, r *http.Request) {
+	swap_requests, err := services.GetAcceptedSwapRequests()
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+
+	response, err := json.Marshal(swap_requests)
+	if err != nil {
+		http.Error(w, "Failed to marshal dropdown data", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(200)
+	w.Write(response)
 }

@@ -136,8 +136,9 @@ export type Message = {
 
 export type ChatRoom = {
   RoomId: string,
-  User1: string,
-  User2: string
+  RoomName: string,
+  Email: string,
+  Name: string,
   LatestMessage: Message
 }
 
@@ -154,6 +155,7 @@ export type BusAssignments = {
 };
 
 export type SwapRequest = {
+  Timestamp: string,
   From: string,
   FromName: string,
   With: string,

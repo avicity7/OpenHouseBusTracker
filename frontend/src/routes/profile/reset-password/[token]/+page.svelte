@@ -8,7 +8,8 @@
   let password: string,
     confirmPassword: string,
     sent = false,
-    error = false
+    error = false,
+    used = false
 
   const resetPassword = async () => {
     if (password == confirmPassword) {
@@ -23,9 +24,12 @@
 		  	}
 		  })
       if (response.ok) {
+        used = false
         sent = true
         password = ""
         confirmPassword = ""
+      } else {
+        used = true
       }
     } else {
       error = true
@@ -38,13 +42,12 @@
     <h1 class="font-bold text-3xl w-full">Reset Password</h1>
     <form 
       class="flex flex-col mt-24"
-      on:submit={resetPassword}
+      on:submit|preventDefault={resetPassword}
     >
       <div class="font-medium mb-4">New password</div>
       <input 
         type="password"
         autocomplete="off"
-        name="email"
         bind:value={password}
         class="px-3 border-2 border-zinc-200 rounded focus:border-red-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800 mb-8"
       />
@@ -52,7 +55,6 @@
       <input 
         type="password"
         autocomplete="off"
-        name="email"
         bind:value={confirmPassword}
         class="px-3 border-2 border-zinc-200 rounded focus:border-red-400 outline-none select-none h-[2rem] mr-2 dark:text-zinc-800"
       />
@@ -62,6 +64,9 @@
       {/if}
       {#if error}
         <ErrorMessage message="Passwords do not match." />
+      {/if}
+      {#if used}
+        <ErrorMessage message="Password has been used in the past." />
       {/if}
     </form>
   </div>

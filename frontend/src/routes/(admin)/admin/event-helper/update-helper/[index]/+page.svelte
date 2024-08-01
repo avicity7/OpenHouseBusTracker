@@ -101,6 +101,7 @@
 									bind:group={selectedShift}
 									class="mr-2"
 									required
+                                    data-testid="{value}"
 								/>
 								<label for={label} class="text-sm">{label}</label>
 							</div>

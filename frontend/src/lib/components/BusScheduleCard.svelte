@@ -1,11 +1,11 @@
 <script lang="ts">
   import type { Schedule } from "$lib/types/global";
   export let bus: Schedule;
+  export let shift: Boolean
 
-  function formatTime(timestamp: string | number | Date) {
-    const utcDate = new Date(timestamp);
-    return utcDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }
+  const cutoff = 14
+  const d = new Date()
+  const pastCutoff = d.getHours() > cutoff
 
   function getRouteColor(routeName: string): string {
     switch (routeName.toLowerCase()) {
@@ -17,7 +17,6 @@
         return '#cccccc'; // this is gray
     }
   }
-
 </script>
 
   <div class="p-8 h-[300px] bg-white rounded-2xl shadow-md mt-6 md:mr-4">
@@ -40,14 +39,18 @@
       </div>
     </div>
 
-    <div class="mt-14 flex items-center justify-center">
-      <div class="text-center">
-        <p class="font-semibold text-md text-slate-400">From</p>
-        <p class="font-medium text-4xl">{formatTime(bus.StartTime)}</p>
-      </div>
-      <div class="text-center ml-8">
-        <p class="font-semibold text-md text-slate-400">To</p>
-        <p class="font-medium text-4xl">{formatTime(bus.EndTime)}</p>
-      </div>
+    <div class="mt-14 flex flex-col items-center justify-center">
+      {#if shift}
+        {#if pastCutoff}
+          <h2 class="text-lg font-light">Started at</h2>
+          <h1 class="text-5xl font-medium mt-2">{cutoff}:00</h1>
+        {:else}
+          <h2 class="text-lg font-light">until</h2>
+          <h1 class="text-5xl font-medium mt-2">{cutoff}:00</h1>
+        {/if}
+      {:else}
+        <h2 class="text-lg font-light">Starts at</h2>
+        <h1 class="text-5xl font-medium">{cutoff}:00</h1>
+      {/if}
     </div>
   </div>
