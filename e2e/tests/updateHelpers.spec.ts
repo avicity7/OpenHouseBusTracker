@@ -21,7 +21,7 @@ test.describe('Reassign Bus and Drivers', () => {
         await page.screenshot({ path: 'admin-event-helper-page.png' });
 
         //Update Helper Page
-        const addScheduleButton = await page.locator('[data-testid="update-helper"]');
+        const addScheduleButton = await page.locator('[data-testid="sarah"]');
         await addScheduleButton.click();
         await page.goto('https://open-house-bus-tracker.vercel.app/admin/event-helper/update-helper');
 
