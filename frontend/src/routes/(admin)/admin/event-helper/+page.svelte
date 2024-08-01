@@ -204,7 +204,7 @@
 			<tbody class="bg-white divide-y divide-gray-200">
 				{#if filteredHelpers.length === 0}
 					<tr>
-						<td colspan="8" class="px-6 py-4 whitespace-nowrap text-center">
+						<td colspan="8" class="px-6 py-4 whitespace-nowrap text-center text-gray-400">
 							No event helpers to display.
 						</td>
 					</tr>
