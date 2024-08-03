@@ -231,6 +231,7 @@ type CreateMessage struct {
 type Message struct {
 	Timestamp time.Time
 	From      string
+	FromName  string
 	RoomId    string
 	Body      string
 }
