@@ -22,6 +22,11 @@ func CreateBus(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetBuses(w http.ResponseWriter, r *http.Request) {
+	err := services.RefreshBuses()
+	if err != nil {
+		http.Error(w, "Error getting Buses", 500)
+		return
+	}
 	response, err := services.GetBuses()
 	if err != nil {
 		http.Error(w, "Error getting Buses", 500)
@@ -39,6 +44,11 @@ func GetBuses(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetBusStatus(w http.ResponseWriter, r *http.Request) {
+	err := services.RefreshBuses()
+	if err != nil {
+		http.Error(w, "Error getting Buses", 500)
+		return
+	}
 	bus_id := chi.URLParam(r, "bus_id")
 
 	status, err := services.GetBusStatus(bus_id)
