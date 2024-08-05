@@ -43,13 +43,13 @@
   })
 </script>
 
-<div class="w-full h-[90vh] grid grid-rows-10 md:pl-[22em] bg-neutral-100">
+<div class="w-full h-[90vh] grid grid-rows-10 md:pl-[22em]">
   <Chat {data} />
 
   <form class="row-span-1 pl-4 grid grid-cols-10 gap-4 items-center mt-8" on:submit={createMessage} bind:this={form}>
     <div class="md:col-span-1"></div>
     <textarea 
-      class="bg-gray-200 p-4 rounded-lg w-full col-span-7 resize-none select-none focus:outline-none"
+      class="bg-gray-100 p-4 rounded-lg w-full col-span-7 resize-none select-none focus:outline-none"
       bind:value={body}
       placeholder="Type a message"
       on:keypress={(e) => {
