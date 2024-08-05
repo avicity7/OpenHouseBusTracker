@@ -19,7 +19,7 @@
 
   const formatTimestamp = (timestamp: string) => {
     const utcDate = new Date(timestamp);
-    const formattedDate = utcDate.toLocaleTimeString();
+    const formattedDate = utcDate.toLocaleTimeString([], {timeZone: 'singapore'});
     return formattedDate;
   }
 </script>

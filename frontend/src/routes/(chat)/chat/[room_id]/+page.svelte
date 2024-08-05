@@ -14,6 +14,7 @@
   const getMessages = async () => {
     const response = await fetch(`${backend_uri}:3000/chat/get-messages/${data.room_id}`)
     data.messages = await response.json() as Array<Message>
+    if (!data.messages) data.messages = []
   }
 
   const createMessage = async () => {
@@ -25,7 +26,6 @@
       body: JSON.stringify({ From:  account?.Email, RoomId: data.room_id, Body: body })
     });
     body = ""
-    getMessages()
   }
 
   afterNavigate(() => {

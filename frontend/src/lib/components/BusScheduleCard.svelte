@@ -8,7 +8,7 @@
   const pastCutoff = d.getHours() >= cutoff
   const start_time = new Date(bus.StartTime)
   const start_hour = start_time.getHours()
-  const start_display = start_time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hourCycle:'h24'})
+  const start_display = start_time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hourCycle:'h24', timeZone: 'singapore'})
 
 
   function getRouteColor(routeName: string): string {
