@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { afterNavigate, beforeNavigate } from '$app/navigation';
+  import { afterNavigate } from '$app/navigation';
 	import Chat from '$lib/components/Chat.svelte';
-  import ChatBody from '$lib/components/ChatBody.svelte';
 	import Send from '$lib/components/Send.svelte';
   import type { Message } from '$lib/types/global.js';
   export let data
@@ -15,6 +14,7 @@
   const getMessages = async () => {
     const response = await fetch(`${backend_uri}:3000/chat/get-messages/${data.room_id}`)
     data.messages = await response.json() as Array<Message>
+    if (!data.messages) data.messages = []
   }
 
   const createMessage = async () => {
@@ -26,7 +26,6 @@
       body: JSON.stringify({ From:  account?.Email, RoomId: data.room_id, Body: body })
     });
     body = ""
-    getMessages()
   }
 
   afterNavigate(() => {
@@ -44,10 +43,10 @@
   })
 </script>
 
-<div class="w-full h-[90vh] grid grid-rows-10">
+<div class="w-full h-[90vh] grid grid-rows-10 md:pl-[22em]">
   <Chat {data} />
 
-  <form class="row-span-1 pl-4 grid grid-cols-10 gap-4 items-center md:pl-[23em] mt-8" on:submit={createMessage} bind:this={form}>
+  <form class="row-span-1 pl-4 grid grid-cols-10 gap-4 items-center mt-8" on:submit={createMessage} bind:this={form}>
     <div class="md:col-span-1"></div>
     <textarea 
       class="bg-gray-100 p-4 rounded-lg w-full col-span-7 resize-none select-none focus:outline-none"

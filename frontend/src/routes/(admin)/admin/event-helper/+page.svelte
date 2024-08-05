@@ -219,6 +219,7 @@
 									<a
 										href={`event-helper/update-helper/${encodeURIComponent(JSON.stringify(helper))}`}
 										class="text-stone-500 hover:text-green-500 mr-8"
+										data-testid="update-helper-{helper.Name}"
 									>
 										<ToolTip text="Update Event Helper">
 											<svg

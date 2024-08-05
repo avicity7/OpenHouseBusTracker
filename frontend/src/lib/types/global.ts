@@ -130,6 +130,7 @@ export type LoginResponse = {
 export type Message = {
   Timestamp: string, 
   From: string, 
+  FromName: string,
   RoomId: string, 
   Body: string
 }

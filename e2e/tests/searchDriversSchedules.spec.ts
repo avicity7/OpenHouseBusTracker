@@ -12,26 +12,26 @@ test.describe('Schedule Search Functionality', () => {
         await signInPage.signIn(email, password);
         const currentURL = page.url();
         console.log('Current URL after login:', currentURL);
-        if (!currentURL.includes('/admin/drivers')) {
-            console.log('Navigating manually to /admin/drivers');
-            await page.goto('http://open-house-bus-tracker.vercel.app/admin/drivers');
+        if (!currentURL.includes('/admin/schedule')) {
+            console.log('Navigating manually to /admin/schedule');
+            await page.goto('http://open-house-bus-tracker.vercel.app/admin/schedule');
         }
         const finalURL = page.url();
-        expect(finalURL).toContain('/admin/drivers');
-        await page.screenshot({ path: 'admin-drivers-page.png' });
+        expect(finalURL).toContain('/admin/schedule');
+        await page.screenshot({ path: 'admin-schedule-page.png' });
 
         // Search Function
-        const searchInputLocator = await page.locator("[data-testid='search-drivers']");
+        const searchInputLocator = await page.locator("[data-testid='search-input']");
         console.log('Search input locator:', searchInputLocator);
         await searchInputLocator.fill('Lily Fields');
         console.log('Filled search input with "Lily Fields"');
         await page.waitForTimeout(2000); 
-        const driversList = await page.$$('.drivers-list');
-        console.log(`Number of drivers found: ${driversList.length}`);
-        if (driversList.length === 0) {
+        const scheduleItems = await page.$$('.schedule-item');
+        console.log(`Number of schedule items found: ${scheduleItems.length}`);
+        if (scheduleItems.length === 0) {
             const pageContent = await page.content();
             console.log('Page content after search:', pageContent);
         }
-        expect(driversList.length).toBeGreaterThan(0);
+        expect(scheduleItems.length).toBeGreaterThan(0);
     });
 });

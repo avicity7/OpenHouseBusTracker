@@ -206,6 +206,7 @@ type Stop struct {
 
 type CurrentBus struct {
 	BusId     string
+	Carplate  string
 	RouteName string
 	Color     string
 	EventType string
@@ -230,6 +231,7 @@ type CreateMessage struct {
 type Message struct {
 	Timestamp time.Time
 	From      string
+	FromName  string
 	RoomId    string
 	Body      string
 }

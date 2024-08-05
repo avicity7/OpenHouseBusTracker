@@ -30,8 +30,6 @@
 
     ws.onmessage = async (msg) => {
       let parts = msg.data.split(' ');
-      console.log(parts)
-      console.log(rooms)
       if (rooms.includes(parts[0])) {
         getRooms()
       }

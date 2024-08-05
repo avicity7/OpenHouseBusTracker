@@ -167,6 +167,7 @@
 				class="border border-gray-300 rounded-md px-3 py-2 w-60"
 				bind:value={search}
 				placeholder="Type to search drivers...."
+				data-testid="search-drivers"
 			/>
 		</div>
 	</div>
@@ -188,7 +189,7 @@
 			<tbody class="bg-white divide-y divide-gray-200">
 				{#if drivers}
 					{#each drivers.filter( (driver) => driver.DriverName.toLowerCase().includes(search.toLowerCase()) ) as driver}
-						<tr class="hover:bg-gray-100">
+						<tr class="hover:bg-gray-100 drivers-list">
 							<td class="px-6 py-4 whitespace-nowrap text-center">{driver.DriverName}</td>
 							<td class="px-6 py-2 whitespace-nowrap text-sm font-medium ">
 								<div class="flex items-center justify-center ml-2 gap-4">
