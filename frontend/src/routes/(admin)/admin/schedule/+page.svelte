@@ -45,9 +45,7 @@
 		}
 	}
 
-	console.log(schedules)
-
-	function formatTimestamp(timestamp: string): string {
+	const formatTimestamp = (timestamp: string) => {
 		let utcDate = new Date(timestamp);
 		let formattedDate = utcDate.toLocaleString();
 		return formattedDate;
