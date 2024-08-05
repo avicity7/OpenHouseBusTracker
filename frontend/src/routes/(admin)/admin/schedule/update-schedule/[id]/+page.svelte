@@ -19,13 +19,13 @@
 	selectedDriverId = DriverId;
 	if (StartTime.endsWith('Z')) {
 		let d = new Date(StartTime)
-		selectedStartTime = `${d.getFullYear()}-${d.getMonth() < 10 ? "0" + d.getMonth() : d.getMonth()}-${d.getUTCDate()}T${d.getHours() < 10 ? "0" + d.toLocaleTimeString().split(' ')[0] : d.toLocaleTimeString().split(' ')[0]}`
+		selectedStartTime = `${d.getFullYear()}-${d.getMonth() < 10 ? "0" + d.getMonth() : d.getMonth()}-${d.getUTCDate() < 10 ? "0" + d.getUTCDate() : d.getUTCDate()}T${d.getHours() < 10 ? "0" + d.toLocaleTimeString().split(' ')[0] : d.toLocaleTimeString().split(' ')[0]}`
 	} else {
 		selectedStartTime = StartTime.split('+')[0]
 	}
 	if (EndTime.endsWith('Z')) {
 		let d = new Date(EndTime)
-		selectedEndTime = `${d.getFullYear()}-${d.getMonth() < 10 ? "0" + d.getMonth() : d.getMonth()}-${d.getUTCDate()}T${d.getHours() < 10 ? "0" + d.toLocaleTimeString().split(' ')[0] : d.toLocaleTimeString().split(' ')[0]}`
+		selectedEndTime = `${d.getFullYear()}-${d.getMonth() < 10 ? "0" + d.getMonth() : d.getMonth()}-${d.getUTCDate() < 10 ? "0" + d.getUTCDate() : d.getUTCDate()}T${d.getHours() < 10 ? "0" + d.toLocaleTimeString().split(' ')[0] : d.toLocaleTimeString().split(' ')[0]}`
 	} else {
 		selectedEndTime = EndTime.split('+')[0]
 	}
