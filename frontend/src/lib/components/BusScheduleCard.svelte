@@ -6,6 +6,10 @@
   const cutoff = 14
   const d = new Date()
   const pastCutoff = d.getHours() >= cutoff
+  const start_time = new Date(bus.StartTime)
+  const start_hour = start_time.getHours()
+  const start_display = start_time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hourCycle:'h24'})
+
 
   function getRouteColor(routeName: string): string {
     switch (routeName.toLowerCase()) {
@@ -43,14 +47,14 @@
       {#if shift}
         {#if pastCutoff}
           <h2 class="text-lg font-light">Started at</h2>
-          <h1 class="text-5xl font-medium mt-2">{cutoff}:00</h1>
+          <h1 class="text-5xl font-medium mt-2">{start_hour > cutoff ? start_display : cutoff + ":00"}</h1>
         {:else}
           <h2 class="text-lg font-light">until</h2>
           <h1 class="text-5xl font-medium mt-2">{cutoff}:00</h1>
         {/if}
       {:else}
         <h2 class="text-lg font-light">Starts at</h2>
-        <h1 class="text-5xl font-medium">{cutoff}:00</h1>
+        <h1 class="text-5xl font-medium">{start_hour > cutoff ? start_display : cutoff + ":00"}</h1>
       {/if}
     </div>
   </div>
