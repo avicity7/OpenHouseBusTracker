@@ -19,6 +19,7 @@
     if (data.session) {
       window.location.replace('/profile')
     }
+    getCaptchaRes()
   })
 
   afterNavigate(getCaptchaRes)
