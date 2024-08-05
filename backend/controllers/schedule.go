@@ -82,8 +82,6 @@ func UpdateBusSchedule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("Received update request for schedule: %+v\n", schedule)
-
 	err = services.UpdateBusSchedule(schedule)
 	if err != nil {
 		http.Error(w, "Failed to update schedule", http.StatusInternalServerError)
