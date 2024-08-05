@@ -119,9 +119,10 @@
       let currentDist = haversineDistance([currentStop.Lat, currentStop.Lng], [position.coords.latitude, position.coords.longitude])
       let nextDist = haversineDistance([nextStop.Lat, nextStop.Lng], [position.coords.latitude, position.coords.longitude])
       let radius = 10
+      let margin = 10
 
-      if ((current.EventId == 2 && currentDist > radius + 5) || (current.EventId == 3 && nextDist < radius) || (current.EventId == 1 && currentDist < radius)) {
-        console.log(`current.EventId: ${current.EventId}, currentDist: ${currentDist}, nextDist: ${nextDist}, currentStop: ${currentStop}, nextStop: ${nextStop}`)
+      if ((current.EventId == 2 && currentDist > (radius + margin)) || (current.EventId == 3 && nextDist < radius) || (current.EventId == 1 && currentDist < radius)) {
+        alert(`current.EventId: ${current.EventId}, currentDist: ${currentDist}, nextDist: ${nextDist}, currentStop: ${currentStop}, nextStop: ${nextStop}`)
         createEvent()
       }
 		})
