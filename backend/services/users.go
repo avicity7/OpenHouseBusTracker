@@ -30,7 +30,7 @@ func GetEmail(name string) (string, error) {
 func GetUsers() (structs.ReturnedUserArray, error) {
 	output := make(structs.ReturnedUserArray, 0)
 	query := `
-		SELECT name, email, role_name, verification_token FROM user_table 
+		SELECT name, email, COALESCE(contact, '') as contact, role_name, verification_token FROM user_table 
 		JOIN user_role ON user_table.role_id = user_role.role_id 
 		ORDER BY email ASC
 	`
@@ -42,7 +42,7 @@ func GetUsers() (structs.ReturnedUserArray, error) {
 
 	for rows.Next() {
 		var user structs.ReturnedUser
-		rows.Scan(&user.Name, &user.Email, &user.Role, &user.VerificationToken)
+		rows.Scan(&user.Name, &user.Email, &user.Contact, &user.Role, &user.VerificationToken)
 		output = append(output, user)
 	}
 

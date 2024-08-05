@@ -38,6 +38,7 @@
 <tr class="hover:bg-gray-100">
 	<td class="px-6 py-4 whitespace-nowrap">{user.Name}</td>
 	<td class="px-6 py-4 whitespace-nowrap">{user.Email}</td>
+	<td class="px-6 py-4 whitespace-nowrap">{user.Contact ? user.Contact : '-'}</td>
 	<td class="py-6">
 		<select
 			class=" hover:bg-gray-100"
