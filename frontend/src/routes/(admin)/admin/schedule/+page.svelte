@@ -133,7 +133,7 @@
     <div class="flex items-center justify-between mb-4">
         {#if selectedSchedules.size > 1}
             <button 
-                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mr-2 rounded transition duration-300"
+                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mr-2 rounded-xl transition duration-300"
                 on:click={bulkDelete}
             >
                 Bulk Delete

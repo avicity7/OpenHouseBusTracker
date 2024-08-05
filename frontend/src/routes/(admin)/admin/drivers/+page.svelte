@@ -273,6 +273,7 @@
 		<div>
 			<label for="payRate">Pay Rate:</label>
 			<input id="payRate" type="number" bind:value={payRate} class="rounded p-1 w-20 mb-2" />
+			<i class="text-gray-400 text-sm ml-4">** Use this Pay Rate input for both individual PDF/Summary PDF</i>
 		</div>
 		<button
 			on:click={exportAllDriversToPDF}
