@@ -5,7 +5,7 @@
 
   const cutoff = 14
   const d = new Date()
-  const pastCutoff = d.getHours() > cutoff
+  const pastCutoff = d.getHours() >= cutoff
 
   function getRouteColor(routeName: string): string {
     switch (routeName.toLowerCase()) {
