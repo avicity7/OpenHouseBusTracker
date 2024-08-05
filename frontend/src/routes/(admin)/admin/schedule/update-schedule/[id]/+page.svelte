@@ -17,8 +17,18 @@
 	selectedBus = buses.find((bus) => bus.BusId == BusId)!;
 	selectedRoute = routes.find((route) => route.RouteName == RouteName)!;
 	selectedDriverId = DriverId;
-	selectedStartTime = StartTime.split('+')[0];
-	selectedEndTime = EndTime.split('+')[0];
+	if (StartTime.endsWith('Z')) {
+		let d = new Date(StartTime)
+		selectedStartTime = `${d.getFullYear()}-${d.getMonth() < 10 ? "0" + d.getMonth() : d.getMonth()}-${d.getUTCDate()}T${d.getHours() < 10 ? "0" + d.toLocaleTimeString().split(' ')[0] : d.toLocaleTimeString().split(' ')[0]}`
+	} else {
+		selectedStartTime = StartTime.split('+')[0]
+	}
+	if (EndTime.endsWith('Z')) {
+		let d = new Date(EndTime)
+		selectedEndTime = `${d.getFullYear()}-${d.getMonth() < 10 ? "0" + d.getMonth() : d.getMonth()}-${d.getUTCDate()}T${d.getHours() < 10 ? "0" + d.toLocaleTimeString().split(' ')[0] : d.toLocaleTimeString().split(' ')[0]}`
+	} else {
+		selectedEndTime = EndTime.split('+')[0]
+	}
 	selectedDriver = drivers.find((driver) => selectedDriverId == driver.DriverId)!;
 
 </script>
