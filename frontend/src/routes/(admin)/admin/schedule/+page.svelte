@@ -17,7 +17,7 @@
 
 	export let data;
 	const { backend_uri, schedules, routes, carplates } = data;
-
+	
 	async function deleteSchedule(id: number | number[]) {
 		try {
 			const response = await fetch(`${backend_uri}:3000/schedules/delete-schedule`, {
@@ -46,8 +46,8 @@
 	}
 
 	function formatTimestamp(timestamp: string): string {
-		const utcDate = new Date(timestamp);
-		const formattedDate = utcDate.toLocaleString();
+		let utcDate = new Date(timestamp);
+		let formattedDate = utcDate.toLocaleString();
 		return formattedDate;
 	}
 

@@ -5,18 +5,15 @@
 	export let data;
 
 	let { drivers, buses, routes, schedule, dropdownData } = data;
-	let selectedBus: EventBus;
-	let selectedRoute: Route;
-	let selectedDriverId: number;
 	let selectedStartTime = '';
 	let selectedEndTime = '';
 	let selectedDriver: Driver;
 
 
-	const { BusId, RouteName, DriverId, StartTime, EndTime } = schedule;
-	selectedBus = buses.find((bus) => bus.BusId == BusId)!;
-	selectedRoute = routes.find((route) => route.RouteName == RouteName)!;
-	selectedDriverId = DriverId;
+	const { BusId, RouteName, DriverName, StartTime, EndTime } = schedule;
+	let selectedBus = buses.find((bus) => bus.BusId == BusId)!;
+	let selectedRoute = routes.find((route) => route.RouteName == RouteName)!;
+	let selectedDriverName = DriverName;
 	if (StartTime.endsWith('Z')) {
 		let d = new Date(StartTime)
 		selectedStartTime = `${d.getFullYear()}-${d.getMonth() < 10 ? "0" + d.getMonth() : d.getMonth()}-${d.getUTCDate() < 10 ? "0" + d.getUTCDate() : d.getUTCDate()}T${d.toLocaleString([], {hour: '2-digit', minute:'2-digit', second: '2-digit'}).split(' ')[0]}`
@@ -29,7 +26,7 @@
 	} else {
 		selectedEndTime = EndTime.split('+')[0]
 	}
-	selectedDriver = drivers.find((driver) => selectedDriverId == driver.DriverId)!;
+	selectedDriver = drivers.find((driver) => selectedDriverName == driver.DriverName)!;
 
 </script>
 

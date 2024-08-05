@@ -1,5 +1,5 @@
 import { error, redirect, type Load } from '@sveltejs/kit';
-import type { Route, EventBus, Driver, DropdownData } from '$lib/types/global';
+import type { Route, EventBus, Driver, DropdownData, Schedule } from '$lib/types/global';
 import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 export const load: Load = async ({ fetch, params }) => {
@@ -34,7 +34,7 @@ export const load: Load = async ({ fetch, params }) => {
 		throw new Error(`Failed to fetch schedule data from id: ${id}: ${response.statusText}`);
 	}
 
-	const schedule = await response.json();
+	const schedule = await response.json() as Schedule;
 
 	return {
 		buses,

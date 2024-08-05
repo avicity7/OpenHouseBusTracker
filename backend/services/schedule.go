@@ -224,8 +224,8 @@ func GetDropdownData() (structs.ScheduleDropdownData, error) {
 	return dropdownData, nil
 }
 
-func GetScheduleByID(id int) (structs.UpdateSchedule, error) {
-	var schedule structs.UpdateSchedule
+func GetScheduleByID(id int) (structs.Schedule, error) {
+	var schedule structs.Schedule
 
 	query := `
 	SELECT 
@@ -233,7 +233,7 @@ func GetScheduleByID(id int) (structs.UpdateSchedule, error) {
 		b.bus_id,
 		b.carplate AS Bus_Carplate,
 		r.route_name AS Route_Name,
-		d.driver_id AS Driver_Id,
+		d.driver_name,
 		bs.start_time,
 		bs.end_time
 	FROM 
@@ -253,12 +253,12 @@ func GetScheduleByID(id int) (structs.UpdateSchedule, error) {
 		&schedule.BusId,
 		&schedule.Carplate,
 		&schedule.RouteName,
-		&schedule.DriverId,
+		&schedule.DriverName,
 		&schedule.StartTime,
 		&schedule.EndTime,
 	)
 	if err != nil {
-		return structs.UpdateSchedule{}, err
+		return structs.Schedule{}, err
 	}
 
 	return schedule, nil
