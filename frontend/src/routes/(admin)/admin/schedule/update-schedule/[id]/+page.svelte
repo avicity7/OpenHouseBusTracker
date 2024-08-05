@@ -14,6 +14,7 @@
 	let selectedBus = buses.find((bus) => bus.BusId == BusId)!;
 	let selectedRoute = routes.find((route) => route.RouteName == RouteName)!;
 	let selectedDriverName = DriverName;
+	console.log(StartTime)
 	if (StartTime.endsWith('Z')) {
 		let d = new Date(StartTime)
 		selectedStartTime = `${d.getFullYear()}-${d.getMonth() < 10 ? "0" + d.getMonth() : d.getMonth()}-${d.getUTCDate() < 10 ? "0" + d.getUTCDate() : d.getUTCDate()}T${d.toLocaleString([], {hour: '2-digit', minute:'2-digit', second: '2-digit'}).split(' ')[0]}`
