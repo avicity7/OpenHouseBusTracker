@@ -47,7 +47,7 @@
 
 	const formatTimestamp = (timestamp: string) => {
 		let utcDate = new Date(timestamp);
-		let formattedDate = utcDate.toLocaleString();
+		let formattedDate = utcDate.toLocaleString([], {hour: '2-digit', minute: '2-digit'});
 		return formattedDate;
 	}
 
