@@ -15,12 +15,24 @@
 		);
 	}
 
-	function toggleNameSelection(user: User) {
-		if (selectedNames.has(user)) {
-			selectedNames.delete(user);
+	// function toggleNameSelection(user: User) {
+	// 	if (selectedNames.has(user)) {
+	// 		selectedNames.delete(user);
+	// 	} else {
+	// 		selectedNames.add(user);
+	// 	}
+	// }
+	function toggleNameSelection(user: User, checked: boolean) {
+		if (checked) {
+		selectedNames.add(user);
 		} else {
-			selectedNames.add(user);
+		selectedNames.delete(user);
 		}
+	}
+
+	function handleCheckboxChange(event: Event, user: User) {
+		const target = event.target as HTMLInputElement;
+		toggleNameSelection(user, target.checked);
 	}
 
 	$: searchQuery, filterNames();
@@ -61,8 +73,9 @@
 									name="name"
 									id={user.Name}
 									value={user.Email}
-									on:change={() => toggleNameSelection(user)}
+									on:change={(e) => handleCheckboxChange(e, user)}
 									class="mr-2"
+									checked={selectedNames.has(user)}
 								/>
 								<label for={user.Name} class="text-sm">{user.Name}</label>
 							</div>
