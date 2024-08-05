@@ -19,13 +19,13 @@
 	selectedDriverId = DriverId;
 	if (StartTime.endsWith('Z')) {
 		let d = new Date(StartTime)
-		selectedStartTime = `${d.getFullYear()}-${d.getMonth() < 10 ? "0" + d.getMonth() : d.getMonth()}-${d.getUTCDate() < 10 ? "0" + d.getUTCDate() : d.getUTCDate()}T${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second: '2-digit', timeZone: 'singapore'}).split(' ')[0]}`
+		selectedStartTime = `${d.getFullYear()}-${d.getMonth() < 10 ? "0" + d.getMonth() : d.getMonth()}-${d.getUTCDate() < 10 ? "0" + d.getUTCDate() : d.getUTCDate()}T${d.toLocaleString([], {hour: '2-digit', minute:'2-digit', second: '2-digit', timeZone: 'singapore'}).split(' ')[0]}`
 	} else {
 		selectedStartTime = StartTime.split('+')[0]
 	}
 	if (EndTime.endsWith('Z')) {
 		let d = new Date(EndTime)
-		selectedEndTime = `${d.getFullYear()}-${d.getMonth() < 10 ? "0" + d.getMonth() : d.getMonth()}-${d.getUTCDate() < 10 ? "0" + d.getUTCDate() : d.getUTCDate()}T${d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second: '2-digit', timeZone: 'singapore'}).split(' ')[0]}`
+		selectedEndTime = `${d.getFullYear()}-${d.getMonth() < 10 ? "0" + d.getMonth() : d.getMonth()}-${d.getUTCDate() < 10 ? "0" + d.getUTCDate() : d.getUTCDate()}T${d.toLocaleString([], {hour: '2-digit', minute:'2-digit', second: '2-digit', timeZone: 'singapore'}).split(' ')[0]}`
 	} else {
 		selectedEndTime = EndTime.split('+')[0]
 	}
