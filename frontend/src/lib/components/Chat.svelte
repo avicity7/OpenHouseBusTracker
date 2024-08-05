@@ -17,7 +17,7 @@
   </p>
 
 </div>
-<div class={`flex flex-col-reverse overflow-y-auto snap-end row-span-10 md:pl-[24em] px-10 pt-16`}>
+<div class={`flex flex-col-reverse overflow-y-auto snap-end row-span-10 px-10 pt-16`}>
   {#each data.messages as message}
     <ChatBody {data} {message} />
   {/each}
