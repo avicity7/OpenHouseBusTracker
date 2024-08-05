@@ -121,6 +121,7 @@
       let radius = 15
 
       if ((current.EventId == 2 && currentDist > radius) || (current.EventId == 3 && nextDist < radius + 5) || (current.EventId == 1 && currentDist < radius)) {
+        console.log(`current.EventId: ${current.EventId}, currentDist: ${currentDist}, nextDist: ${nextDist}, currentStop: ${currentStop}, nextStop: ${nextStop}`)
         createEvent()
       }
 		})
