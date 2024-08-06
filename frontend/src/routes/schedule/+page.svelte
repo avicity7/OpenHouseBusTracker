@@ -82,7 +82,7 @@
           <h2 class="text-xl font-medium mt-8">for your {swapRequest.TargetShift ? " AM" : "PM"} shift</h2>
           <div class="flex flex-row items-center">
             <button class="px-3 py-2 bg-red-800 hover:bg-red-700 text-white rounded my-8 mx-2" on:click={() => deleteRequest(swapRequest)}>
-              Cancel request
+              Reject request
             </button>
             <button class="px-3 py-2 bg-green-900 hover:bg-green-800 text-white rounded my-8 mx-2" on:click={() => acceptRequest(swapRequest)}>
               Accept request
