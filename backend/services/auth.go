@@ -1,3 +1,4 @@
+// Package services defines the SQL and/or intensive tasks (bcrypt etc.) that the server will undertake for each route.
 package services
 
 import (
