@@ -1,3 +1,4 @@
+// Package utils defines functions that do not necessarily update entities, but are re-used.
 package utils
 
 import (
@@ -10,6 +11,7 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
+// This function is used throughout different Controllers for different purposes, hence the logic.
 func SendEmail(token string, user_email string, pwd string, name string) error {
 	godotenv.Load()
 	env := os.Getenv("ENV")

@@ -1,3 +1,4 @@
+// Module server defines the code for the OpenHouseBusTracker API.
 module server
 
 go 1.20

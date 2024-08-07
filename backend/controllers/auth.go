@@ -1,3 +1,4 @@
+// Package controllers defines what services each route will call, as well as what they will return.
 package controllers
 
 import (

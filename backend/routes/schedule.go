@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+// Schedules is the function that defines the routes related to creating Bus Schedules.
 func Schedules(r *chi.Mux) {
 	r.Route("/schedules", func(r chi.Router) {
 		r.Get("/get-schedules", http.HandlerFunc(controllers.GetSchedule))
