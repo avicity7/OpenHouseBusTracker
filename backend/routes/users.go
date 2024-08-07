@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+// Users defines the routes related to Users (separate from Auth)
 func Users(r *chi.Mux) {
 	r.Route("/users", func(r chi.Router) {
 		r.Get("/get-users", http.HandlerFunc(controllers.GetUsers))
