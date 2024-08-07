@@ -241,6 +241,7 @@
 									<button
 										class="text-stone-500 hover:text-red-600 text-2xl"
 										on:click={() => deleteEventHelper(helper)}
+										data-testid="delete-helper-{helper.Name}"
 									>
 										<ToolTip text="Delete Event Helper">
 											<svg
