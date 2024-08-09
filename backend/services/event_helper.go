@@ -316,7 +316,7 @@ func GetAvailableSwaps(email string) ([]structs.EventHelper, error) {
 }
 
 func CreateSwapRequest(swap_request structs.SwapRequest) error {
-	query := `INSERT INTO swap_request("from", "with") VALUES (@From, @With)`
+	query := `INSERT INTO swap_request("from", "with", accepted) VALUES (@From, @With, FALSE)`
 
 	args := pgx.NamedArgs{
 		"From": swap_request.From,
@@ -325,6 +325,7 @@ func CreateSwapRequest(swap_request structs.SwapRequest) error {
 
 	_, err := config.Dbpool.Exec(context.Background(), query, args)
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 
