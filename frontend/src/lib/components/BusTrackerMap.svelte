@@ -79,21 +79,10 @@
 
 				if (inputCoords.length > 2) {
 					response = await fetch(
-						`https://api.openrouteservice.org/v2/directions/driving-car/geojson`,
-						{
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/json',
-								Authorization: osr_key
-							},
-							body: JSON.stringify({
-								continue_straight: false,
-								coordinates: inputCoords
-							})
-						}
+						`https://api.mapbox.com/matching/v5/mapbox/driving/${positions}?geometries=geojson&access_token=${mapbox_key}`
 					);
 					parsed = await response.json();
-					coords.push(parsed.features[0].geometry);
+					coords.push(parsed.matchings[0].geometry);
 				} else {
 					response = await fetch(
 						`https://api.mapbox.com/matching/v5/mapbox/driving/${positions}?geometries=geojson&access_token=${mapbox_key}`
