@@ -170,7 +170,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex items-center">
-                                <button class="text-stone-500 hover:text-red-600 text-2xl mr-4" on:click={() => updateBusVisibility(bus.BusId, !bus.Hidden)}>
+                                <button class="text-stone-500 hover:text-red-600 text-2xl" on:click={() => updateBusVisibility(bus.BusId, !bus.Hidden)}>
                                     <ToolTip text={bus.Hidden ? "Show Bus" : "Hide Bus"}> 
                                       {#if bus.Hidden}
                                         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m4 4l16 16m-3.5-3.244C15.147 17.485 13.618 18 12 18c-3.53 0-6.634-2.452-8.413-4.221c-.47-.467-.705-.7-.854-1.159c-.107-.327-.107-.913 0-1.24c.15-.459.385-.693.855-1.16c.897-.892 2.13-1.956 3.584-2.793M19.5 14.634c.333-.293.638-.582.912-.854l.003-.003c.468-.466.703-.7.852-1.156c.107-.327.107-.914 0-1.241c-.15-.458-.384-.692-.854-1.159C18.633 8.452 15.531 6 12 6c-.338 0-.671.022-1 .064m2.323 7.436a2 2 0 0 1-2.762-2.889"/></svg>
@@ -179,11 +179,9 @@
                                       {/if}
                                     </ToolTip>
                                 </button>
-                                <a href={`buses/update-bus/${encodeURIComponent(JSON.stringify(bus))}`} class="text-stone-500 hover:text-green-500 mr-8">
+                                <a href={`buses/update-bus/${encodeURIComponent(JSON.stringify(bus))}`} class="text-2xl text-stone-500 hover:text-green-500 mx-4">
                                     <ToolTip text="Update Bus"> 
-                                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3"/>
-                                      </svg>
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1"/><path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3"/></g></svg>
                                     </ToolTip>
                                 </a>
                                 <button class="text-stone-500 hover:text-red-600 text-2xl" on:click={() => deleteBus(bus.BusId)}>

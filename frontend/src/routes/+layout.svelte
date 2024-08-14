@@ -41,7 +41,7 @@
   <div class={`flex flex-row items-center ${session?.Role == "admin" && $page.url.pathname == '/' ? "bg-white p-2 rounded" : ""}`}>
     {#if session?.Role == "admin"}
       <div class="flex flex-row items-center">
-        <a href="/admin/users" class={"font-medium hidden md:block "+($page.url.pathname.includes('admin') ? "text-red-700" : "hover:text-red-700")}>Manage</a>
+        <a href="/admin/users" class={"ml-2 font-medium hidden md:block "+($page.url.pathname.includes('admin') ? "text-red-700" : "hover:text-red-700")}>Manage</a>
         <a href="/chat" class={"mx-8 font-medium hidden md:block "+($page.url.pathname.includes('chat') ? "text-red-700" : "hover:text-red-700")}>Chat</a>
         <Avatar {data} />
       </div>
@@ -49,7 +49,7 @@
 
     {#if session?.Role == "user"}
       <div class="flex flex-row items-center">
-        <a href="/bus-routes" class={"font-medium mr-8"+($page.url.pathname.includes('bus-routes') ? "text-red-700" : "hover:text-red-700")}>Routes</a>
+        <a href="/bus-routes" class={"font-medium mr-8 "+($page.url.pathname.includes('bus-routes') ? "text-red-700" : "hover:text-red-700")}>Routes</a>
         <a href="/schedule" class={"font-medium hidden md:block "+($page.url.pathname.includes('schedule') ? "text-red-700" : "hover:text-red-700")}>My Shifts</a>
         <a href="/chat" class={"mx-8 font-medium hidden md:block "+($page.url.pathname.includes('chat') ? "text-red-700" : "hover:text-red-700")}>Chat</a>
         <Avatar {data} />
@@ -58,7 +58,7 @@
 
     {#if !session}
       <div class="flex flex-row items-center">
-        <a href="/bus-routes" class={"font-medium mr-8"+($page.url.pathname.includes('bus-routes') ? "text-red-700" : "hover:text-red-700")}>Routes</a>
+        <a href="/bus-routes" class={"font-medium mr-8 "+($page.url.pathname.includes('bus-routes') ? "text-red-700" : "hover:text-red-700")}>Routes</a>
         <a href="/help" class={"font-medium "+($page.url.pathname.includes('/help') ? "text-red-700" : "hover:text-red-700")}>Help</a>
         <a href="/profile" class={"mx-8 font-medium "+($page.url.pathname.includes('/profile') ? "text-red-700" : "hover:text-red-700")}>Login</a>
       </div>
