@@ -1,14 +1,19 @@
+<svelte:head>
+  <script bind:this={script} src="https://www.google.com/recaptcha/api.js?render=explicit"></script>
+	<title>Sign up | SPOH Bus Tracker</title>
+</svelte:head>
+
 <script lang="ts">
-	import { afterNavigate } from '$app/navigation';
 	import { onMount } from 'svelte';
   import ErrorMessage from '$lib/components/ErrorMessage.svelte';
 
   export let data
   export let form
   const { captcha_key } = data
+  let script:HTMLElement
   
   const getCaptchaRes = () => {
-    grecaptcha.ready(function() {
+    grecaptcha.ready(() => {
       grecaptcha.render("g-recaptcha", {
         "sitekey": captcha_key
       });
@@ -19,16 +24,11 @@
     if (data.session) {
       window.location.replace('/profile')
     }
-    getCaptchaRes()
+    script.addEventListener('load', () => {
+      getCaptchaRes()
+    })
   })
-
-  afterNavigate(getCaptchaRes)
 </script>
-
-<svelte:head>
-  <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
-	<title>Sign up | SPOH Bus Tracker</title>
-</svelte:head>
 
 <div class="w-screen flex flex-col items-center text-zinc-800 pt-16">
   <div class="max-w-xl mt-12">

@@ -3,10 +3,10 @@
   export let form
   import UserSettingsOutline from '$lib/components/UserSettingsOutline.svelte';
   import ErrorMessage from '$lib/components/ErrorMessage.svelte';
-  import { onMount } from 'svelte';
+	import { onMount } from 'svelte';
   let { session, account } = data;
   onMount(() => {
-    if (session && account.Email != '') {
+    if (session) {
       location.replace("/")
     }
   })

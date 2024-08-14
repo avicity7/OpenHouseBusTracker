@@ -987,6 +987,11 @@ canvg@^3.0.6:
     stackblur-canvas "^2.0.0"
     svg-pathdata "^6.0.3"
 
+centra@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/centra/-/centra-1.0.1.tgz#88d164906779c43adc25ffc175585bcbcc168d55"
+  integrity sha512-NyC/mxn9vTH9GXFuybc91nftdWdJUhv7HYRuXaJWQkpzpXghRBEr7WlP7wAxtHb0SrePpuJO127gJsWD+xOZrg==
+
 chalk@^4.0.0:
   version "4.1.2"
   resolved "https://registry.npmjs.org/chalk/-/chalk-4.1.2.tgz"
@@ -1693,6 +1698,13 @@ graphemer@^1.4.0:
   version "1.4.0"
   resolved "https://registry.npmjs.org/graphemer/-/graphemer-1.4.0.tgz"
   integrity sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==
+
+grecaptcha@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/grecaptcha/-/grecaptcha-1.0.3.tgz#4634b1626efb3b922a1d527f2046d325bd4d4aa0"
+  integrity sha512-L0yHm3V+p82zBVCqPA7gbBxf+Hvf8nxQ+h3XtVmwEWXQf7pzAQzaSsf6eTUiV/ZoZd0R4+3d7ToEHIVwWHLOzQ==
+  dependencies:
+    centra "^1.0.1"
 
 grid-index@^1.1.0:
   version "1.1.0"
