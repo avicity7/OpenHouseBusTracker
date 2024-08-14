@@ -34,8 +34,13 @@
   </div>
 
   <div class="w-full flex justify-between">
-    <div class="text-ellipsis overflow-hidden text-nowrap">
-      {chat_room.LatestMessage.Body}
+    <div class="text-sm flex flex-row">
+      <div class="mr-1">
+        {chat_room.LatestMessage.FromName}:
+      </div>
+      <div class="text-ellipsis overflow-hidden text-nowrap">
+        {chat_room.LatestMessage.Body}
+      </div>
     </div>
     <button class="invisible group-hover:visible text-gray-400 hover:text-red-400" on:click={deleteRoom}>
       <Trash />
