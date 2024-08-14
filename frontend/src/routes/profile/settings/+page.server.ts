@@ -53,7 +53,7 @@ export const actions = {
       throw new Error("Failed to update user settings");
     }
 
-    redirect(301, '/profile')
+    redirect(301, '/')
   }
 }
 

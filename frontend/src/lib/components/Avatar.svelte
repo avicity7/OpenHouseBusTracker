@@ -33,9 +33,12 @@
   {#if menuOpen}
     <div class={`absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 right-0 mr-8 ${(session?.Role == "admin" && $page.url.pathname == '/') ? "mt-4" : "mt-2"}`}>
         <div class="px-4 py-3 text-sm text-gray-900">
-          <div>{account.Name}</div>
-          <div class="font-medium truncate">{account.Email}</div>
+          <div class="font-medium mb-2">{account.Name}</div>
+          <div class="truncate">{account.Email}</div>
           <div>{session.Role}</div>
+          {#if account.Contact}
+            <div>+65 {account.Contact}</div>
+          {/if}
         </div>
         <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
           <li>
