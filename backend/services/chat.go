@@ -48,27 +48,29 @@ func GetChatRooms(email string) ([]structs.ChatRoom, error) {
 	var chat_rooms []structs.ChatRoom
 
 	q1 := ` 
-		SELECT cr.room_id, cr.email, ut.name, COALESCE(timestamp, timestamp '2000-01-01 00:00:00') AS timestamp, COALESCE("from", '') AS from, cr.room_id, COALESCE(body, '') AS body FROM chat_room cr 
+		SELECT cr.room_id, '' as blank, cr.email, ut.name, COALESCE(timestamp, timestamp '2000-01-01 00:00:00') AS timestamp, COALESCE("from", '') AS from, COALESCE(ms.name, '') as from_name, cr.room_id, COALESCE(body, '') AS body FROM chat_room cr 
 		JOIN user_table ut ON cr.email = ut.email
 		FULL JOIN (
-			SELECT *, RANK() OVER ( PARTITION BY room_id ORDER BY timestamp DESC ) 
+			SELECT timestamp, "from", name, room_id, body, RANK() OVER ( PARTITION BY room_id ORDER BY timestamp DESC ) 
 			FROM chat_message cm
+			JOIN user_table ut ON cm.from = ut.email
 		) ms ON cr.room_id = ms.room_id AND "rank" = 1
 		WHERE NOT cr.email = @Email
 		AND cr.room_id IN (SELECT room_id FROM chat_room cr WHERE cr.email = @Email)
-		AND cr.room_id NOT IN (SELECT room_id FROM room_name)
+		AND cr.room_id IN (SELECT room_id FROM room_name WHERE name = '')
 	`
 	q2 := ` 
-		SELECT cr.room_id, rn.name, cr.email, ut.name, COALESCE(timestamp, timestamp '2000-01-01 00:00:00') AS timestamp, COALESCE("from", '') AS from, cr.room_id, COALESCE(body, '') AS body FROM chat_room cr 
+		SELECT cr.room_id, rn.name, cr.email, ut.name, COALESCE(timestamp, timestamp '2000-01-01 00:00:00') AS timestamp, COALESCE("from", '') AS from, COALESCE(ms.name, '') as from_name, cr.room_id, COALESCE(body, '') AS body FROM chat_room cr 
 		JOIN user_table ut ON cr.email = ut.email
 		JOIN room_name rn ON cr.room_id = rn.room_id
 		FULL JOIN (
-			SELECT *, RANK() OVER ( PARTITION BY room_id ORDER BY timestamp DESC ) 
+			SELECT timestamp, "from", name, room_id, body, RANK() OVER ( PARTITION BY room_id ORDER BY timestamp DESC ) 
 			FROM chat_message cm
+			JOIN user_table ut ON cm.from = ut.email
 		) ms ON cr.room_id = ms.room_id AND "rank" = 1
 		WHERE cr.email = @Email
 		AND cr.room_id IN (SELECT room_id FROM chat_room cr WHERE cr.email = @Email)
-		AND cr.room_id IN (SELECT room_id FROM room_name)
+		AND cr.room_id IN (SELECT room_id FROM room_name WHERE name != '')
 	`
 
 	args := pgx.NamedArgs{
@@ -83,7 +85,8 @@ func GetChatRooms(email string) ([]structs.ChatRoom, error) {
 
 	for rows.Next() {
 		var chat_room structs.ChatRoom
-		if err := rows.Scan(&chat_room.RoomId, "", &chat_room.Email, &chat_room.Name, &chat_room.LatestMessage.Timestamp, &chat_room.LatestMessage.From, &chat_room.LatestMessage.RoomId, &chat_room.LatestMessage.Body); err != nil {
+		if err := rows.Scan(&chat_room.RoomId, &chat_room.RoomName, &chat_room.Email, &chat_room.Name, &chat_room.LatestMessage.Timestamp, &chat_room.LatestMessage.From, &chat_room.LatestMessage.FromName, &chat_room.LatestMessage.RoomId, &chat_room.LatestMessage.Body); err != nil {
+			fmt.Println(err)
 			return nil, err
 		}
 		chat_rooms = append(chat_rooms, chat_room)
@@ -98,7 +101,7 @@ func GetChatRooms(email string) ([]structs.ChatRoom, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var chat_room structs.ChatRoom
-		if err := rows.Scan(&chat_room.RoomId, &chat_room.RoomName, &chat_room.Email, &chat_room.Name, &chat_room.LatestMessage.Timestamp, &chat_room.LatestMessage.From, &chat_room.LatestMessage.RoomId, &chat_room.LatestMessage.Body); err != nil {
+		if err := rows.Scan(&chat_room.RoomId, &chat_room.RoomName, &chat_room.Email, &chat_room.Name, &chat_room.LatestMessage.Timestamp, &chat_room.LatestMessage.From, &chat_room.LatestMessage.FromName, &chat_room.LatestMessage.RoomId, &chat_room.LatestMessage.Body); err != nil {
 			return nil, err
 		}
 		chat_rooms = append(chat_rooms, chat_room)
