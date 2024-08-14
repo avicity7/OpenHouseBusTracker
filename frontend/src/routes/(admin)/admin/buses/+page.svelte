@@ -120,7 +120,7 @@
   <div class="flex justify-between">
     <div class="flex items-end">
       <div>
-        <a href="/admin/buses/create-bus" class="w-fit bg-red-700 hover:bg-red-800 px-8 py-2 my-6 text-white font-semibold rounded-md">
+        <a href="/admin/buses/create-bus" class="w-fit bg-red-700 hover:bg-red-800 px-8 py-2 my-6 text-white font-semibold rounded-md" data-testid="add-bus-button">
           Add Bus
         </a>
       </div>
