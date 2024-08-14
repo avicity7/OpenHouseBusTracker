@@ -100,7 +100,7 @@ func CreateEventHelpers(eventHelpers []structs.EventHelper) error {
 
 // 	for _, eventHelper := range eventHelpers {
 // 		query := `
-//             INSERT INTO event_helper (bus_id, email, shift) 
+//             INSERT INTO event_helper (bus_id, email, shift)
 //             VALUES ($1, $2, $3)
 //         `
 // 		_, err = tx.Exec(context.Background(), query,
@@ -136,7 +136,7 @@ func BulkCreateEventHelpers(eventHelpers []structs.EventHelper) (string, error) 
 			if pgErr, ok := err.(*pgconn.PgError); ok && pgErr.Code == "23505" {
 				fmt.Printf("Duplicate entry for email: %s, skipping...\n", eventHelper.Email)
 			} else {
-				errorMessages += eventHelper.Email + ", " 
+				errorMessages += eventHelper.Email + ", "
 				fmt.Println("Error inserting event helper:", err)
 			}
 		} else {
@@ -350,7 +350,7 @@ func GetAvailableSwaps(email string) ([]structs.EventHelper, error) {
 }
 
 func CreateSwapRequest(swap_request structs.SwapRequest) error {
-	query := `INSERT INTO swap_request("from", "with", accepted) VALUES (@From, @With, FALSE)`
+	query := `INSERT INTO swap_request("from", "with", timestamp, accepted) VALUES (@From, @With, NOW(), FALSE)`
 
 	args := pgx.NamedArgs{
 		"From": swap_request.From,
