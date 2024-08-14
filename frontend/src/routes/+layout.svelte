@@ -49,8 +49,8 @@
 
     {#if session?.Role == "user"}
       <div class="flex flex-row items-center">
-        <a href="/bus-routes" class={"font-medium "+($page.url.pathname.includes('bus-routes') ? "text-red-700" : "hover:text-red-700")}>Routes</a>
-        <a href="/schedule" class={"ml-8 font-medium hidden md:block "+($page.url.pathname.includes('schedule') ? "text-red-700" : "hover:text-red-700")}>My Shifts</a>
+        <a href="/bus-routes" class={"font-medium mr-8"+($page.url.pathname.includes('bus-routes') ? "text-red-700" : "hover:text-red-700")}>Routes</a>
+        <a href="/schedule" class={"font-medium hidden md:block "+($page.url.pathname.includes('schedule') ? "text-red-700" : "hover:text-red-700")}>My Shifts</a>
         <a href="/chat" class={"mx-8 font-medium hidden md:block "+($page.url.pathname.includes('chat') ? "text-red-700" : "hover:text-red-700")}>Chat</a>
         <Avatar {data} />
       </div>
@@ -58,8 +58,8 @@
 
     {#if !session}
       <div class="flex flex-row items-center">
-        <a href="/bus-routes" class={"font-medium "+($page.url.pathname.includes('bus-routes') ? "text-red-700" : "hover:text-red-700")}>Routes</a>
-        <a href="/help" class={"ml-8 font-medium "+($page.url.pathname.includes('/help') ? "text-red-700" : "hover:text-red-700")}>Help</a>
+        <a href="/bus-routes" class={"font-medium mr-8"+($page.url.pathname.includes('bus-routes') ? "text-red-700" : "hover:text-red-700")}>Routes</a>
+        <a href="/help" class={"font-medium "+($page.url.pathname.includes('/help') ? "text-red-700" : "hover:text-red-700")}>Help</a>
         <a href="/profile" class={"mx-8 font-medium "+($page.url.pathname.includes('/profile') ? "text-red-700" : "hover:text-red-700")}>Login</a>
       </div>
     {/if}
