@@ -21,14 +21,14 @@ test.describe('Delete Bus', () => {
         await page.screenshot({ path: 'admin-buses-page.png' });
 
         // Delete Button
-        const deleteButtonSelector = '.schedule-item button[data-testid="delete-bus-button"]';
-        const scheduleItems = await page.$$(`${deleteButtonSelector}`);
-        if (scheduleItems.length > 0) {
-            console.log(`Deleting ${scheduleItems.length} schedule(s)...`);
-            for (const scheduleItem of scheduleItems) {
-                for (const scheduleItem of scheduleItems) {
-                    await scheduleItem.click();
-                    console.log('Schedule deleted.');
+        const deleteButtonSelector = '.bus-item button[data-testid="delete-bus-button"]';
+        const busItems = await page.$$(`${deleteButtonSelector}`);
+        if (busItems.length > 0) {
+            console.log(`Deleting ${busItems.length} bus(s)...`);
+            for (const scheduleItem of busItems) {
+                for (const busItem of busItems) {
+                    await busItem.click();
+                    console.log('Bus deleted.');
             }
         }
         } else {
