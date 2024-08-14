@@ -29,16 +29,16 @@
 </script>
 
 
-<nav class={`z-10 text-sm justify-between flex flex-row items-center ${white ? "bg-white/40 backdrop-blur" : ""} ${$page.url.pathname == '/' ? 'w-screen fixed p-6' : 'sticky p-2 px-4 bg-white/40 backdrop-blur'} top-0 transition-all ease-out`}>
+<nav class={`z-10 text-sm justify-between flex flex-row items-center ${white ? "bg-white/40 backdrop-blur" : ""} ${$page.url.pathname == '/' ? 'w-screen fixed pl-2 md:pl-6 pr-6 py-6' : 'sticky p-2 px-4 bg-white/40 backdrop-blur'} top-0 transition-all ease-out`}>
   <div class={`flex flex-row items-center ${(session?.Role == "admin" && $page.url.pathname == '/') ? "p-2 px-4 rounded bg-white" : "px-6"}`}>
     <a href="/" class="flex flex-row items-center">
       <div class={`text-red-600 font-bold text-2xl mr-4`}>
         SP
       </div>
-      <span class="font-semibold font-stone-800 text-md">Bus Tracker</span>
+      <span class="font-semibold font-stone-800 text-md hidden md:block">Bus Tracker</span>
     </a>
   </div>
-  <div class={`flex flex-row items-center px-6 ${session?.Role == "admin" && $page.url.pathname == '/' ? "bg-white p-2 rounded" : ""}`}>
+  <div class={`flex flex-row items-center ${session?.Role == "admin" && $page.url.pathname == '/' ? "bg-white p-2 rounded" : ""}`}>
     {#if session?.Role == "admin"}
       <div class="flex flex-row items-center">
         <a href="/admin/users" class={"font-medium hidden md:block "+($page.url.pathname.includes('admin') ? "text-red-700" : "hover:text-red-700")}>Manage</a>
