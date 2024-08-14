@@ -9,6 +9,7 @@ import (
 	"server/config"
 	"server/services"
 	"server/structs"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/patrickmn/go-cache"
@@ -101,6 +102,78 @@ func CreateEventHelpers(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Event Helpers created successfully")
 }
 
+// func BulkCreateEventHelpers(w http.ResponseWriter, r *http.Request) {
+// 	file, _, err := r.FormFile("file")
+// 	if err != nil {
+// 		fmt.Println("Error getting form file:", err)
+// 		http.Error(w, "Invalid file", http.StatusBadRequest)
+// 		return
+// 	}
+// 	defer file.Close()
+
+// 	csvReader := csv.NewReader(file)
+// 	var eventHelpers []structs.EventHelper
+
+// 	if _, err := csvReader.Read(); err != nil {
+// 		fmt.Println("Error skipping header row:", err)
+// 		http.Error(w, "Failed to parse CSV", http.StatusInternalServerError)
+// 		return
+// 	}
+
+// 	for {
+// 		record, err := csvReader.Read()
+// 		if err == io.EOF {
+// 			break
+// 		}
+// 		if err != nil {
+// 			fmt.Println("Error reading CSV record:", err)
+// 			http.Error(w, "Failed to parse CSV", http.StatusInternalServerError)
+// 			return
+// 		}
+
+// 		fmt.Println("CSV Record:", record)
+
+// 		var shift bool
+// 		switch record[2] {
+// 		case "AM":
+// 			shift = true
+// 		case "PM":
+// 			shift = false
+// 		default:
+// 			fmt.Println("Invalid shift value:", record[2])
+// 			http.Error(w, "Invalid shift value", http.StatusBadRequest)
+// 			return
+// 		}
+
+// 		busId, err := services.GetBusIdByCarplate(record[0])
+// 		if err != nil {
+// 			fmt.Println("Error getting bus ID:", err)
+// 			http.Error(w, "Failed to get Bus ID", http.StatusInternalServerError)
+// 			return
+// 		}
+
+// 		eventHelper := structs.EventHelper{
+// 			BusId:    busId,
+// 			Carplate: record[0],
+// 			Email:    record[1],
+// 			Shift:    shift,
+// 		}
+// 		eventHelpers = append(eventHelpers, eventHelper)
+// 	}
+
+// 	err = services.BulkCreateEventHelpers(eventHelpers)
+// 	if err != nil {
+// 		fmt.Println("Error creating event helpers:", err)
+// 		http.Error(w, "Failed to create event helpers", http.StatusInternalServerError)
+// 		return
+// 	}
+// 	config.Cache.Delete("EventHelpers")
+// 	config.Cache.Delete("CurrentUserSchedules")
+// 	config.Cache.Delete("FutureUserSchedules")
+
+// 	w.WriteHeader(http.StatusOK)
+// }
+
 func BulkCreateEventHelpers(w http.ResponseWriter, r *http.Request) {
 	file, _, err := r.FormFile("file")
 	if err != nil {
@@ -160,12 +233,22 @@ func BulkCreateEventHelpers(w http.ResponseWriter, r *http.Request) {
 		eventHelpers = append(eventHelpers, eventHelper)
 	}
 
-	err = services.BulkCreateEventHelpers(eventHelpers)
+	errorMessages, err := services.BulkCreateEventHelpers(eventHelpers)
 	if err != nil {
-		fmt.Println("Error creating event helpers:", err)
-		http.Error(w, "Failed to create event helpers", http.StatusInternalServerError)
+		config.Cache.Delete("EventHelpers")
+		config.Cache.Delete("CurrentUserSchedules")
+		config.Cache.Delete("FutureUserSchedules")
+		if len(errorMessages) > 0 {
+			errorMessages = strings.TrimSuffix(errorMessages, ", ")
+			warningMessage := "The following event helper emails could not be added: " + fmt.Sprintf("%v", errorMessages)
+			http.Error(w, warningMessage, http.StatusPartialContent)
+		} else {
+			fmt.Println("Error creating event helpers:", err)
+			http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		}
 		return
 	}
+
 	config.Cache.Delete("EventHelpers")
 	config.Cache.Delete("CurrentUserSchedules")
 	config.Cache.Delete("FutureUserSchedules")

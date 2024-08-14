@@ -49,6 +49,7 @@
     if (response.ok) {
       showSuccessMessage = true;
       console.log("File uploaded successfully");
+      location.reload();
     } else {
       const error = await response.text();
       showSuccessMessage = false;
@@ -56,7 +57,6 @@
     }
 
     isLoading = false;
-    location.reload();
   };
 
   function handleFileSelected(event: CustomEvent<File>) {
