@@ -9,17 +9,19 @@
 			width: 100%;
 		}
 	</style>
-</svelte:head>
-<body>
-	<div class="p-8" id="webchat" role="main"></div>
-
 	<script
+		bind:this={script}
 		crossorigin="anonymous"
 		src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"
 	></script>
+</svelte:head>
 
-	<script>
-		(async function () {
+<script lang="ts">
+	import { onMount } from "svelte";
+
+	let script: HTMLElement;
+	onMount(async function () {
+		script.addEventListener("load", async () => {
 			const styleOptions = {
 				hideUploadButton: true
 			};
@@ -84,6 +86,8 @@
 				{ directLine, locale, styleOptions },
 				document.getElementById('webchat')
 			);
-		})();
-	</script>
-</body>
+		})
+	});
+</script>
+
+<div class="p-8" id="webchat" role="main"></div>

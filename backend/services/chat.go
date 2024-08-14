@@ -223,3 +223,22 @@ func DeleteRoom(room_id string) error {
 
 	return nil
 }
+
+func UpdateRoom(room_id string, room_name string) error {
+	query := `UPDATE room_name SET name = @RoomName WHERE room_id = @RoomId`
+
+	args := pgx.NamedArgs{
+		"RoomId":   room_id,
+		"RoomName": room_name,
+	}
+
+	_, err := config.Dbpool.Exec(context.Background(), query, args)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	config.Melody.Broadcast([]byte(room_id))
+
+	return nil
+}
