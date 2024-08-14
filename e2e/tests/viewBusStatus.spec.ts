@@ -1,13 +1,13 @@
 import { test, expect } from '@playwright/test';
 import SignInPage from '../models/SignInPage';
 
-test.describe('View Schedule', () => {
-    test('Available Drivers', async ({ page }) => {
+test.describe('View Bus Status', () => {
+    test('View Bus Status', async ({ page }) => {
         // Login
         let signInPage = new SignInPage(page);
         await signInPage.visit();
-        const email = 'sarahaxl7@gmail.com';
-        const password = '123';
+        const email = 'gabrieltai2001@gmail.com';
+        const password = 'test123';
         console.log('Attempting to sign in with provided credentials');
         await signInPage.signIn(email, password);
         const currentURL = page.url();
