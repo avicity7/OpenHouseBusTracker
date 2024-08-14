@@ -36,7 +36,7 @@
   <div class="w-full flex justify-between">
     <div class="text-sm flex flex-row">
       <div class="mr-1">
-        {chat_room.LatestMessage.FromName}:
+        {chat_room.LatestMessage.FromName + (chat_room.LatestMessage.FromName ? ":" : "")}
       </div>
       <div class="text-ellipsis overflow-hidden text-nowrap">
         {chat_room.LatestMessage.Body}

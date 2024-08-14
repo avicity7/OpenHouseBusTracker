@@ -49,7 +49,7 @@
 
     {#if session?.Role == "user"}
       <div class="flex flex-row items-center">
-        <a href="/bus-routes" class={"font-medium"+($page.url.pathname.includes('bus-routes') ? "text-red-700" : "hover:text-red-700")}>Routes</a>
+        <a href="/bus-routes" class={"font-medium "+($page.url.pathname.includes('bus-routes') ? "text-red-700" : "hover:text-red-700")}>Routes</a>
         <a href="/schedule" class={"ml-8 font-medium hidden md:block "+($page.url.pathname.includes('schedule') ? "text-red-700" : "hover:text-red-700")}>My Shifts</a>
         <a href="/chat" class={"mx-8 font-medium hidden md:block "+($page.url.pathname.includes('chat') ? "text-red-700" : "hover:text-red-700")}>Chat</a>
         <Avatar {data} />
@@ -58,9 +58,9 @@
 
     {#if !session}
       <div class="flex flex-row items-center">
-        <a href="/bus-routes" class={"font-medium"+($page.url.pathname.includes('bus-routes') ? "text-red-700" : "hover:text-red-700")}>Routes</a>
-        <a href="/help" class={"ml-8 font-medium"+($page.url.pathname.includes('/help') ? "text-red-700" : "hover:text-red-700")}>Help</a>
-        <a href="/profile" class={"mx-8 font-medium"+($page.url.pathname.includes('/profile') ? "text-red-700" : "hover:text-red-700")}>Login</a>
+        <a href="/bus-routes" class={"font-medium "+($page.url.pathname.includes('bus-routes') ? "text-red-700" : "hover:text-red-700")}>Routes</a>
+        <a href="/help" class={"ml-8 font-medium "+($page.url.pathname.includes('/help') ? "text-red-700" : "hover:text-red-700")}>Help</a>
+        <a href="/profile" class={"mx-8 font-medium "+($page.url.pathname.includes('/profile') ? "text-red-700" : "hover:text-red-700")}>Login</a>
       </div>
     {/if}
   </div>
@@ -69,6 +69,12 @@
   <div class="flex flex-col text-center items-center my-auto mx-8">
     <h1 class="mt-16 text-3xl font-semibold">You're signed up!</h1>
     <p class="mt-8 text-xl">But before you use the Tracker, you need to verify your email.</p>
+  </div>
+{:else if session && account?.Role == "public"}
+  <div class="flex flex-col text-center items-center my-auto mx-8">
+    <h1 class="mt-16 text-3xl font-semibold">You've been registered!</h1>
+    <p class="mt-8 text-xl">Before you can access the rest of the platform, ask an admin to verify you!</p>
+    <p class="mt-8 text-xl">Once they've done so, you can refresh this page.</p>
   </div>
 {:else}
   <slot />
