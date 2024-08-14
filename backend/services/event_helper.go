@@ -7,6 +7,7 @@ import (
 	"server/config"
 	"server/structs"
 
+	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v5"
 	// "github.com/jackc/pgx/v5"
 )
@@ -83,38 +84,71 @@ func CreateEventHelpers(eventHelpers []structs.EventHelper) error {
 	return nil
 }
 
-func BulkCreateEventHelpers(eventHelpers []structs.EventHelper) error {
-	tx, err := config.Dbpool.Begin(context.Background())
-	if err != nil {
-		fmt.Println("Failed to begin transaction:", err)
-		return err
-	}
-	defer func() {
-		if err != nil {
-			tx.Rollback(context.Background())
-		} else {
-			tx.Commit(context.Background())
-		}
-	}()
+// func BulkCreateEventHelpers(eventHelpers []structs.EventHelper) error {
+// 	tx, err := config.Dbpool.Begin(context.Background())
+// 	if err != nil {
+// 		fmt.Println("Failed to begin transaction:", err)
+// 		return err
+// 	}
+// 	defer func() {
+// 		if err != nil {
+// 			tx.Rollback(context.Background())
+// 		} else {
+// 			tx.Commit(context.Background())
+// 		}
+// 	}()
+
+// 	for _, eventHelper := range eventHelpers {
+// 		query := `
+//             INSERT INTO event_helper (bus_id, email, shift) 
+//             VALUES ($1, $2, $3)
+//         `
+// 		_, err = tx.Exec(context.Background(), query,
+// 			eventHelper.BusId,
+// 			eventHelper.Email,
+// 			eventHelper.Shift,
+// 		)
+// 		if err != nil {
+// 			fmt.Println("Error inserting event helper:", err)
+// 			return err
+// 		}
+// 		fmt.Printf("Event helper inserted successfully for email: %s\n", eventHelper.Email)
+// 	}
+
+// 	return nil
+// }
+
+func BulkCreateEventHelpers(eventHelpers []structs.EventHelper) (string, error) {
+	errorMessages := ""
 
 	for _, eventHelper := range eventHelpers {
 		query := `
             INSERT INTO event_helper (bus_id, email, shift) 
             VALUES ($1, $2, $3)
         `
-		_, err = tx.Exec(context.Background(), query,
+
+		_, err := config.Dbpool.Exec(context.Background(), query,
 			eventHelper.BusId,
 			eventHelper.Email,
 			eventHelper.Shift,
 		)
 		if err != nil {
-			fmt.Println("Error inserting event helper:", err)
-			return err
+			if pgErr, ok := err.(*pgconn.PgError); ok && pgErr.Code == "23505" {
+				fmt.Printf("Duplicate entry for email: %s, skipping...\n", eventHelper.Email)
+			} else {
+				errorMessages += eventHelper.Email + ", " 
+				fmt.Println("Error inserting event helper:", err)
+			}
+		} else {
+			fmt.Printf("Event helper inserted successfully for email: %s\n", eventHelper.Email)
 		}
-		fmt.Printf("Event helper inserted successfully for email: %s\n", eventHelper.Email)
 	}
 
-	return nil
+	if len(errorMessages) > 0 {
+		return errorMessages, fmt.Errorf("one or more records failed to insert")
+	}
+
+	return errorMessages, nil
 }
 
 func GetBusIdByCarplate(carplate string) (string, error) {

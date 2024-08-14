@@ -15,6 +15,8 @@
 
 	let selectedFile: File | null = null;
 	let showSuccessMessage = false;
+	let showErrorMessage = false;
+	let errorMessages: string[];
 	let isLoading = false;
 
 	async function deleteEventHelper(eventHelperToDelete: EventHelper) {
@@ -65,20 +67,28 @@
 				body: formData
 			});
 
-			if (response.ok) {
+			if (response.status === 200) {
 				showSuccessMessage = true;
-				console.log('File uploaded successfully');
+				showErrorMessage = false;
+				errorMessages = [];
+				location.reload();
+			} else if (response.status === 206) { 
+				const error = await response.text();
+				showSuccessMessage = false;
+				showErrorMessage = true;
+				errorMessages = error.split(": ")[1].split(" ")
 			} else {
 				const error = await response.text();
 				showSuccessMessage = false;
-				console.error(`Error: ${error}`);
+				showErrorMessage = true;
+				errorMessages = [error] ;
 			}
 		} catch (error) {
-			console.error('Fetch error:', error);
+			showErrorMessage = true;
+			errorMessages = ['An unexpected error occurred. Please try again.'];
 		}
 
 		isLoading = false;
-		location.reload();
 	};
 
 	function handleFileSelected(event: CustomEvent<File>) {
@@ -132,6 +142,16 @@
 		</button>
 		{#if showSuccessMessage}
 			<p class="text-green-600 text-sm mt-2">File uploaded successfully!</p>
+		{/if}
+		{#if showErrorMessage}
+			<div class="mt-2">
+				<p class="text-red-600 text-sm">The following emails were invalid:</p>
+				<ul class="list-disc list-inside text-red-600 text-sm">
+					{#each errorMessages as email}
+						<li>{email}</li>
+					{/each}
+				</ul>
+			</div>
 		{/if}
 	</div>
 
