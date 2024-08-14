@@ -1,6 +1,7 @@
 <script lang="ts">
   import UserRow from '$lib/components/UserRow.svelte';
   import FileUpload from '$lib/components/FileUpload.svelte';
+  import ErrorMessage from '$lib/components/ErrorMessage.svelte';
 
 	export let data;
 	let { backend_uri, session, users, roles } = data;
@@ -11,6 +12,7 @@
 
   let pendingSearch = '';
   let verifiedSearch = '';
+  let errorMessage: string | null = null;
 
   $: filteredPendingUsers = users.filter(user =>
     user.Role === 'public' && user.Name.toLowerCase().includes(pendingSearch.toLowerCase())
@@ -19,6 +21,14 @@
   $: filteredVerifiedUsers = users.filter(user =>
     user.Role !== 'public' && user.Name.toLowerCase().includes(verifiedSearch.toLowerCase())
   );
+
+  const handleError = (event: { detail: { message: string | null; }; }) => {
+    errorMessage = event.detail.message;
+  };
+
+  const clearError = () => {
+    errorMessage = null;
+  };
 
   const uploadCSV = async () => {
     if (!selectedFile) {
@@ -118,6 +128,7 @@
 
 	<div class="mt-8 flex justify-between items-center">
     <h1 class="text-xl font-semibold p-2 py-8 text-stone-800">Admins & Student Helpers</h1>
+    
     <input
       type="text"
       placeholder="Search Admins & Student Helpers..."
@@ -127,6 +138,9 @@
   </div>
   
 	<div class="mt-8">
+    {#if errorMessage}
+      <ErrorMessage message={errorMessage} />
+    {/if}
     <table class="min-w-full divide-y divide-gray-200">
 			<thead class="bg-gray-50">
 				<tr>
@@ -144,7 +158,12 @@
           </tr>
         {:else}
           {#each filteredVerifiedUsers as user}
-            <UserRow bind:users {user} {roles} />
+            <UserRow 
+              bind:users 
+              {user} 
+              {roles} 
+              on:error={handleError} 
+              on:clearError={clearError} />
           {/each}
         {/if}
       </tbody>

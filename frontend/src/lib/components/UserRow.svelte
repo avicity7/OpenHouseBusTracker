@@ -2,11 +2,15 @@
   export let users: User[]
   export let user
   export let roles
+  import { createEventDispatcher } from "svelte";
   import { PUBLIC_BACKEND_URL } from "$env/static/public";
   import type { User, UserRole } from "$lib/types/global";
   import ToolTip from "./ToolTip.svelte";
 
   const backend_uri = PUBLIC_BACKEND_URL
+  let userToDelete: User | null = null;
+
+  const dispatch = createEventDispatcher();
 
 	const updateUserRole = async (user: User) => {
 		let roleInt = roles.find((role: UserRole) => role.Description == user.Role)?.RoleId;
@@ -23,16 +27,35 @@
 		});
 	};
 
-	const deleteUser = async (user: User) => {
-		await fetch(`${backend_uri}:3000/users/delete-user/${user.Email}`, {
-			method: 'DELETE',
-			headers: {
-				'content-type': 'application/json'
-			},
-			credentials: 'include'
-		});
-    users = users.filter((u) => u != user)
+	const deleteUser = (user: User) => {
+		userToDelete = user;
+    	dispatch('clearError');
 	};
+
+	const confirmDelete = async () => {
+		if (userToDelete) {
+			const response = await fetch(`${backend_uri}:3000/users/delete-user/${userToDelete.Email}`, {
+				method: 'DELETE',
+				headers: {
+					'content-type': 'application/json'
+				},
+				credentials: 'include'
+			});
+			if (response.status === 400) {
+				const message = await response.text();
+				dispatch('error', { message });
+			} else if (response.ok) {
+				users = users.filter((u) => u !== userToDelete);
+			}
+			userToDelete = null;
+		}
+	};
+
+	const cancelDelete = () => {
+		userToDelete = null;
+		dispatch('clearError');
+	};
+
 </script>
 
 <tr class="hover:bg-gray-100">
@@ -91,3 +114,19 @@
 		</div>
 	</td>
 </tr>
+
+
+{#if userToDelete}
+  <div
+    class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-50"
+  >
+    <div class="bg-white p-8 rounded-lg shadow-lg">
+      <p class="text-lg mb-4">Are you sure you want to delete this user?</p>
+      <div class="flex justify-end">
+        <button class="px-4 py-2 mr-4 text-gray-600" on:click={cancelDelete}>Cancel</button>
+        <button class="px-4 py-2 bg-red-700 text-white rounded" on:click={confirmDelete}>Delete</button>
+      </div>
+    </div>
+  </div>
+{/if}
+
