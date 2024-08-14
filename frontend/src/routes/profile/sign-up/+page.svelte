@@ -27,6 +27,7 @@
     script.addEventListener('load', () => {
       getCaptchaRes()
     })
+    getCaptchaRes()
   })
 </script>
 
