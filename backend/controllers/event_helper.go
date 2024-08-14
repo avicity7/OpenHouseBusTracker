@@ -10,7 +10,6 @@ import (
 	"server/services"
 	"server/structs"
 
-	// "github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5"
 	"github.com/patrickmn/go-cache"
 )
@@ -86,7 +85,6 @@ func CreateEventHelpers(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fmt.Println("WHAT IS INSIDE THIS", eventHelpers)
 	err = services.CreateEventHelpers(eventHelpers)
 	if err != nil {
 		fmt.Println("Error creating event helpers:", err)
@@ -95,6 +93,8 @@ func CreateEventHelpers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	config.Cache.Delete("EventHelpers")
+	config.Cache.Delete("CurrentUserSchedules")
+	config.Cache.Delete("FutureUserSchedules")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
@@ -167,12 +167,13 @@ func BulkCreateEventHelpers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	config.Cache.Delete("EventHelpers")
+	config.Cache.Delete("CurrentUserSchedules")
+	config.Cache.Delete("FutureUserSchedules")
 
 	w.WriteHeader(http.StatusOK)
 }
 
 func UpdateEventHelper(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Received request body:", r.Body)
 	var eventHelper structs.EventHelperUpdate
 	err := json.NewDecoder(r.Body).Decode(&eventHelper)
 	if err != nil {
@@ -190,6 +191,8 @@ func UpdateEventHelper(w http.ResponseWriter, r *http.Request) {
 	}
 
 	config.Cache.Delete("EventHelpers")
+	config.Cache.Delete("CurrentUserSchedules")
+	config.Cache.Delete("FutureUserSchedules")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -212,6 +215,8 @@ func DeleteEventHelper(w http.ResponseWriter, r *http.Request) {
 	}
 
 	config.Cache.Delete("EventHelpers")
+	config.Cache.Delete("CurrentUserSchedules")
+	config.Cache.Delete("FutureUserSchedules")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
