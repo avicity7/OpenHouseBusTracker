@@ -135,10 +135,15 @@ func DeleteUser(email string) error {
 	_, err = tx.Exec(context.Background(), q2, args)
 	if err != nil {
 		tx.Rollback(context.Background())
+		return err	
+	}
+
+	err = tx.Commit(context.Background())
+	if err != nil {
 		return err
 	}
 
-	tx.Commit(context.Background())
-
 	return nil
 }
+
+	
