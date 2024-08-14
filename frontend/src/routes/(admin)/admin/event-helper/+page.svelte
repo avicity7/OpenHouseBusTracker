@@ -145,6 +145,7 @@
 		{/if}
 		{#if showErrorMessage}
 			<div class="mt-2">
+				<p class="text-red-600 text-sm font-semibold">Reload page to view changes.</p>
 				<p class="text-red-600 text-sm">The following emails were invalid:</p>
 				<ul class="list-disc list-inside text-red-600 text-sm">
 					{#each errorMessages as email}
