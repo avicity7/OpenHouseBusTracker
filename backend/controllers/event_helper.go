@@ -394,6 +394,10 @@ func AcceptSwapRequest(w http.ResponseWriter, r *http.Request) {
 
 	config.Cache.Delete("Schedules")
 	config.Cache.Delete("CurrentUserSchedules")
+	_, found := config.Cache.Get("CurrentUserSchedules")
+	if found {
+		fmt.Println("found")
+	}
 	config.Cache.Delete("FutureUserSchedules")
 
 	w.WriteHeader(200)
