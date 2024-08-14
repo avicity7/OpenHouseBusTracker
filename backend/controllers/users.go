@@ -3,6 +3,8 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"strings"
 	"net/http"
 	"server/config"
 	"server/services"
@@ -94,7 +96,12 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	err := services.DeleteUser(email)
 
 	if err != nil {
-		w.WriteHeader(500)
+		if strings.Contains(err.Error(), "23503") {
+			http.Error(w, "Cannot delete user. This user is linked to other records and cannot be deleted.", http.StatusBadRequest)
+		} else {
+			log.Printf("Unhandled error in controller: %v", err)
+			w.WriteHeader(500)
+		}
 		return
 	}
 

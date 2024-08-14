@@ -11,8 +11,6 @@ test.describe('Sign In Page', () => {
     await signInPage.signIn(email, password);
   });
 
-
-  // no error message done in FE yet
   test('should display error message with invalid credentials', async ({ page }) => {
     const signInPage = new SignInPage(page);
     await signInPage.visit();

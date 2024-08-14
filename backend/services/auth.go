@@ -207,12 +207,6 @@ func BulkCreateUsers(csvFilePath string) error {
 		return err
 	}
 
-	tx, err := config.Dbpool.Begin(context.Background())
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback(context.Background())
-
 	for {
 		record, err := reader.Read()
 		if err == io.EOF {
@@ -235,41 +229,30 @@ func BulkCreateUsers(csvFilePath string) error {
 			Role:     1,
 		}
 
-		err = createUserInTransaction(tx, user)
-		if err != nil {
-			return err
-		}
-
-		utils.SendEmail("", record[1], pwd, record[0])
-	}
-
-	err = tx.Commit(context.Background())
-	if err != nil {
-		return err
+		createUserInTransaction(user)
 	}
 
 	return nil
 }
 
-func createUserInTransaction(tx pgx.Tx, user structs.NewUser) error {
+func createUserInTransaction(user structs.NewUser) {
+	tx, _ := config.Dbpool.Begin(context.Background())
 	query := `
 		INSERT INTO user_table (name, email, password, role_id, verification_token) 
 		VALUES ($1, $2, $3, $4, $5)
 	`
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
-	if err != nil {
-		return err
-	}
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
 
 	verificationToken := ""
 
-	_, err = tx.Exec(context.Background(), query, user.Name, user.Email, hashedPassword, user.Role, verificationToken)
+	_, err := tx.Exec(context.Background(), query, user.Name, user.Email, hashedPassword, user.Role, verificationToken)
 	if err != nil {
-		return err
+		tx.Rollback(context.Background())
+	} else {
+		tx.Commit(context.Background())
+		utils.SendEmail("", user.Email, user.Password, user.Name)
 	}
-
-	return nil
 }
 
 func GetUser(email string) (structs.ReturnedUser, error) {

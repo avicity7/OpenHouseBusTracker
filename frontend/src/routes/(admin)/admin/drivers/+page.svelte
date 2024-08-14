@@ -246,7 +246,6 @@
 											</svg>
 										</ToolTip>
 									</button>
-									<!-- colour undetermined LOL -->
 									<button
 										class="text-stone-500 hover:text-red-600 text-2xl"
 										on:click={() => exportDriverToPDF(driver)}
