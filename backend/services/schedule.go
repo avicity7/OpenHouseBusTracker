@@ -273,7 +273,7 @@ func GetScheduleByUser(email string) ([]structs.Schedule, error) {
 			JOIN bus_schedule bs ON eh.bus_id  = bs.bus_id 
 			JOIN driver d ON bs.driver_id = d.driver_id 
 			WHERE email = $1
-			AND (shift = (NOT (CURRENT_TIME AT TIME ZONE 'Etc/GMT-8' >= '12:00:00')) OR (CURRENT_TIME AT TIME ZONE 'Etc/GMT-8' <= '14:00:00'))
+			AND shift = (CURRENT_TIME AT TIME ZONE 'Etc/GMT-8' >= '00:00:00') AND (CURRENT_TIME AT TIME ZONE 'Etc/GMT-8' <= '14:00:00')
 			AND NOW() AT TIME ZONE 'Etc/GMT-8' BETWEEN bs.start_time AND bs.end_time
 			ORDER BY shift DESC
 			LIMIT 1
@@ -315,7 +315,7 @@ func GetFutureScheduleByUser(email string) ([]structs.Schedule, error) {
 			JOIN bus_schedule bs ON eh.bus_id  = bs.bus_id 
 			JOIN driver d ON bs.driver_id = d.driver_id 
 			WHERE email = $1
-			AND (shift = (NOT (CURRENT_TIME AT TIME ZONE 'Etc/GMT-8' >= '12:00:00')) OR (CURRENT_TIME AT TIME ZONE 'Etc/GMT-8' <= '14:00:00'))
+			AND shift = (CURRENT_TIME AT TIME ZONE 'Etc/GMT-8' >= '00:00:00') AND (CURRENT_TIME AT TIME ZONE 'Etc/GMT-8' <= '14:00:00')
 			AND NOW() AT TIME ZONE 'Etc/GMT-8' BETWEEN bs.start_time AND bs.end_time
 			ORDER BY shift DESC
 			LIMIT 1
