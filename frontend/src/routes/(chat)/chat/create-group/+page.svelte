@@ -1,30 +1,41 @@
 <script lang="ts">
 	import type { User } from '$lib/types/global';
+	import { onMount } from 'svelte';
 
 	export let data;
 	const { users } = data;
 
-	let filteredNames: User[]
+	let filteredNames: User[] = []
 	let searchQuery: string = '';
 
-	let selectedNames: Set<User> = new Set();
+	let selectedNames: Array<User>= []
+
 
 	function filterNames() {
-		filteredNames = users.filter(user =>
-			user.Name.toLowerCase().includes(searchQuery.toLowerCase())
-		);
+		let arr: Array<User> = []
+		users.forEach((user) => {
+			if (user.Name.toLowerCase().includes(searchQuery.toLowerCase())) arr.push(user)
+		})
+		filteredNames = arr
 	}
 
-	function toggleNameSelection(user: User) {
-		if (selectedNames.has(user)) {
-			selectedNames.delete(user);
+	function toggleNameSelection(user: User, checked: boolean) {
+		if (checked) {
+			selectedNames.push(user)
 		} else {
-			selectedNames.add(user);
+			selectedNames.splice(selectedNames.indexOf(user), 1)
 		}
+		filteredNames = filteredNames
 	}
 
-	$: searchQuery, filterNames();
+	function handleCheckboxChange(event: Event, user: User) {
+		const target = event.target as HTMLInputElement;
+		toggleNameSelection(user, target.checked);
+	}
 
+	onMount(() => {
+		filteredNames = users
+	})
 </script>
 
 <div class="flex justify-center items-center h-full">
@@ -48,6 +59,7 @@
 							type="text"
 							placeholder="Search names..."
 							bind:value={searchQuery}
+							on:input={filterNames}
 							class="block w-full px-3 py-2 border rounded-md text-sm focus:border-red-600 focus:outline-none"
 							/>
 					</div>
@@ -61,8 +73,9 @@
 									name="name"
 									id={user.Name}
 									value={user.Email}
-									on:change={() => toggleNameSelection(user)}
+									on:change={(e) => handleCheckboxChange(e, user)}
 									class="mr-2"
+									checked={selectedNames.includes(user)}
 								/>
 								<label for={user.Name} class="text-sm">{user.Name}</label>
 							</div>

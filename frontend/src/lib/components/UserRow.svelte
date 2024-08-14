@@ -38,12 +38,13 @@
 <tr class="hover:bg-gray-100">
 	<td class="px-6 py-4 whitespace-nowrap">{user.Name}</td>
 	<td class="px-6 py-4 whitespace-nowrap">{user.Email}</td>
+	<td class="px-6 py-4 whitespace-nowrap">{user.Contact ? user.Contact : '-'}</td>
 	<td class="py-6">
 		<select
-			class=" hover:bg-gray-100"
+			class=" hover:bg-gray-100" data-testid="update-role-{user.Email}"
 			bind:value={user.Role}
 			on:change={() => {
-				updateUserRole(user);
+				updateUserRole(user)
 			}}
 		>
 			{#each roles as role}

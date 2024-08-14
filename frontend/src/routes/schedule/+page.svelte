@@ -59,37 +59,39 @@
   <div class="flex flex-row items-center align-center my-12">
     <h1 class="text-3xl font-semibold">Shift Swap Requests</h1>
 
-    <a href="/schedule/swap" class="mt-2 ml-6 text-neutral-400 hover:text-red-600">
-      + Make a request
+    <a href="/schedule/swap" class="ml-6 text-2xl text-neutral-400 hover:text-red-600">
+      +
     </a>
   </div>
 
   {#if swapRequests}
-    {#each swapRequests as swapRequest}
-      {#if swapRequest.From == account?.Email}
-        <div class="bg-white shadow-md max-w-md flex flex-col items-center">
-          <h3 class="text-neutral-400 my-8">Outgoing request to</h3>
-          <h1 class="text-2xl font-semibold">{swapRequest.WithName}</h1>
-          <h2 class="text-xl font-medium mt-8">for {swapRequest.TargetShift ? "an AM" : "a PM"} shift</h2>
-          <button class="px-2 py-1 bg-red-700 hover:bg-red-800 text-white rounded my-8" on:click={() => deleteRequest(swapRequest)}>
-            Cancel request
-          </button>
-        </div>
-      {:else}
-        <div class="bg-white shadow-md max-w-md flex flex-col items-center">
-          <h3 class="text-neutral-400 my-8">Incoming request from</h3>
-          <h1 class="text-2xl font-semibold">{swapRequest.FromName}</h1>
-          <h2 class="text-xl font-medium mt-8">for your {swapRequest.TargetShift ? " AM" : "PM"} shift</h2>
-          <div class="flex flex-row items-center">
-            <button class="px-3 py-2 bg-red-800 hover:bg-red-700 text-white rounded my-8 mx-2" on:click={() => deleteRequest(swapRequest)}>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      {#each swapRequests as swapRequest}
+        {#if swapRequest.From == account?.Email}
+          <div class="bg-white shadow-md max-w-md flex flex-col items-center">
+            <h3 class="text-neutral-400 my-8">Outgoing request to</h3>
+            <h1 class="text-2xl font-semibold">{swapRequest.WithName}</h1>
+            <h2 class="text-xl font-medium mt-8">for {swapRequest.TargetShift ? "an AM" : "a PM"} shift</h2>
+            <button class="px-2 py-1 bg-red-700 hover:bg-red-800 text-white rounded my-8" on:click={() => deleteRequest(swapRequest)}>
               Cancel request
             </button>
-            <button class="px-3 py-2 bg-green-900 hover:bg-green-800 text-white rounded my-8 mx-2" on:click={() => acceptRequest(swapRequest)}>
-              Accept request
-            </button>
           </div>
-        </div>
-      {/if}
-    {/each}
+        {:else}
+          <div class="bg-white shadow-md max-w-md flex flex-col items-center">
+            <h3 class="text-neutral-400 my-8">Incoming request from</h3>
+            <h1 class="text-2xl font-semibold">{swapRequest.FromName}</h1>
+            <h2 class="text-xl font-medium mt-8">for your {swapRequest.TargetShift ? " AM" : "PM"} shift</h2>
+            <div class="flex flex-row items-center">
+              <button class="px-3 py-2 bg-red-800 hover:bg-red-700 text-white rounded my-8 mx-2" on:click={() => deleteRequest(swapRequest)}>
+                Reject request
+              </button>
+              <button class="px-3 py-2 bg-green-900 hover:bg-green-800 text-white rounded my-8 mx-2" on:click={() => acceptRequest(swapRequest)}>
+                Accept request
+              </button>
+            </div>
+          </div>
+        {/if}
+      {/each}
+    </div>
   {/if}
 </div>

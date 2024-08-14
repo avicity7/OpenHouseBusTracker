@@ -5,21 +5,26 @@
 	export let data;
 
 	let { drivers, buses, routes, schedule, dropdownData } = data;
-	let selectedBus: EventBus;
-	let selectedRoute: Route;
-	let selectedDriverId: number;
-	let selectedStartTime = '';
-	let selectedEndTime = '';
 	let selectedDriver: Driver;
 
+	const convertToDateTimeLocalString = (timestamp: string) => {
+		let date = new Date(timestamp)
+		let year = date.getFullYear();
+		let month = (date.getMonth() + 1).toString().padStart(2, "0");
+		let day = date.getDate().toString().padStart(2, "0");
+		let hours = date.getHours().toString().padStart(2, "0");
+		let minutes = date.getMinutes().toString().padStart(2, "0");
 
-	const { BusId, RouteName, DriverId, StartTime, EndTime } = schedule;
-	selectedBus = buses.find((bus) => bus.BusId == BusId)!;
-	selectedRoute = routes.find((route) => route.RouteName == RouteName)!;
-	selectedDriverId = DriverId;
-	selectedStartTime = StartTime.split('+')[0];
-	selectedEndTime = EndTime.split('+')[0];
-	selectedDriver = drivers.find((driver) => selectedDriverId == driver.DriverId)!;
+		return `${year}-${month}-${day}T${hours}:${minutes}`;
+	}
+
+	const { BusId, RouteName, DriverName, StartTime, EndTime } = schedule;
+	let selectedBus = buses.find((bus) => bus.BusId == BusId)!;
+	let selectedRoute = routes.find((route) => route.RouteName == RouteName)!;
+	let selectedDriverName = DriverName;
+	let selectedStartTime = convertToDateTimeLocalString(StartTime)
+	let selectedEndTime = convertToDateTimeLocalString(EndTime)
+	selectedDriver = drivers.find((driver) => selectedDriverName == driver.DriverName)!;
 
 </script>
 

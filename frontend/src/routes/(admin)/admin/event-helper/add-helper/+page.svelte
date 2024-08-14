@@ -50,6 +50,7 @@
 		} else {
 		selectedNames.delete(name);
 		}
+		selectedNames = selectedNames
 	}
 
 	function handleCheckboxChange(event: Event, name: string) {

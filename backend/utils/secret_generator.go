@@ -6,6 +6,7 @@ import (
 	"fmt"
 )
 
+// This function is used when a secret is needed in type string that is not UUID.
 func GenerateRandomToken(length int) string {
 	arr := make([]byte, length)
 	_, err := rand.Read(arr)

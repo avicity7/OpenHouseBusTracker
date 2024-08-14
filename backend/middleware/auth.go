@@ -1,3 +1,4 @@
+// Package middleware provides auth middleware.
 package middleware
 
 import (

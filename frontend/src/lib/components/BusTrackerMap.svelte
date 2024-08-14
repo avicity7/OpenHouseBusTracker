@@ -79,21 +79,10 @@
 
 				if (inputCoords.length > 2) {
 					response = await fetch(
-						`https://api.openrouteservice.org/v2/directions/driving-car/geojson`,
-						{
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/json',
-								Authorization: osr_key
-							},
-							body: JSON.stringify({
-								continue_straight: false,
-								coordinates: inputCoords
-							})
-						}
+						`https://api.mapbox.com/matching/v5/mapbox/driving/${positions}?geometries=geojson&access_token=${mapbox_key}`
 					);
 					parsed = await response.json();
-					coords.push(parsed.features[0].geometry);
+					coords.push(parsed.matchings[0].geometry);
 				} else {
 					response = await fetch(
 						`https://api.mapbox.com/matching/v5/mapbox/driving/${positions}?geometries=geojson&access_token=${mapbox_key}`
@@ -132,11 +121,10 @@
 					pastMarkers[`103.7789194739538, 1.3103185038805805`] = pastValue != undefined ? pastValue + 1 : 0
 				}
 				pastValue = currentBus.EventType != "Break" ? pastMarkers[`${currentBus.Lng}, ${currentBus.Lat}`] : pastMarkers[`103.7789194739538, 1.3103185038805805`]
-				console.log(`${currentBus.Carplate}: ${pastValue}`)
 				const waypoint = new Marker({ color: (currentBus.EventType == "Arrive" ? currentBus.Color : "#606060") })
 					.setLngLat(currentBus.EventType != "Break" ? [currentBus.Lng, currentBus.Lat] : [103.7789194739538, 1.3103185038805805])
 					.setOffset(currentBus.EventType == "Arrive" ? [0 + (pastValue * 12), -25] : [0 + (pastValue * 12), (currentBus.EventType != "Break" ? -42 : 0)])
-					.setPopup(new Popup({ offset: [pastValue * 12, -30], className: "flex text-lg font-public justify-center items-center text-center" })
+					.setPopup(new Popup({ offset: [pastValue * 12, -30], className: "flex text-lg font-public justify-center items-center text-center pb-4" })
 						.setHTML(
 							`
 							<div class="px-2 pt-2">

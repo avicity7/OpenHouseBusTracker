@@ -1,3 +1,4 @@
+// Package config sets up the DB connection, WebSocket server and in-memory cache.
 package config
 
 import (
@@ -12,7 +13,6 @@ import (
 	"github.com/patrickmn/go-cache"
 )
 
-// To evaluate performance using single connection vs Pool in the future.
 var Dbpool *pgxpool.Pool
 var err error
 var Melody *melody.Melody

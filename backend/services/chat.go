@@ -134,7 +134,8 @@ func CreateMessage(email string, room_id string, body string) error {
 func GetMessages(room_id string) ([]structs.Message, error) {
 	var messages []structs.Message
 	query := ` 
-		SELECT * FROM chat_message
+		SELECT timestamp, "from", ut.name, room_id, body FROM chat_message cm
+		JOIN user_table ut ON ut.email = cm.from
 		WHERE room_id = @RoomId
 		ORDER BY "timestamp" DESC
 	`
@@ -152,7 +153,7 @@ func GetMessages(room_id string) ([]structs.Message, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var message structs.Message
-		if err := rows.Scan(&message.Timestamp, &message.From, &message.RoomId, &message.Body); err != nil {
+		if err := rows.Scan(&message.Timestamp, &message.From, &message.FromName, &message.RoomId, &message.Body); err != nil {
 			return nil, err
 		}
 		messages = append(messages, message)

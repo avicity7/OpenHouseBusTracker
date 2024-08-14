@@ -17,7 +17,25 @@ func CreateBus(carplate string) error {
 	}
 	_, err := config.Dbpool.Exec(context.Background(), query, args)
 	if err != nil {
-		fmt.Println("error adding driver:", err)
+		return err
+	}
+	return nil
+}
+
+func RefreshBuses() error {
+	query := `
+	UPDATE bus 
+	SET status = false 
+	WHERE bus_id NOT IN 
+		(
+			SELECT bus.bus_id FROM bus
+			JOIN bus_schedule bs ON bs.bus_id = bus.bus_id 
+			WHERE bs.end_time > NOW() AT TIME ZONE 'Etc/GMT-8'
+		)
+	`
+
+	_, err := config.Dbpool.Exec(context.Background(), query)
+	if err != nil {
 		return err
 	}
 	return nil

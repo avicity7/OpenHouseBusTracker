@@ -178,12 +178,13 @@ func GetCurrentBuses() ([]structs.CurrentBus, error) {
 		WITH ranked AS (
 			SELECT *, ROW_NUMBER() OVER (PARTITION BY bus_id ORDER BY timestamp DESC) row_num FROM "event" e
 		)
-		SELECT bus_id, r.route_name, color, et.event_name, lng, lat, "timestamp" FROM ranked r
+		SELECT bus.bus_id, bus.carplate, r.route_name, color, et.event_name, lng, lat, "timestamp" FROM ranked r
+		JOIN bus ON bus.bus_id = r.bus_id
 		JOIN stop ON stop.stop_name = r.stop_name
 		JOIN route ON route.route_name = r.route_name
 		JOIN event_type et ON et.event_id = r.event_id
 		WHERE row_num = 1 
-		AND bus_id IN (
+		AND bus.bus_id IN (
 			SELECT bus_id FROM bus_schedule bs 
 			WHERE end_time >= NOW() AT TIME ZONE 'Etc/GMT-8'
 			AND start_time <= NOW() AT TIME ZONE 'Etc/GMT-8'
@@ -199,7 +200,7 @@ func GetCurrentBuses() ([]structs.CurrentBus, error) {
 
 	for rows.Next() {
 		var currentBus structs.CurrentBus
-		rows.Scan(&currentBus.BusId, &currentBus.RouteName, &currentBus.Color, &currentBus.EventType, &currentBus.Lng, &currentBus.Lat, &currentBus.Timestamp)
+		rows.Scan(&currentBus.BusId, &currentBus.Carplate, &currentBus.RouteName, &currentBus.Color, &currentBus.EventType, &currentBus.Lng, &currentBus.Lat, &currentBus.Timestamp)
 		currentBuses = append(currentBuses, currentBus)
 	}
 

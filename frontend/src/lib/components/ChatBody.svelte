@@ -19,12 +19,13 @@
 
   const formatTimestamp = (timestamp: string) => {
     const utcDate = new Date(timestamp);
-    const formattedDate = utcDate.toLocaleTimeString();
+    const formattedDate = utcDate.toLocaleTimeString([], {timeZone: 'singapore'});
     return formattedDate;
   }
 </script>
 
 <div class="my-2">
+  <p class={`w-full group flex ${message.From == account?.Email ? "flex-row-reverse" : "flex-row"} text-neutral-500 text-xs mb-2`}>{message.FromName}</p>
   <div class={`w-full group flex ${message.From == account?.Email ? "flex-row-reverse" : "flex-row"} items-center`}>
     <p class={`max-w-full rounded-md p-4 mb-2 ${message.From == account?.Email ? "bg-red-100" : "bg-gray-100"} break-words text-wrap overflow-wrap`}>
       {message.Body}
