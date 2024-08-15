@@ -32,7 +32,7 @@ func GetUsers() (structs.ReturnedUserArray, error) {
 	query := `
 		SELECT name, email, COALESCE(contact, '') as contact, role_name, verification_token FROM user_table 
 		JOIN user_role ON user_table.role_id = user_role.role_id 
-		ORDER BY email ASC
+		ORDER BY name ASC
 	`
 
 	rows, err := config.Dbpool.Query(context.Background(), query)
@@ -135,7 +135,7 @@ func DeleteUser(email string) error {
 	_, err = tx.Exec(context.Background(), q2, args)
 	if err != nil {
 		tx.Rollback(context.Background())
-		return err	
+		return err
 	}
 
 	err = tx.Commit(context.Background())
@@ -145,5 +145,3 @@ func DeleteUser(email string) error {
 
 	return nil
 }
-
-	
