@@ -154,7 +154,7 @@
 			<tbody class="bg-white divide-y divide-gray-200">
         {#if filteredVerifiedUsers.length === 0}
           <tr>
-            <td colspan="4" class="px-6 py-4 whitespace-nowrap text-center text-gray-400">No matching Admin or Student Helpers found</td>
+            <td colspan="5" class="px-6 py-4 whitespace-nowrap text-center text-gray-400">No matching Admin or Student Helpers found</td>
           </tr>
         {:else}
           {#each filteredVerifiedUsers as user}
