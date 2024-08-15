@@ -39,6 +39,7 @@ func CreateChatRoom(users []string, groupname string) (string, error) {
 			fmt.Println(err)
 			return "", err
 		}
+		config.Melody.Broadcast([]byte(user))
 	}
 
 	return room_id, nil
