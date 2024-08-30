@@ -2,19 +2,43 @@
   import ChatThumbnail from '$lib/components/ChatThumbnail.svelte';
   import Plus from '$lib/components/Plus.svelte';
 	import { onMount } from 'svelte';
+  import type { ChatRoom } from '$lib/types/global.js';
+	import { onNavigate } from '$app/navigation';
 
   export let data
-  const { chat_rooms } = data
+  let { chat_rooms, backend_uri, account, env } = data
 
   let button: HTMLElement
   let menu = false
 
+  const getRooms = async () => {
+    const response = await fetch(`${backend_uri}:3000/chat/get-chat-rooms/${account?.Email}`)
+    chat_rooms = await response.json() as Array<ChatRoom>
+  }
+
   onMount(() => {
+    const ws = new WebSocket(`${env == 'PROD' ? 'wss' : 'ws'}://${backend_uri.split('//')[1]}:3000/ws`);
     document.addEventListener('click', (e: MouseEvent) => {
       if (!button.contains(e.target as Node)) {
         menu = false
       }
     })
+
+    ws.onmessage = async (msg) => {
+      let refresh = false
+      let parts = msg.data.split(' ');
+      if (parts[0] == account?.Email) {
+        await getRooms()
+        refresh = true
+      }
+      for (let i = 0; i < chat_rooms.length; i++) {
+        const room = chat_rooms[i]
+        if (room.RoomId == parts[0] && !refresh) {
+          await getRooms()
+          break
+        } 
+      }
+    };
   })
 </script>
 

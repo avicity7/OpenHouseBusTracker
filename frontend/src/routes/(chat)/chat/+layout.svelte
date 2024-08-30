@@ -4,6 +4,7 @@
   import Plus from '$lib/components/Plus.svelte';
 	import { onMount } from 'svelte';
   import type { ChatRoom } from '$lib/types/global.js';
+	import { afterNavigate, onNavigate } from '$app/navigation';
 
   let { account, chat_rooms, env, backend_uri } = data
 
@@ -31,7 +32,7 @@
     ws.onmessage = async (msg) => {
       let parts = msg.data.split(' ');
       if (rooms.includes(parts[0])) {
-        getRooms()
+        await getRooms()
       }
     };
   })
