@@ -3,6 +3,7 @@
 	import Chat from '$lib/components/Chat.svelte';
 	import Send from '$lib/components/Send.svelte';
   import type { Message } from '$lib/types/global.js';
+	import { onMount } from 'svelte';
   export let data
 
   const { account, env, backend_uri } = data
@@ -27,6 +28,10 @@
     });
     body = ""
   }
+
+  onMount(() => {
+    getMessages()
+  })
 
   afterNavigate(() => {
     body = ""

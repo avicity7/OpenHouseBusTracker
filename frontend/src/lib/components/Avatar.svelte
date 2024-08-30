@@ -49,6 +49,7 @@
           </li>
           {#if session.Role == "user"}
             <li class="block md:hidden">
+              <a href="/bus-routes" class="block px-4 py-2 hover:bg-gray-100" on:click={() => menuOpen = false}>Routes</a>
               <a href="/event" class="block px-4 py-2 hover:bg-gray-100" on:click={() => menuOpen = false}>Follow Bus</a>
             </li>
           {/if}
