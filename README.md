@@ -29,6 +29,7 @@ Create a `.env` file in the `frontend` directory with the following variables:
 PUBLIC_BACKEND_URL=http://127.0.0.1
 PUBLIC_MAPBOX_KEY=your_mapbox_key_here
 PUBLIC_OSR_KEY=your_osr_key_here
+```
 
 ### Backend Environment Variables
 
@@ -40,6 +41,7 @@ DATABASE_URL=your_database_url_here
 SECRET=your_secret_key_here
 ENV=DEV
 EMAIL_PASSWORD=your_email_password_here
+```
 
 ## Deployment
 
