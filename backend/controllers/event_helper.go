@@ -274,8 +274,6 @@ func UpdateEventHelper(w http.ResponseWriter, r *http.Request) {
 	}
 
 	config.Cache.Delete("EventHelpers")
-	config.Cache.Delete("CurrentUserSchedules")
-	config.Cache.Delete("FutureUserSchedules")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

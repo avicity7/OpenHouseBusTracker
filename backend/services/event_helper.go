@@ -216,6 +216,11 @@ func UpdateEventHelper(eventHelper structs.EventHelperUpdate) error {
 		eventHelper.OldShift,
 	)
 
+	config.Cache.Delete("CurrentUserSchedules" + oldEmail)
+	config.Cache.Delete("FutureUserSchedules" + oldEmail)
+	config.Cache.Delete("CurrentUserSchedules" + newEmail)
+	config.Cache.Delete("FutureUserSchedules" + newEmail)
+
 	if err != nil {
 		fmt.Println("Error updating event helper:", err)
 		return err
