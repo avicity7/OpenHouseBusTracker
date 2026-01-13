@@ -1,0 +1,41 @@
+services:
+  frontend:
+    image: node:lts-alpine
+    command: sh -c "cd frontend && yarn install && yarn run dev --host"
+    ports:
+      - 5173:5173
+    working_dir: /frontend
+    volumes:
+      - ./:/frontend
+    environment:
+      PUBLIC_BACKEND_URL: http://backend
+  
+  backend:
+    image: golang:alpine
+    command: sh -c "cd backend && go run ."
+    ports:
+      - 3000:3000
+    working_dir: /backend
+    volumes:
+      - ./:/backend
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PORT: 5432
+      DB_SECRET: ${SECRET}
+      ENV: dev
+  db:
+    image: postgres:latest
+    container_name: db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: ${SECRET}
+      POSTGRES_DB: fyp
+    volumes:
+      - ./backend/db:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
