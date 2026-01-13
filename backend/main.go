@@ -3,6 +3,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"server/config"
@@ -25,9 +26,12 @@ func main() {
 
 	// Configure CORS
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://open-house-bus-tracker.vercel.app", "http://localhost:5173"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedOrigins:   []string{"https://open-house-bus-tracker.vercel.app", "frontend:5173"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: true,
+		MaxAge:           300,
 	}))
 
 	// Add logger middleware
@@ -56,6 +60,7 @@ func main() {
 	if env == "PROD" {
 		http.ListenAndServeTLS(":3000", "fullchain.pem", "privkey.pem", r)
 	} else {
-		http.ListenAndServe("127.0.0.1:3000", r)
+		fmt.Println("Started")
+		http.ListenAndServe(":3000", r)
 	}
 }
