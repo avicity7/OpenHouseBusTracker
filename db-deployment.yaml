@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opbt-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opbt-db
+  template:
+    metadata:
+      labels:
+        app: opbt-db
+    spec:
+      containers:
+      - name: db
+        image: avicity7/repo:db
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: env
+              key: SECRET
+        volumeMounts:
+        - name: init-db
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: init-db
+          configMap:
+            name: opbt-db-init

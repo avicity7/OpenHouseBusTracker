@@ -26,7 +26,7 @@ func main() {
 
 	// Configure CORS
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://open-house-bus-tracker.vercel.app", "frontend:5173"},
+		AllowedOrigins:   []string{"http://openhousebustracker.local", "http://localhost", "https://open-house-bus-tracker.vercel.app"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},

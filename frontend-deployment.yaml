@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opbt-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opbt-frontend
+  template:
+    metadata:
+      labels:
+        app: opbt-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: avicity7/repo:frontend
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 5173

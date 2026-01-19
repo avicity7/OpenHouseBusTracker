@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opbt-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opbt-backend
+  template:
+    metadata:
+      labels:
+        app: opbt-backend
+    spec:
+      containers:
+      - name: backend
+        image: avicity7/repo:backend
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 3000
+        env:
+        - name: DB_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: env
+              key: SECRET

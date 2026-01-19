@@ -1,0 +1,14 @@
+FROM golang:alpine
+
+WORKDIR /app
+
+ENV DB_HOST=opbt-db
+ENV DB_USER=root
+ENV DB_PORT=5432
+ENV ENV=dev
+
+COPY backend ./
+
+EXPOSE 3000
+
+CMD ["go", "run", "."]

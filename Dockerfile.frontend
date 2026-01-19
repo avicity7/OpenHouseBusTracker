@@ -1,0 +1,7 @@
+FROM node:lts-alpine
+WORKDIR /app
+ENV PUBLIC_BACKEND_URL=http://opbt-backend
+COPY frontend ./
+EXPOSE 5173
+RUN yarn
+CMD ["yarn", "run", "dev", "--host"]
